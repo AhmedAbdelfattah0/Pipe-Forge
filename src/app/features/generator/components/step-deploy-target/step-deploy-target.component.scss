@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+// Grid-row expand/collapse animation for the trigger pipeline ID section.
+.expandable {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease-in-out;
+
+  &.is-open {
+    grid-template-rows: 1fr;
+  }
+}
+
+// Fade-in animation for config sections appearing after target selection.
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

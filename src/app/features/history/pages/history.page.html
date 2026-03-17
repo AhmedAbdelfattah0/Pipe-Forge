@@ -1,0 +1,165 @@
+<div class="flex flex-col h-full p-6 gap-6">
+
+  <!-- ── Page Header ───────────────────────────────────────────────────────── -->
+  <div>
+    <h1 class="text-2xl font-bold text-navy">My Projects</h1>
+    <p class="mt-1 text-sm text-gray-500">
+      View and manage your generated pipeline sets
+    </p>
+  </div>
+
+  <!-- ── Search Bar ────────────────────────────────────────────────────────── -->
+  <div class="relative max-w-md">
+    <!-- Magnifier icon -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+    <input
+      type="text"
+      placeholder="Search projects..."
+      [value]="history.searchQuery()"
+      (input)="onSearchInput($event)"
+      class="w-full rounded border border-border bg-card py-2 pl-10 pr-3 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+    />
+  </div>
+
+  <!-- ── Projects Grid or Empty State ──────────────────────────────────────── -->
+  @if (history.filteredProjects().length > 0) {
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+      @for (project of history.filteredProjects(); track project.id) {
+        <div class="project-card rounded border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
+
+          <!-- Top: MFE name + deploy badge -->
+          <div class="flex items-start justify-between px-6 pt-5 pb-2">
+            <h3 class="text-lg font-semibold text-navy">{{ project.mfeName }}</h3>
+            <pf-badge
+              [variant]="deployBadgeVariant(project.deployTarget)"
+              [text]="deployBadgeText(project.deployTarget)"
+            />
+          </div>
+
+          <!-- Date -->
+          <div class="px-6 pb-4">
+            <p class="text-xs text-gray-500">
+              Generated on {{ project.generatedAt | date:'MMM d, y' }}
+            </p>
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-border"></div>
+
+          <!-- Info rows -->
+          <div class="flex flex-col gap-3 px-6 py-4">
+
+            <!-- Markets -->
+            <div>
+              <p class="mb-1.5 text-xs font-medium text-gray-500">Markets</p>
+              <div class="flex flex-wrap gap-1.5">
+                @for (market of project.markets; track market) {
+                  <pf-badge variant="market" [text]="market" />
+                }
+              </div>
+            </div>
+
+            <!-- Environments -->
+            <div>
+              <p class="mb-1.5 text-xs font-medium text-gray-500">Environments</p>
+              <div class="flex flex-wrap gap-1.5">
+                @for (env of project.environments; track env) {
+                  <pf-badge [variant]="envBadgeVariant(env)" [text]="env" />
+                }
+              </div>
+            </div>
+
+            <!-- Languages -->
+            <div>
+              <p class="mb-1.5 text-xs font-medium text-gray-500">Languages</p>
+              <div class="flex flex-wrap gap-1.5">
+                @for (lang of project.languages; track lang) {
+                  <pf-badge [text]="lang" />
+                }
+              </div>
+            </div>
+
+            <!-- Pipelines -->
+            <div>
+              <p class="mb-1.5 text-xs font-medium text-gray-500">Pipelines</p>
+              <p class="text-sm text-text-dark">{{ project.pipelineCount }} files</p>
+            </div>
+
+          </div>
+
+          <!-- Divider -->
+          <div class="border-t border-border"></div>
+
+          <!-- Action row -->
+          <div class="flex items-center justify-between px-6 py-3">
+            <pf-button variant="ghost" size="sm" (clicked)="onRegenerate()">
+              <!-- Refresh icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+              Regenerate
+            </pf-button>
+            <pf-button variant="primary" size="sm" (clicked)="onDownload(project)">
+              <!-- Download icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              Download
+            </pf-button>
+          </div>
+
+        </div>
+      }
+
+    </div>
+  } @else {
+
+    <!-- Empty state -->
+    <div class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card py-16">
+      <!-- Folder-open icon -->
+      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-surface">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400" aria-hidden="true">
+          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+          <path d="M2 10h20" />
+        </svg>
+      </div>
+      <h3 class="mt-4 text-lg font-semibold text-navy">No projects yet</h3>
+      <p class="mt-2 text-center text-sm text-gray-500">
+        @if (history.searchQuery()) {
+          No projects match your search
+        } @else {
+          Generate your first pipeline set to see it here
+        }
+      </p>
+      @if (!history.searchQuery()) {
+        <div class="mt-6">
+          <pf-button variant="primary" (clicked)="goToGenerator()">
+            Generate Pipelines
+          </pf-button>
+        </div>
+      }
+    </div>
+
+  }
+
+</div>

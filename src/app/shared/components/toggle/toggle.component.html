@@ -1,0 +1,36 @@
+<label
+  class="flex items-center justify-between gap-4 select-none"
+  [class.opacity-50]="control.disabled"
+  [class.cursor-pointer]="!control.disabled"
+  [class.cursor-not-allowed]="control.disabled"
+>
+  @if (label || helperText) {
+    <div class="flex flex-col gap-0.5">
+      @if (label) {
+        <span class="text-sm font-medium text-text-dark">{{ label }}</span>
+      }
+      @if (helperText) {
+        <span class="text-xs text-gray-500">{{ helperText }}</span>
+      }
+    </div>
+  }
+
+  <div class="relative inline-flex shrink-0">
+    <!--
+      Hidden checkbox drives all visual state via CSS `peer` classes.
+      Angular's CheckboxControlValueAccessor sets the `checked` property
+      when the FormControl value changes, which activates :checked pseudo-class.
+    -->
+    <input type="checkbox" class="peer sr-only" [formControl]="control" />
+
+    <!-- Track: w-9 (36px) × h-5 (20px) -->
+    <span
+      class="block h-5 w-9 rounded-full bg-gray-200 transition-colors peer-checked:bg-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+    ></span>
+
+    <!-- Thumb: size-4 (16px). Off: left-0.5 top-0.5 (2px). On: translate-x-4 (16px) → 2px right gap. -->
+    <span
+      class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm ring-0 transition-transform peer-checked:translate-x-4"
+    ></span>
+  </div>
+</label>

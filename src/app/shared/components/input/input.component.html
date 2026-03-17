@@ -1,0 +1,38 @@
+<div class="flex flex-col gap-1">
+  @if (label) {
+    <div class="flex items-center gap-2">
+      <label class="text-sm font-medium text-text-dark">{{ label }}</label>
+
+      @if (badge === 'optional') {
+        <span
+          class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500"
+        >
+          Optional
+        </span>
+      }
+
+      @if (badge === 'secret') {
+        <span
+          class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-warning"
+        >
+          Secret
+        </span>
+      }
+    </div>
+  }
+
+  <input
+    [type]="type"
+    [formControl]="control"
+    [placeholder]="placeholder"
+    [attr.aria-invalid]="isInvalid ? 'true' : null"
+    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-red-500 aria-invalid:ring-2 aria-invalid:ring-red-500/20"
+    (blur)="onBlur()"
+  />
+
+  @if (isInvalid) {
+    <p class="text-xs text-red-600">{{ errorMessage }}</p>
+  } @else if (helperText) {
+    <p class="text-xs text-gray-500">{{ helperText }}</p>
+  }
+</div>

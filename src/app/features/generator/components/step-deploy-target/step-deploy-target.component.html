@@ -1,0 +1,344 @@
+<div class="flex flex-col gap-6">
+
+  <!-- ── Section 1: Deploy Target Selection ────────────────────────────────── -->
+  <pf-card
+    title="Deploy Target"
+    subtitle="Select where your application will be deployed"
+  >
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+
+      <!-- Storage Account -->
+      <button
+        type="button"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200"
+        [class.border-2]="state.deployTarget() === 'storage-account'"
+        [class.border-primary]="state.deployTarget() === 'storage-account'"
+        [class.bg-primary/5]="state.deployTarget() === 'storage-account'"
+        [class.shadow-md]="state.deployTarget() === 'storage-account'"
+        [class.border]="state.deployTarget() !== 'storage-account'"
+        [class.border-border]="state.deployTarget() !== 'storage-account'"
+        [class.bg-card]="state.deployTarget() !== 'storage-account'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'storage-account'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'storage-account'"
+        (click)="selectTarget('storage-account')"
+      >
+        @if (state.deployTarget() === 'storage-account') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        }
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'storage-account'"
+          [class.text-white]="state.deployTarget() === 'storage-account'"
+          [class.bg-gray-100]="state.deployTarget() !== 'storage-account'"
+          [class.text-gray-500]="state.deployTarget() !== 'storage-account'"
+        >
+          <!-- Database icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <ellipse cx="12" cy="5" rx="9" ry="3" />
+            <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+            <path d="M3 12A9 3 0 0 0 21 12" />
+          </svg>
+        </div>
+        <h3
+          class="mt-4 text-sm font-semibold"
+          [class.text-primary]="state.deployTarget() === 'storage-account'"
+          [class.text-navy]="state.deployTarget() !== 'storage-account'"
+        >Azure Storage Account</h3>
+        <p class="mt-2 text-xs text-gray-500">Static website hosting via Azure Blob Storage</p>
+      </button>
+
+      <!-- Static Web App -->
+      <button
+        type="button"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200"
+        [class.border-2]="state.deployTarget() === 'static-web-app'"
+        [class.border-primary]="state.deployTarget() === 'static-web-app'"
+        [class.bg-primary/5]="state.deployTarget() === 'static-web-app'"
+        [class.shadow-md]="state.deployTarget() === 'static-web-app'"
+        [class.border]="state.deployTarget() !== 'static-web-app'"
+        [class.border-border]="state.deployTarget() !== 'static-web-app'"
+        [class.bg-card]="state.deployTarget() !== 'static-web-app'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'static-web-app'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'static-web-app'"
+        (click)="selectTarget('static-web-app')"
+      >
+        @if (state.deployTarget() === 'static-web-app') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        }
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'static-web-app'"
+          [class.text-white]="state.deployTarget() === 'static-web-app'"
+          [class.bg-gray-100]="state.deployTarget() !== 'static-web-app'"
+          [class.text-gray-500]="state.deployTarget() !== 'static-web-app'"
+        >
+          <!-- Globe icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+        </div>
+        <h3
+          class="mt-4 text-sm font-semibold"
+          [class.text-primary]="state.deployTarget() === 'static-web-app'"
+          [class.text-navy]="state.deployTarget() !== 'static-web-app'"
+        >Azure Static Web App</h3>
+        <p class="mt-2 text-xs text-gray-500">Managed hosting with built-in CI/CD</p>
+      </button>
+
+      <!-- App Service -->
+      <button
+        type="button"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200"
+        [class.border-2]="state.deployTarget() === 'app-service'"
+        [class.border-primary]="state.deployTarget() === 'app-service'"
+        [class.bg-primary/5]="state.deployTarget() === 'app-service'"
+        [class.shadow-md]="state.deployTarget() === 'app-service'"
+        [class.border]="state.deployTarget() !== 'app-service'"
+        [class.border-border]="state.deployTarget() !== 'app-service'"
+        [class.bg-card]="state.deployTarget() !== 'app-service'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'app-service'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'app-service'"
+        (click)="selectTarget('app-service')"
+      >
+        @if (state.deployTarget() === 'app-service') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        }
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'app-service'"
+          [class.text-white]="state.deployTarget() === 'app-service'"
+          [class.bg-gray-100]="state.deployTarget() !== 'app-service'"
+          [class.text-gray-500]="state.deployTarget() !== 'app-service'"
+        >
+          <!-- Server icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+            <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+            <line x1="6" y1="6" x2="6.01" y2="6" />
+            <line x1="6" y1="18" x2="6.01" y2="18" />
+          </svg>
+        </div>
+        <h3
+          class="mt-4 text-sm font-semibold"
+          [class.text-primary]="state.deployTarget() === 'app-service'"
+          [class.text-navy]="state.deployTarget() !== 'app-service'"
+        >Azure App Service</h3>
+        <p class="mt-2 text-xs text-gray-500">Full server-side hosting</p>
+      </button>
+
+    </div>
+  </pf-card>
+
+  <!-- ── Section 2: Target Configuration (conditional) ─────────────────────── -->
+
+  <!-- Storage Account Configuration -->
+  @if (state.deployTarget() === 'storage-account') {
+    <div class="animate-fade-in">
+      <pf-card
+        title="Storage Account Configuration"
+        subtitle="Enter the Azure Storage Account name for each market and environment"
+      >
+        @if (marketEnvCombinations().length > 0) {
+          <div class="flex flex-col gap-4">
+            @for (combo of marketEnvCombinations(); track combo.key) {
+              <div class="rounded-lg border border-border bg-surface p-4">
+                <div class="flex flex-col gap-2">
+                  <label
+                    [for]="'storage-' + combo.key"
+                    class="text-sm font-medium text-navy"
+                  >{{ combo.label }}</label>
+                  <input
+                    [id]="'storage-' + combo.key"
+                    type="text"
+                    [value]="configValue(combo.key)"
+                    (input)="onConfigChange(combo.key, $event)"
+                    placeholder="e.g. jedazup2qaswa"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                  <p class="text-xs text-gray-500">Azure Storage Account name</p>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="rounded-lg border border-dashed border-border p-8 text-center">
+            <p class="text-sm text-gray-500">
+              Configure markets and environments in the previous steps to see deployment options.
+            </p>
+          </div>
+        }
+      </pf-card>
+    </div>
+  }
+
+  <!-- Static Web App Configuration -->
+  @if (state.deployTarget() === 'static-web-app') {
+    <div class="animate-fade-in flex flex-col gap-6">
+      <pf-card
+        title="Static Web App Configuration"
+        subtitle="Enter the deployment token for each market and environment"
+      >
+        @if (marketEnvCombinations().length > 0) {
+          <div class="flex flex-col gap-4">
+            @for (combo of marketEnvCombinations(); track combo.key) {
+              <div class="rounded-lg border border-border bg-surface p-4">
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center gap-2">
+                    <label
+                      [for]="'swa-' + combo.key"
+                      class="text-sm font-medium text-navy"
+                    >{{ combo.label }}</label>
+                    <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-warning">
+                      Secret
+                    </span>
+                  </div>
+                  <input
+                    [id]="'swa-' + combo.key"
+                    type="password"
+                    [value]="configValue(combo.key)"
+                    (input)="onConfigChange(combo.key, $event)"
+                    placeholder="Enter SWA deployment token"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                  <p class="text-xs text-gray-500">SWA deployment token</p>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="rounded-lg border border-dashed border-border p-8 text-center">
+            <p class="text-sm text-gray-500">
+              Configure markets and environments in the previous steps to see deployment options.
+            </p>
+          </div>
+        }
+      </pf-card>
+
+      <!-- Trigger Pipeline Section -->
+      <div class="rounded border border-border bg-card shadow-sm">
+        <div class="flex items-center gap-4 p-5">
+
+          <!-- Zap icon -->
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+          </div>
+
+          <!-- Title + description -->
+          <div class="flex-1">
+            <h3 class="text-sm font-semibold text-text-dark">Trigger another pipeline after deploy?</h3>
+            <p class="mt-0.5 text-sm text-gray-500">
+              Useful for cache invalidation or post-deployment tasks
+            </p>
+          </div>
+
+          <!-- Inline peer-checkbox toggle -->
+          <label class="relative inline-flex shrink-0 cursor-pointer">
+            <input
+              type="checkbox"
+              class="peer sr-only"
+              [checked]="state.triggerPipelineAfterDeploy()"
+              (change)="onTriggerToggle($event)"
+            />
+            <span class="block h-5 w-9 rounded-full bg-gray-200 transition-colors peer-checked:bg-primary"></span>
+            <span class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm ring-0 transition-transform peer-checked:translate-x-4"></span>
+          </label>
+        </div>
+
+        <!-- Expandable pipeline ID input -->
+        <div class="expandable" [class.is-open]="state.triggerPipelineAfterDeploy()">
+          <div class="overflow-hidden">
+            <div class="border-t border-border px-5 pb-5 pt-4">
+              <div class="flex flex-col gap-2">
+                <label for="trigger-pipeline-id" class="text-sm font-medium text-text-dark">
+                  Pipeline Definition ID
+                </label>
+                <input
+                  id="trigger-pipeline-id"
+                  type="text"
+                  [value]="state.triggerPipelineId()"
+                  (input)="onTriggerPipelineIdChange($event)"
+                  placeholder="e.g. 227"
+                  class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                />
+                <p class="text-xs text-gray-500">
+                  The Azure DevOps build definition ID to trigger after deployment
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- App Service Configuration -->
+  @if (state.deployTarget() === 'app-service') {
+    <div class="animate-fade-in">
+      <pf-card
+        title="App Service Configuration"
+        subtitle="Enter the App Service name for each market and environment"
+      >
+        @if (marketEnvCombinations().length > 0) {
+          <div class="flex flex-col gap-4">
+            @for (combo of marketEnvCombinations(); track combo.key) {
+              <div class="rounded-lg border border-border bg-surface p-4">
+                <div class="flex flex-col gap-2">
+                  <label
+                    [for]="'appservice-' + combo.key"
+                    class="text-sm font-medium text-navy"
+                  >{{ combo.label }}</label>
+                  <input
+                    [id]="'appservice-' + combo.key"
+                    type="text"
+                    [value]="configValue(combo.key)"
+                    (input)="onConfigChange(combo.key, $event)"
+                    placeholder="e.g. my-app-ksa-qa"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                  <p class="text-xs text-gray-500">Azure App Service name</p>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="rounded-lg border border-dashed border-border p-8 text-center">
+            <p class="text-sm text-gray-500">
+              Configure markets and environments in the previous steps to see deployment options.
+            </p>
+          </div>
+        }
+      </pf-card>
+    </div>
+  }
+
+  <!-- ── Bottom bar: Back + Next ────────────────────────────────────────────── -->
+  <div class="flex items-center justify-between">
+    <pf-button variant="ghost" (clicked)="state.prevStep()">
+      &larr; Back
+    </pf-button>
+    <pf-button
+      variant="primary"
+      [disabled]="!state.isStep4Valid()"
+      (clicked)="state.nextStep()"
+    >
+      Next Step &rarr;
+    </pf-button>
+  </div>
+
+</div>

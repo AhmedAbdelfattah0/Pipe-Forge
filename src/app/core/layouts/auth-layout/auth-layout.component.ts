@@ -3,10 +3,10 @@ import { RouterOutlet } from '@angular/router';
 
 @Component({
   standalone: true,
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss',
+  selector: 'pf-auth-layout',
+  templateUrl: './auth-layout.component.html',
+  styleUrl: './auth-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterOutlet],
 })
-export class App {}
+export class AuthLayoutComponent {}

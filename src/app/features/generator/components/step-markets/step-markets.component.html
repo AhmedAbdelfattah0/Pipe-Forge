@@ -1,0 +1,161 @@
+<div class="flex flex-col gap-6">
+
+  <!-- ── Section 1: Markets ──────────────────────────────────────────────── -->
+  <div class="rounded border border-border bg-card shadow-sm">
+
+    <!-- Custom header: title + subtitle on left, "+ Add Market" on right -->
+    <div class="flex items-center justify-between border-b border-border px-6 py-4">
+      <div>
+        <h3 class="text-sm font-semibold text-text-dark">Markets</h3>
+        <p class="mt-1 text-sm text-gray-500">Configure the markets/regions for your deployments</p>
+      </div>
+      <pf-button variant="ghost" size="sm" (clicked)="addMarket()">
+        + Add Market
+      </pf-button>
+    </div>
+
+    <!-- Market rows -->
+    <div class="p-6">
+      <div class="flex flex-col gap-4">
+
+        @for (market of state.markets(); track $index; let i = $index) {
+          <div class="flex flex-col gap-4 rounded-lg border border-border bg-surface p-4 sm:flex-row sm:items-center">
+
+            <!-- Enable/disable checkbox -->
+            <input
+              type="checkbox"
+              [checked]="market.enabled"
+              (change)="state.toggleMarket(i)"
+              class="h-4 w-4 shrink-0 cursor-pointer rounded accent-primary"
+            />
+
+            <!-- Name + Code inputs -->
+            <div class="grid flex-1 grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-text-dark">Market Name</label>
+                <input
+                  type="text"
+                  [value]="market.name"
+                  (input)="onMarketNameChange(i, $event)"
+                  placeholder="e.g. KSA"
+                  class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-text-dark">Market Code</label>
+                <input
+                  type="text"
+                  [value]="market.code"
+                  (input)="onMarketCodeChange(i, $event)"
+                  placeholder="e.g. sa"
+                  class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                />
+              </div>
+            </div>
+
+            <!-- Delete button — disabled when only 1 market remains -->
+            <pf-button
+              variant="danger"
+              size="sm"
+              [disabled]="state.markets().length === 1"
+              (clicked)="state.removeMarket(i)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+              </svg>
+            </pf-button>
+
+          </div>
+        }
+
+        @if (state.markets().length === 0) {
+          <div class="rounded-lg border border-dashed border-border p-8 text-center">
+            <p class="text-sm text-gray-500">No markets configured. Click "+ Add Market" to get started.</p>
+          </div>
+        }
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Section 2: Environments ────────────────────────────────────────── -->
+  <pf-card
+    title="Environments"
+    subtitle="Select which environments to generate pipelines for"
+  >
+    <div class="grid gap-4 sm:grid-cols-2">
+
+      @for (env of envConfigs; track env.id) {
+        <div
+          class="flex items-center justify-between rounded-lg border p-4 transition-colors"
+          [ngClass]="state.environments().includes(env.id)
+            ? 'border-primary bg-blue-50'
+            : 'border-border bg-surface'"
+        >
+          <!-- Left: label, badge, branch pattern -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium text-navy">{{ env.label }}</span>
+              <pf-badge
+                [variant]="state.environments().includes(env.id) ? 'prod' : 'default'"
+                [text]="state.environments().includes(env.id) ? 'Active' : 'Inactive'"
+              />
+            </div>
+            <p class="text-xs text-gray-500">
+              Branch pattern:
+              <code class="rounded bg-gray-100 px-1">{{ env.branch }}</code>
+            </p>
+          </div>
+
+          <!-- Right: toggle (peer-checkbox pattern, no FormControl needed) -->
+          <label class="relative inline-flex shrink-0 cursor-pointer">
+            <input
+              type="checkbox"
+              class="peer sr-only"
+              [checked]="state.environments().includes(env.id)"
+              [disabled]="state.environments().length === 1 && state.environments().includes(env.id)"
+              (change)="state.toggleEnvironment(env.id)"
+            />
+            <span
+              class="block h-5 w-9 rounded-full bg-gray-200 transition-colors peer-checked:bg-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+            ></span>
+            <span
+              class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm ring-0 transition-transform peer-checked:translate-x-4"
+            ></span>
+          </label>
+        </div>
+      }
+
+    </div>
+  </pf-card>
+
+  <!-- ── Bottom bar: Back + Next ────────────────────────────────────────── -->
+  <div class="flex items-center justify-between">
+    <pf-button variant="ghost" (clicked)="state.prevStep()">
+      &larr; Back
+    </pf-button>
+    <pf-button
+      variant="primary"
+      [disabled]="!state.isStep2Valid()"
+      (clicked)="state.nextStep()"
+    >
+      Next Step &rarr;
+    </pf-button>
+  </div>
+
+</div>

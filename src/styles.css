@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* Tell Tailwind v4 where Angular templates live */
+@source "./**/*.{html,ts}";
+
+@theme {
+  /* Colors */
+  --color-primary:   #2E86C1;
+  --color-navy:      #1E3A5F;
+  --color-surface:   #F8F9FA;
+  --color-card:      #FFFFFF;
+  --color-border:    #E2E8F0;
+  --color-text-dark: #1A1A2E;
+  --color-success:   #1E8449;
+  --color-warning:   #D35400;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Border radius — 8px default */
+  --radius: 0.5rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}

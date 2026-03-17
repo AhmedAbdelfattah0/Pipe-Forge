@@ -1,0 +1,76 @@
+<!-- Mobile: current step indicator + progress dots -->
+<div class="sm:hidden mb-6">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
+        {{ currentStep }}
+      </div>
+      <div>
+        <p class="text-sm font-medium text-navy">{{ currentStepLabel }}</p>
+        <p class="text-xs text-gray-500">Step {{ currentStep }} of {{ totalSteps }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1.5">
+      @for (step of steps; track step.number) {
+        <div
+          class="h-1.5 w-6 rounded-full transition-colors"
+          [class.bg-primary]="step.number <= currentStep"
+          [class.bg-gray-200]="step.number > currentStep"
+        ></div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Desktop: horizontal stepper with circles, connectors, labels -->
+<div class="hidden sm:flex items-center justify-between px-2">
+  @for (step of steps; track step.number; let first = $first) {
+
+    <!-- Connector line before each step (except first) -->
+    @if (!first) {
+      <div
+        class="h-0.5 flex-1 mx-2 transition-colors"
+        [class.bg-primary]="step.number <= currentStep"
+        [class.bg-gray-200]="step.number > currentStep"
+      ></div>
+    }
+
+    <!-- Step circle + label -->
+    <div class="flex flex-col items-center">
+      <div
+        class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-colors"
+        [class.bg-primary]="isCompleted(step.number) || isActive(step.number)"
+        [class.text-white]="isCompleted(step.number) || isActive(step.number)"
+        [class.bg-gray-200]="!isCompleted(step.number) && !isActive(step.number)"
+        [class.text-gray-500]="!isCompleted(step.number) && !isActive(step.number)"
+      >
+        @if (isCompleted(step.number)) {
+          <!-- Checkmark SVG -->
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-5 w-5"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        } @else {
+          {{ step.number }}
+        }
+      </div>
+
+      <span
+        class="mt-2 text-center text-xs font-medium transition-colors"
+        [class.text-navy]="isCompleted(step.number) || isActive(step.number)"
+        [class.text-gray-400]="!isCompleted(step.number) && !isActive(step.number)"
+      >
+        {{ step.label }}
+      </span>
+    </div>
+
+  }
+</div>

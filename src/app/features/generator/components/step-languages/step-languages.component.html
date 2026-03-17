@@ -1,0 +1,290 @@
+<div class="flex flex-col gap-6">
+
+  <!-- ── Multi-Language Toggle Card ────────────────────────────────────────── -->
+  <div class="rounded border border-border bg-card shadow-sm">
+    <div class="flex items-center gap-4 p-5">
+
+      <!-- Globe icon -->
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+      </div>
+
+      <!-- Title + description -->
+      <div class="flex-1">
+        <h3 class="text-sm font-semibold text-text-dark">Multi-Language Builds</h3>
+        <p class="mt-0.5 text-sm text-gray-500">
+          Enable if your app builds separately for each language
+          (e.g. Arabic and English as separate deployments)
+        </p>
+      </div>
+
+      <!-- Inline peer-checkbox toggle -->
+      <label class="relative inline-flex shrink-0 cursor-pointer">
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          [checked]="state.isMultiLanguage()"
+          (change)="onMultiLanguageToggle($event)"
+        />
+        <span
+          class="block h-5 w-9 rounded-full bg-gray-200 transition-colors peer-checked:bg-primary"
+        ></span>
+        <span
+          class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm ring-0 transition-transform peer-checked:translate-x-4"
+        ></span>
+      </label>
+
+    </div>
+  </div>
+
+  <!-- ── Single-language info box (toggle OFF) ─────────────────────────────── -->
+  @if (!state.isMultiLanguage()) {
+    <div class="flex gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="mt-0.5 shrink-0 text-primary"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 16v-4" />
+        <path d="M12 8h.01" />
+      </svg>
+      <p class="text-sm text-navy">
+        <span class="font-medium">Single language mode</span> — one pipeline set will be
+        generated per market and environment. Enable multi-language if you need
+        separate builds for Arabic and English.
+      </p>
+    </div>
+  }
+
+  <!-- ── Section 1: Languages (toggle ON only) ─────────────────────────────── -->
+  @if (state.isMultiLanguage()) {
+    <div class="rounded border border-border bg-card shadow-sm">
+
+      <!-- Custom header: title + subtitle on left, "+ Add Language" on right -->
+      <div class="flex items-center justify-between border-b border-border px-6 py-4">
+        <div>
+          <h3 class="text-sm font-semibold text-text-dark">Languages</h3>
+          <p class="mt-1 text-sm text-gray-500">Configure the languages your application supports</p>
+        </div>
+        <pf-button variant="ghost" size="sm" (clicked)="state.addLanguage({ name: '', code: '' })">
+          + Add Language
+        </pf-button>
+      </div>
+
+      <!-- Language rows -->
+      <div class="p-6">
+        <div class="flex flex-col gap-4">
+
+          @for (lang of state.languages(); track $index; let i = $index) {
+            <div class="flex flex-col gap-4 rounded-lg border border-border bg-surface p-4 sm:flex-row sm:items-center">
+
+              <!-- Name + Code inputs -->
+              <div class="grid flex-1 grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1">
+                  <label
+                    [for]="'lang-name-' + i"
+                    class="text-xs font-medium text-text-dark"
+                  >Language Name</label>
+                  <input
+                    [id]="'lang-name-' + i"
+                    type="text"
+                    [value]="lang.name"
+                    (input)="onLanguageNameChange(i, $event)"
+                    placeholder="e.g. EN"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label
+                    [for]="'lang-code-' + i"
+                    class="text-xs font-medium text-text-dark"
+                  >Language Code</label>
+                  <input
+                    [id]="'lang-code-' + i"
+                    type="text"
+                    [value]="lang.code"
+                    (input)="onLanguageCodeChange(i, $event)"
+                    placeholder="e.g. en"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                </div>
+              </div>
+
+              <!-- Delete — disabled when only 1 language remains -->
+              <pf-button
+                variant="danger"
+                size="sm"
+                [disabled]="state.languages().length === 1"
+                (clicked)="state.removeLanguage(i)"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                </svg>
+              </pf-button>
+
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Section 2: Build Scripts Matrix ───────────────────────────────────── -->
+  <!-- Always shown. Columns = Env×Lang (multi) or Env-only (single). -->
+  <pf-card
+    title="Build Scripts Matrix"
+    subtitle="Define the npm script name for each market and environment combination"
+  >
+    @if (state.enabledMarkets().length > 0 && matrixColumns().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-border">
+              <th class="px-3 py-2 text-left text-xs font-semibold text-text-dark">
+                Market
+              </th>
+              @for (col of matrixColumns(); track col.headerKey) {
+                <th class="min-w-32 px-3 py-2 text-center text-xs font-semibold text-text-dark">
+                  <span class="block">{{ col.env }}</span>
+                  @if (col.lang) {
+                    <span class="block font-normal text-gray-500">{{ col.lang.name }}</span>
+                  }
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (market of state.enabledMarkets(); track market.code) {
+              <tr class="border-b border-border last:border-0">
+                <td class="whitespace-nowrap px-3 py-3 text-sm font-medium text-text-dark">
+                  {{ market.name }}
+                </td>
+                @for (col of matrixColumns(); track col.headerKey) {
+                  <td class="px-3 py-2">
+                    <input
+                      type="text"
+                      [value]="buildScriptValue(market.code, col.keySuffix)"
+                      (input)="onBuildScriptChange(market.code + col.keySuffix, $event)"
+                      [placeholder]="market.code + col.env.toLowerCase()"
+                      class="w-full min-w-28 rounded border border-border bg-card px-2 py-1.5 text-center text-xs text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                    />
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="rounded-lg border border-dashed border-border p-8 text-center">
+        <p class="text-sm text-gray-500">
+          Configure markets and environments in the previous step to see the build scripts matrix.
+        </p>
+      </div>
+    }
+  </pf-card>
+
+  <!-- ── Section 3: Environment File Replacement ───────────────────────────── -->
+  <div class="rounded border border-border bg-card shadow-sm">
+
+    <!-- Custom header: title + subtitle on left, toggle on right -->
+    <div class="flex items-center justify-between border-b border-border px-6 py-4">
+      <div>
+        <h3 class="text-sm font-semibold text-text-dark">Environment File Replacement</h3>
+        <p class="mt-1 text-sm text-gray-500">Configure token replacement for environment files</p>
+      </div>
+      <!-- Inline peer-checkbox toggle -->
+      <label class="relative inline-flex shrink-0 cursor-pointer">
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          [checked]="state.tokenReplacement().enabled"
+          (change)="onTokenEnabledToggle($event)"
+        />
+        <span
+          class="block h-5 w-9 rounded-full bg-gray-200 transition-colors peer-checked:bg-primary"
+        ></span>
+        <span
+          class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm ring-0 transition-transform peer-checked:translate-x-4"
+        ></span>
+      </label>
+    </div>
+
+    <!-- Expandable fields — animated via .expandable / .is-open in SCSS -->
+    <div class="expandable" [class.is-open]="state.tokenReplacement().enabled">
+      <div class="overflow-hidden">
+        <div class="flex flex-col gap-6 p-6">
+          <pf-input
+            [control]="envFilePathControl"
+            label="Environment File Path"
+            placeholder="e.g. src/environments/environment.ksaqa.ts"
+            helperText="Relative path from project root"
+          />
+          <pf-input
+            [control]="secretVarNamesControl"
+            label="Secret Variable Names"
+            placeholder="e.g. ENCRYPTION_IV, ENCRYPTION_KEY"
+            helperText="Comma separated list of pipeline secret variables"
+            badge="secret"
+          />
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Bottom bar: Back + Next ────────────────────────────────────────────── -->
+  <div class="flex items-center justify-between">
+    <pf-button variant="ghost" (clicked)="state.prevStep()">
+      &larr; Back
+    </pf-button>
+    <pf-button
+      variant="primary"
+      [disabled]="!state.isStep3Valid()"
+      (clicked)="state.nextStep()"
+    >
+      Next Step &rarr;
+    </pf-button>
+  </div>
+
+</div>

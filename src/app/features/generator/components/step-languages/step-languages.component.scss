@@ -1,0 +1,11 @@
+// Grid-row expand/collapse animation for the token replacement section.
+// Uses CSS grid trick: 0fr collapses content while keeping smooth transition.
+.expandable {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease-in-out;
+
+  &.is-open {
+    grid-template-rows: 1fr;
+  }
+}

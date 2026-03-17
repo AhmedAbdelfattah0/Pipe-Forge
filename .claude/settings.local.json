@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/angular.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d['projects']['pipe-forge']['architect']['build'], indent=2\\)\\)\")",
+      "Bash(cat /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/angular.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(list\\(d['projects'].keys\\(\\)\\)\\)\")",
+      "Bash(cat /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/angular.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d['projects']['PipeForge']['architect']['build'], indent=2\\)\\)\")",
+      "Bash(npm install tailwindcss @tailwindcss/postcss --save-dev 2>&1)",
+      "Bash(npm run build 2>&1)",
+      "Bash(cat /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/node_modules/@tailwindcss/postcss/package.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d['version']\\)\" && cat /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/node_modules/tailwindcss/package.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(d['version']\\)\")",
+      "Bash(ls -la /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge-react/*.config.* 2>/dev/null)",
+      "Bash(npm install lucide-angular 2>&1 | tail -5)",
+      "Bash(cat /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/node_modules/lucide-angular/package.json | python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('version:', d['version']\\); print\\('exports:', list\\(d.get\\('exports', {}\\).keys\\(\\)\\)[:10]\\)\")",
+      "Bash(node -e \"const l = require\\('lucide-angular'\\); console.log\\('exports:', Object.keys\\(l\\).filter\\(k => !k.startsWith\\('_'\\)\\).slice\\(0,20\\)\\)\")",
+      "Bash(curl -s http://localhost:4200/ | head -30)",
+      "Bash(sleep 10 && curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost:4201/)",
+      "Bash(curl -s http://localhost:4201/ | grep -E \"\\(app-root|Inter|pipeforge|PipeForge|title\\)\" | head -20)",
+      "Bash(jobs -l)",
+      "Bash(curl -s http://localhost:4201/generator -o /dev/null -w \"HTTP %{http_code}\\\\n\" && curl -s http://localhost:4201/auth/login -o /dev/null -w \"HTTP %{http_code}\\\\n\")",
+      "Bash(find /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge -type f \\\\\\( -name \"button.component.ts\" -o -name \"button.component.html\" -o -name \"input.component.ts\" -o -name \"input.component.html\" -o -name \"index.ts\" -o -name \"*auth-layout*\" -o -name \"*auth-login*\" \\\\\\) 2>/dev/null | head -20)",
+      "Bash(ng build 2>&1 | tail -30)",
+      "Bash(npx ng build --configuration=development 2>&1 | tail -20)",
+      "Bash(npx ng build --configuration=development 2>&1 | tail -30)",
+      "Bash(npx tsc --noEmit 2>&1 | head -40)",
+      "Bash(npx tsc --noEmit 2>&1)",
+      "Bash(npx ng build 2>&1 | tail -30)",
+      "Bash(npx ng build 2>&1 | tail -10)",
+      "Bash(npx ng build 2>&1 | tail -20)"
+    ]
+  }
+}

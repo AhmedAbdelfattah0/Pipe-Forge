@@ -1,0 +1,119 @@
+<div class="rounded border border-border bg-card shadow-sm">
+
+  <!-- Form body -->
+  <div class="p-6 flex flex-col gap-6">
+
+    <!-- Row 1: MFE Name + Repository Name -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <pf-input
+        [control]="form.controls.mfeName"
+        label="MFE Name"
+        placeholder="e.g. shoppingbag"
+        helperText="The name of your micro-frontend application"
+      />
+      <pf-input
+        [control]="form.controls.repositoryName"
+        label="Repository Name"
+        placeholder="e.g. Webapp-ShoppingBagV2"
+        helperText="The Azure DevOps repository name"
+      />
+    </div>
+
+    <!-- Row 2: Node Version + Dist Folder -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+
+      <!-- Node Version — native select styled to match pf-input -->
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-text-dark">Node Version</label>
+        <select
+          [formControl]="form.controls.nodeVersion"
+          class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer"
+        >
+          <option value="18.x">18.x</option>
+          <option value="20.x">20.x</option>
+          <option value="22.x">22.x</option>
+        </select>
+      </div>
+
+      <pf-input
+        [control]="form.controls.distFolder"
+        label="Dist Folder"
+        placeholder="e.g. dist/my-app"
+        helperText="The output folder after building"
+      />
+    </div>
+
+    <!-- Row 3: Install Flags + Browser Subfolder toggle -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <pf-input
+        [control]="form.controls.installFlags"
+        label="Install Flags"
+        placeholder="--legacy-peer-deps"
+        helperText="Additional npm install flags"
+        badge="optional"
+      />
+
+      <div class="flex flex-col justify-center rounded-lg border border-border bg-surface p-4">
+        <pf-toggle
+          [control]="form.controls.hasBrowserSubfolder"
+          label="Has /browser subfolder"
+          helperText="Enable if dist output has /browser subfolder"
+        />
+      </div>
+    </div>
+
+    <!-- Section: Branch Configuration -->
+    <div class="border-t border-border pt-6 flex flex-col gap-4">
+      <h3 class="text-sm font-semibold text-navy">Branch Configuration</h3>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <pf-input
+          [control]="form.controls.qaBranch"
+          label="QA Branch"
+          placeholder="e.g. qa-feature-shoppingbag"
+        />
+        <pf-input
+          [control]="form.controls.productionBranch"
+          label="Production Branch"
+          placeholder="e.g. main"
+        />
+      </div>
+    </div>
+
+    <!-- Section: Azure DevOps Configuration -->
+    <div class="border-t border-border pt-6 flex flex-col gap-4">
+      <h3 class="text-sm font-semibold text-navy">Azure DevOps Configuration</h3>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <pf-input
+          [control]="form.controls.adoOrganization"
+          label="ADO Organization"
+          placeholder="e.g. mycompany"
+        />
+        <pf-input
+          [control]="form.controls.adoProjectName"
+          label="ADO Project Name"
+          placeholder="e.g. MyProject"
+        />
+      </div>
+
+      <!-- Service Connection ID — full width -->
+      <pf-input
+        [control]="form.controls.serviceConnectionId"
+        label="Service Connection ID"
+        placeholder="Enter service connection ID"
+      />
+    </div>
+
+  </div>
+
+  <!-- Sticky footer: Next Step button -->
+  <div class="border-t border-border px-6 py-4 flex justify-end">
+    <pf-button
+      variant="primary"
+      [disabled]="!state.isStep1Valid()"
+      (clicked)="state.nextStep()"
+    >
+      Next Step &rarr;
+    </pf-button>
+  </div>
+
+</div>
