@@ -3,8 +3,15 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  // Root redirect
-  { path: '', redirectTo: 'generator', pathMatch: 'full' },
+  // Landing page — public, no layout wrapper
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./features/landing/pages/landing.page').then(
+        m => m.LandingPage,
+      ),
+  },
 
   // Auth routes — centered layout, no sidebar
   {
