@@ -25,7 +25,10 @@
       "Bash(npx ng build 2>&1 | tail -30)",
       "Bash(npx ng build 2>&1 | tail -10)",
       "Bash(npx ng build 2>&1 | tail -20)",
-      "Bash(npx ng build 2>&1)"
+      "Bash(npx ng build 2>&1)",
+      "Bash(xargs -0 grep -n ^import.*from)",
+      "Bash(grep -rn \"Add\\\\|Delete\\\\|Remove\\\\|Cancel\\\\|Submit\\\\|Save\\\\|Continue\" /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/PipeForge-Frontend/src/app/features/generator --include=*.html)",
+      "Bash(grep -rn \"import.*unused\\\\|@ts-ignore\\\\|any\" /Users/ahmedabdelfatah/Documents/personal-projects/PipeForge/PipeForge-Frontend/src/app --include=*.ts)"
     ]
   }
 }

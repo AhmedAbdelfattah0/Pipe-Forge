@@ -8,6 +8,7 @@ import { DeployTarget } from '../../models/generator.model';
 import { GeneratorStateService } from '../../services/generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
+import { ToggleInlineComponent } from '../../../../shared/components/toggle-inline/toggle-inline.component';
 
 interface MarketEnvCombo {
   label: string;
@@ -20,7 +21,7 @@ interface MarketEnvCombo {
   templateUrl: './step-deploy-target.component.html',
   styleUrl: './step-deploy-target.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, CardComponent],
+  imports: [ButtonComponent, CardComponent, ToggleInlineComponent],
 })
 export class StepDeployTargetComponent {
   protected readonly state = inject(GeneratorStateService);
@@ -56,8 +57,7 @@ export class StepDeployTargetComponent {
     }
   }
 
-  protected onTriggerToggle(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
+  protected onTriggerToggle(checked: boolean): void {
     this.state.setTriggerPipelineAfterDeploy(checked);
   }
 

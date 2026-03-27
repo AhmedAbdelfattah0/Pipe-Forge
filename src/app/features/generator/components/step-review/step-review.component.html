@@ -1,4 +1,19 @@
-<div class="flex flex-col gap-6">
+<div class="relative flex flex-col gap-6">
+
+  <!-- Generating overlay -->
+  @if (generator.isGenerating()) {
+    <div
+      class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-lg bg-white/80 backdrop-blur-sm"
+      aria-busy="true"
+      aria-label="Generating pipelines"
+    >
+      <pf-spinner size="lg" />
+      <div class="text-center">
+        <p class="font-display text-base font-semibold text-navy">Generating {{ state.totalPipelineCount() }} pipeline files&hellip;</p>
+        <p class="mt-1 text-sm text-navy/50">Packaging build and release configurations</p>
+      </div>
+    </div>
+  }
 
   <!-- ── Section 1: Configuration Summary ──────────────────────────────────── -->
   <pf-card
@@ -88,7 +103,8 @@
       <!-- YAML -->
       <button
         type="button"
-        class="flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all duration-200"
+        [attr.aria-pressed]="state.outputFormats().includes('yaml')"
+        class="flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
         [class.border-2]="state.outputFormats().includes('yaml')"
         [class.border-primary]="state.outputFormats().includes('yaml')"
         [class.bg-primary/5]="state.outputFormats().includes('yaml')"
@@ -134,7 +150,8 @@
       <!-- Classic JSON -->
       <button
         type="button"
-        class="flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all duration-200"
+        [attr.aria-pressed]="state.outputFormats().includes('classic-json')"
+        class="flex cursor-pointer items-center gap-4 rounded-lg p-4 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
         [class.border-2]="state.outputFormats().includes('classic-json')"
         [class.border-primary]="state.outputFormats().includes('classic-json')"
         [class.bg-primary/5]="state.outputFormats().includes('classic-json')"
@@ -185,6 +202,22 @@
     title="Files to Generate"
     [subtitle]="state.totalPipelineCount() + ' pipeline files will be included in your ZIP download'"
   >
+    <!-- Legend -->
+    <div class="mb-3 flex items-center gap-4 text-xs text-gray-500">
+      <span class="flex items-center gap-1.5">
+        <span class="inline-block h-2 w-2 rounded-full bg-green-400"></span>
+        YAML
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="inline-block h-2 w-2 rounded-full bg-blue-400"></span>
+        Classic JSON
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="inline-block h-2 w-2 rounded-full bg-gray-400"></span>
+        Other
+      </span>
+    </div>
+
     <div class="rounded-lg bg-navy p-4 font-mono text-sm">
 
       <!-- Root folder -->
@@ -255,34 +288,54 @@
     </div>
   </pf-card>
 
-  <!-- ── Status Banners ────────────────────────────────────────────────────── -->
+  <!-- ── Success State — the peak moment of value delivery ────────────────── -->
   @if (generator.generationStatus() === 'success') {
-    <div class="animate-fade-in flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-success" aria-hidden="true">
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-        <polyline points="22 4 12 14.01 9 11.01" />
-      </svg>
-      <p class="text-sm font-medium text-success">
-        Your pipelines are ready! Download started automatically.
-      </p>
+    <div role="status" aria-live="polite" class="animate-fade-in rounded-lg border border-success/20 bg-success/5 p-8">
+      <div class="flex flex-col items-center text-center">
+        <!-- Animated checkmark -->
+        <div class="circle-reveal flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-success" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" class="checkmark-draw" />
+          </svg>
+        </div>
+
+        <!-- Pipeline count — the metric that proves value -->
+        <p class="metric-reveal mt-5 font-display text-3xl font-bold tracking-tight text-navy">
+          {{ state.totalPipelineCount() }} pipeline files
+        </p>
+        <p class="metric-reveal mt-1 text-sm text-navy/60">
+          Generated and ready for Azure DevOps
+        </p>
+
+        <!-- Download confirmation -->
+        <div class="metric-reveal mt-6 flex items-center gap-2 text-sm font-medium text-success">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          ZIP download started automatically
+        </div>
+      </div>
     </div>
   }
 
+  <!-- ── Error State ─────────────────────────────────────────────────────── -->
   @if (generator.generationStatus() === 'error') {
-    <div class="animate-fade-in flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
+    <div role="alert" aria-live="assertive" class="animate-fade-in flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-red-600" aria-hidden="true">
         <circle cx="12" cy="12" r="10" />
         <line x1="15" y1="9" x2="9" y2="15" />
         <line x1="9" y1="9" x2="15" y2="15" />
       </svg>
       <p class="text-sm font-medium text-red-600">
-        Something went wrong. Please try again.
+        Pipeline generation failed. Check your configuration and try again.
       </p>
     </div>
   }
 
   <!-- ── Bottom bar: Back + Generate ───────────────────────────────────────── -->
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between border-t border-border pt-6">
     <pf-button variant="ghost" (clicked)="state.prevStep()">
       &larr; Back
     </pf-button>
@@ -294,6 +347,7 @@
       (clicked)="onGenerate()"
     >
       @if (generator.isGenerating()) {
+        <pf-spinner size="sm" />
         Generating...
       } @else {
         <!-- Zap icon -->

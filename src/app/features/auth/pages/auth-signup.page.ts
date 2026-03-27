@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { Check, LucideAngularModule, Zap } from 'lucide-angular';
 
 import { ButtonComponent, InputComponent } from '../../../shared/components';
+import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -11,11 +13,12 @@ import { AuthService } from '../services/auth.service';
   selector: 'pf-auth-signup-page',
   templateUrl: './auth-signup.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule, ButtonComponent, InputComponent],
+  imports: [ReactiveFormsModule, RouterLink, LucideAngularModule, ButtonComponent, InputComponent, SpinnerComponent],
 })
 export class AuthSignupPage {
-  private readonly authService = inject(AuthService);
+  protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
 
   protected readonly zapIcon = Zap;
   protected readonly checkIcon = Check;
@@ -37,11 +40,16 @@ export class AuthSignupPage {
     password: this.passwordControl,
   });
 
-  protected onSubmit(): void {
+  protected async onSubmit(): Promise<void> {
     if (this.form.valid) {
       const { email, password } = this.form.value;
-      this.authService.signup(email!, password!);
-      this.router.navigate(['/auth/login']);
+      await this.authService.signup(email!, password!);
+      if (!this.authService.error()) {
+        this.toastService.show('Account created! Please check your email to confirm.', 'success');
+        this.router.navigate(['/auth/login']);
+      } else {
+        this.toastService.show(this.authService.error()!, 'error');
+      }
     } else {
       this.form.markAllAsTouched();
       this.emailControl.updateValueAndValidity();

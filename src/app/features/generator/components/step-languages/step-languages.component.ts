@@ -13,6 +13,7 @@ import { GeneratorStateService } from '../../services/generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
+import { ToggleInlineComponent } from '../../../../shared/components/toggle-inline/toggle-inline.component';
 
 interface MatrixColumn {
   env: EnvironmentType;
@@ -27,7 +28,7 @@ interface MatrixColumn {
   templateUrl: './step-languages.component.html',
   styleUrl: './step-languages.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ButtonComponent, CardComponent, InputComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, CardComponent, InputComponent, ToggleInlineComponent],
 })
 export class StepLanguagesComponent implements OnInit {
   protected readonly state = inject(GeneratorStateService);
@@ -90,8 +91,7 @@ export class StepLanguagesComponent implements OnInit {
       );
   }
 
-  protected onMultiLanguageToggle(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
+  protected onMultiLanguageToggle(checked: boolean): void {
     this.state.setIsMultiLanguage(checked);
   }
 
@@ -113,8 +113,7 @@ export class StepLanguagesComponent implements OnInit {
     this.state.setBuildScript(key, value);
   }
 
-  protected onTokenEnabledToggle(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
+  protected onTokenEnabledToggle(checked: boolean): void {
     this.state.setTokenReplacement({
       ...this.state.tokenReplacement(),
       enabled: checked,

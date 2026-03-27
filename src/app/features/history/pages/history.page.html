@@ -2,8 +2,8 @@
 
   <!-- ── Page Header ───────────────────────────────────────────────────────── -->
   <div>
-    <h1 class="text-2xl font-bold text-navy">My Projects</h1>
-    <p class="mt-1 text-sm text-gray-500">
+    <h1 class="font-display text-2xl font-bold tracking-tight text-navy">My Projects</h1>
+    <p class="mt-1 text-sm text-navy/50">
       View and manage your generated pipeline sets
     </p>
   </div>
@@ -30,136 +30,209 @@
     <input
       type="text"
       placeholder="Search projects..."
+      aria-label="Search projects"
       [value]="history.searchQuery()"
       (input)="onSearchInput($event)"
       class="w-full rounded border border-border bg-card py-2 pl-10 pr-3 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
     />
   </div>
 
-  <!-- ── Projects Grid or Empty State ──────────────────────────────────────── -->
-  @if (history.filteredProjects().length > 0) {
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-
-      @for (project of history.filteredProjects(); track project.id) {
-        <div class="project-card rounded border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
-
-          <!-- Top: MFE name + deploy badge -->
-          <div class="flex items-start justify-between px-6 pt-5 pb-2">
-            <h3 class="text-lg font-semibold text-navy">{{ project.mfeName }}</h3>
-            <pf-badge
-              [variant]="deployBadgeVariant(project.deployTarget)"
-              [text]="deployBadgeText(project.deployTarget)"
-            />
-          </div>
-
-          <!-- Date -->
-          <div class="px-6 pb-4">
-            <p class="text-xs text-gray-500">
-              Generated on {{ project.generatedAt | date:'MMM d, y' }}
-            </p>
-          </div>
-
-          <!-- Divider -->
-          <div class="border-t border-border"></div>
-
-          <!-- Info rows -->
-          <div class="flex flex-col gap-3 px-6 py-4">
-
-            <!-- Markets -->
-            <div>
-              <p class="mb-1.5 text-xs font-medium text-gray-500">Markets</p>
-              <div class="flex flex-wrap gap-1.5">
-                @for (market of project.markets; track market) {
-                  <pf-badge variant="market" [text]="market" />
-                }
-              </div>
-            </div>
-
-            <!-- Environments -->
-            <div>
-              <p class="mb-1.5 text-xs font-medium text-gray-500">Environments</p>
-              <div class="flex flex-wrap gap-1.5">
-                @for (env of project.environments; track env) {
-                  <pf-badge [variant]="envBadgeVariant(env)" [text]="env" />
-                }
-              </div>
-            </div>
-
-            <!-- Languages -->
-            <div>
-              <p class="mb-1.5 text-xs font-medium text-gray-500">Languages</p>
-              <div class="flex flex-wrap gap-1.5">
-                @for (lang of project.languages; track lang) {
-                  <pf-badge [text]="lang" />
-                }
-              </div>
-            </div>
-
-            <!-- Pipelines -->
-            <div>
-              <p class="mb-1.5 text-xs font-medium text-gray-500">Pipelines</p>
-              <p class="text-sm text-text-dark">{{ project.pipelineCount }} files</p>
-            </div>
-
-          </div>
-
-          <!-- Divider -->
-          <div class="border-t border-border"></div>
-
-          <!-- Action row -->
-          <div class="flex items-center justify-between px-6 py-3">
-            <pf-button variant="ghost" size="sm" (clicked)="onRegenerate()">
-              <!-- Refresh icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="23 4 23 10 17 10" />
-                <polyline points="1 20 1 14 7 14" />
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-              </svg>
-              Regenerate
-            </pf-button>
-            <pf-button variant="primary" size="sm" (clicked)="onDownload(project)">
-              <!-- Download icon -->
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              Download
-            </pf-button>
-          </div>
-
-        </div>
-      }
-
-    </div>
-  } @else {
-
-    <!-- Empty state -->
-    <div class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card py-16">
-      <!-- Folder-open icon -->
-      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-surface">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400" aria-hidden="true">
-          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
-          <path d="M2 10h20" />
+  <!-- ── Error Banner ──────────────────────────────────────────────────────── -->
+  @if (history.error()) {
+    <div
+      role="alert"
+      class="flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3"
+    >
+      <div class="flex items-center gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="shrink-0 text-red-600"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="15" y1="9" x2="9" y2="15" />
+          <line x1="9" y1="9" x2="15" y2="15" />
         </svg>
+        <p class="text-sm font-medium text-red-700">{{ history.error() }}</p>
       </div>
-      <h3 class="mt-4 text-lg font-semibold text-navy">No projects yet</h3>
-      <p class="mt-2 text-center text-sm text-gray-500">
-        @if (history.searchQuery()) {
-          No projects match your search
-        } @else {
-          Generate your first pipeline set to see it here
-        }
-      </p>
-      @if (!history.searchQuery()) {
-        <div class="mt-6">
-          <pf-button variant="primary" (clicked)="goToGenerator()">
-            Generate Pipelines
-          </pf-button>
+      <pf-button variant="ghost" size="sm" (clicked)="history.getProjects()">
+        Retry
+      </pf-button>
+    </div>
+  }
+
+  <!-- ── Skeleton Loader ───────────────────────────────────────────────────── -->
+  @if (history.loading()) {
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2" aria-busy="true" aria-label="Loading projects">
+      @for (i of skeletonItems; track i) {
+        <div class="rounded border border-border bg-card shadow-sm">
+          <div class="flex items-start justify-between px-6 pt-5 pb-2">
+            <div class="h-5 w-40 animate-pulse rounded bg-gray-200"></div>
+            <div class="h-5 w-20 animate-pulse rounded-full bg-gray-200"></div>
+          </div>
+          <div class="px-6 pb-4">
+            <div class="h-3 w-32 animate-pulse rounded bg-gray-200"></div>
+          </div>
+          <div class="border-t border-border"></div>
+          <div class="flex flex-col gap-3 px-6 py-4">
+            <div class="h-3 w-24 animate-pulse rounded bg-gray-200"></div>
+            <div class="flex gap-2">
+              <div class="h-5 w-16 animate-pulse rounded-full bg-gray-200"></div>
+              <div class="h-5 w-16 animate-pulse rounded-full bg-gray-200"></div>
+            </div>
+            <div class="h-3 w-24 animate-pulse rounded bg-gray-200"></div>
+            <div class="flex gap-2">
+              <div class="h-5 w-12 animate-pulse rounded-full bg-gray-200"></div>
+              <div class="h-5 w-12 animate-pulse rounded-full bg-gray-200"></div>
+            </div>
+          </div>
+          <div class="border-t border-border"></div>
+          <div class="flex items-center justify-between px-6 py-3">
+            <div class="h-7 w-20 animate-pulse rounded bg-gray-200"></div>
+            <div class="h-7 w-24 animate-pulse rounded bg-gray-200"></div>
+          </div>
         </div>
       }
     </div>
+  }
 
+  <!-- ── Projects Grid or Empty State ──────────────────────────────────────── -->
+  @if (!history.loading()) {
+    @if (history.projects().length > 0) {
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+        @for (project of history.projects(); track project.id) {
+          <div class="project-card rounded border border-border bg-card shadow-sm transition-shadow hover:shadow-md">
+
+            <!-- Top: MFE name + deploy badge -->
+            <div class="flex items-start justify-between px-6 pt-5 pb-2">
+              <h3 class="font-display text-lg font-semibold text-navy truncate" [title]="project.mfeName">{{ project.mfeName }}</h3>
+              <pf-badge
+                [variant]="deployBadgeVariant(project.deployTarget)"
+                [text]="deployBadgeText(project.deployTarget)"
+              />
+            </div>
+
+            <!-- Date -->
+            <div class="px-6 pb-4">
+              <p class="text-xs text-gray-500">
+                Generated on {{ project.generatedAt | date:'MMM d, y' }}
+              </p>
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-border"></div>
+
+            <!-- Info rows -->
+            <div class="flex flex-col gap-3 px-6 py-4">
+
+              <!-- Markets -->
+              <div>
+                <p class="mb-1.5 text-xs font-medium text-gray-500">Markets</p>
+                <div class="flex flex-wrap gap-1.5">
+                  @for (market of project.markets; track market) {
+                    <pf-badge variant="market" [text]="market" />
+                  }
+                </div>
+              </div>
+
+              <!-- Environments -->
+              <div>
+                <p class="mb-1.5 text-xs font-medium text-gray-500">Environments</p>
+                <div class="flex flex-wrap gap-1.5">
+                  @for (env of project.environments; track env) {
+                    <pf-badge [variant]="envBadgeVariant(env)" [text]="env" />
+                  }
+                </div>
+              </div>
+
+              <!-- Languages -->
+              <div>
+                <p class="mb-1.5 text-xs font-medium text-gray-500">Languages</p>
+                <div class="flex flex-wrap gap-1.5">
+                  @for (lang of project.languages; track lang) {
+                    <pf-badge [text]="lang" />
+                  }
+                </div>
+              </div>
+
+              <!-- Pipelines -->
+              <div>
+                <p class="mb-1.5 text-xs font-medium text-gray-500">Pipelines</p>
+                <p class="text-sm text-text-dark">{{ project.pipelineCount }} files</p>
+              </div>
+
+            </div>
+
+            <!-- Divider -->
+            <div class="border-t border-border"></div>
+
+            <!-- Action row -->
+            <div class="flex items-center justify-between px-6 py-3">
+              <pf-button variant="ghost" size="sm" (clicked)="onDelete(project)">
+                <!-- Trash icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
+                Delete
+              </pf-button>
+              <pf-button variant="primary" size="sm" (clicked)="onRegenerate(project)">
+                <!-- Download icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download
+              </pf-button>
+            </div>
+
+          </div>
+        }
+
+      </div>
+    } @else {
+
+      <!-- Empty state -->
+      <div class="flex flex-col items-center justify-center rounded-lg border border-dashed border-border bg-card py-16">
+        <!-- Archive/clipboard icon -->
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-surface">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400" aria-hidden="true">
+            <rect x="2" y="4" width="20" height="5" rx="2" />
+            <path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9" />
+            <path d="M10 13h4" />
+          </svg>
+        </div>
+        <h3 class="mt-4 font-display text-lg font-semibold text-navy">No pipelines generated yet</h3>
+        <p class="mt-2 text-center text-sm text-gray-500">
+          @if (history.searchQuery()) {
+            No projects match your search "{{ history.searchQuery() }}"
+          } @else {
+            Create your first pipeline set — it takes about 5 minutes
+          }
+        </p>
+        @if (!history.searchQuery()) {
+          <div class="mt-6">
+            <pf-button variant="primary" routerLink="/generator">
+              Generate your first pipelines
+            </pf-button>
+          </div>
+        }
+      </div>
+
+    }
   }
 
 </div>

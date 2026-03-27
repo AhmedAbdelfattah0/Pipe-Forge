@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HistoryService } from '../services/history.service';
 import { HistoryProject } from '../models/history.model';
 import { DeployTarget } from '../../generator/models/generator.model';
@@ -13,15 +13,22 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
   templateUrl: './history.page.html',
   styleUrl: './history.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, BadgeComponent, ButtonComponent],
+  imports: [DatePipe, BadgeComponent, ButtonComponent, RouterLink],
 })
-export class HistoryPage {
+export class HistoryPage implements OnInit {
   protected readonly history = inject(HistoryService);
   private readonly router = inject(Router);
+
+  protected readonly skeletonItems = [1, 2, 3, 4];
+
+  ngOnInit(): void {
+    this.history.getProjects();
+  }
 
   protected onSearchInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.history.setSearchQuery(value);
+    this.history.getProjects(1, 20, value);
   }
 
   protected deployBadgeVariant(target: DeployTarget): string {
@@ -46,26 +53,12 @@ export class HistoryPage {
     return env === 'QA' ? 'qa' : 'prod';
   }
 
-  protected onRegenerate(): void {
-    this.router.navigate(['/generator']);
+  protected onRegenerate(project: HistoryProject): void {
+    this.history.regenerate(project.id, project.mfeName);
   }
 
-  protected onDownload(project: HistoryProject): void {
-    const content = [
-      'PipeForge — Re-download',
-      `MFE: ${project.mfeName}`,
-      `Pipelines: ${project.pipelineCount}`,
-      '',
-      'Mock re-download. Real implementation coming soon.',
-    ].join('\n');
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${project.mfeName}-pipelines-mock.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+  protected onDelete(project: HistoryProject): void {
+    this.history.deleteProject(project.id);
   }
 
   protected goToGenerator(): void {

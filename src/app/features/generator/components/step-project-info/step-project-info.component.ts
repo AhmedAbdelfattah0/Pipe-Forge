@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GeneratorStateService } from '../../services/generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { CardComponent } from '../../../../shared/components/card/card.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { ToggleComponent } from '../../../../shared/components/toggle/toggle.component';
 
@@ -18,24 +19,24 @@ import { ToggleComponent } from '../../../../shared/components/toggle/toggle.com
   templateUrl: './step-project-info.component.html',
   styleUrl: './step-project-info.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, InputComponent, ToggleComponent, ButtonComponent],
+  imports: [ReactiveFormsModule, InputComponent, ToggleComponent, ButtonComponent, CardComponent],
 })
 export class StepProjectInfoComponent implements OnInit {
   protected readonly state = inject(GeneratorStateService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly form = new FormGroup({
-    mfeName: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    repositoryName: new FormControl('', { nonNullable: true, validators: Validators.required }),
+    mfeName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(64)] }),
+    repositoryName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
     nodeVersion: new FormControl<'18.x' | '20.x' | '22.x'>('20.x', { nonNullable: true }),
-    distFolder: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    installFlags: new FormControl('', { nonNullable: true }),
+    distFolder: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(256)] }),
+    installFlags: new FormControl('', { nonNullable: true, validators: Validators.maxLength(256) }),
     hasBrowserSubfolder: new FormControl(false, { nonNullable: true }),
-    qaBranch: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    productionBranch: new FormControl('main', { nonNullable: true, validators: Validators.required }),
-    adoOrganization: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    adoProjectName: new FormControl('', { nonNullable: true, validators: Validators.required }),
-    serviceConnectionId: new FormControl('', { nonNullable: true, validators: Validators.required }),
+    qaBranch: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
+    productionBranch: new FormControl('main', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
+    adoOrganization: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(64)] }),
+    adoProjectName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
+    serviceConnectionId: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
   });
 
   ngOnInit(): void {

@@ -28,6 +28,7 @@ interface NavItem {
 })
 export class SidebarComponent {
   @Output() logoutClicked = new EventEmitter<void>();
+  @Output() linkClicked = new EventEmitter<void>();
 
   private readonly router = inject(Router);
 

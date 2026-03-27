@@ -5,6 +5,7 @@ import { OutputFormat } from '../../models/generator.model';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
+import { SpinnerComponent } from '../../../../shared/components/spinner/spinner.component';
 
 interface SummaryRow {
   label: string;
@@ -17,7 +18,7 @@ interface SummaryRow {
   templateUrl: './step-review.component.html',
   styleUrl: './step-review.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, ButtonComponent, CardComponent],
+  imports: [BadgeComponent, ButtonComponent, CardComponent, SpinnerComponent],
 })
 export class StepReviewComponent {
   protected readonly state = inject(GeneratorStateService);

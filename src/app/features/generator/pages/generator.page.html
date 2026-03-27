@@ -2,33 +2,25 @@
 
   <!-- Page Header -->
   <div class="px-6 py-5 border-b border-border bg-card">
-    <h1 class="text-xl font-semibold text-navy">New Pipeline Set</h1>
-    <p class="mt-1 text-sm text-gray-500">
-      Configure your micro-frontend and generate deployment pipelines
+    <h1 class="font-display text-2xl font-bold tracking-tight text-navy">New Pipeline Set</h1>
+    <p class="mt-1 text-sm text-navy/50">
+      5 steps to production-ready CI/CD
     </p>
   </div>
 
   <!-- Stepper -->
-  <div class="px-6 pt-6 pb-2">
+  <div class="px-6 pt-6 pb-4">
     <pf-stepper [currentStep]="state.currentStep()" [steps]="steps" />
   </div>
 
   <!-- Step Content -->
   <div class="flex-1 overflow-y-auto p-6">
-    @if (state.currentStep() === 1) {
-      <pf-step-project-info />
-    }
-    @if (state.currentStep() === 2) {
-      <pf-step-markets />
-    }
-    @if (state.currentStep() === 3) {
-      <pf-step-languages />
-    }
-    @if (state.currentStep() === 4) {
-      <pf-step-deploy-target />
-    }
-    @if (state.currentStep() === 5) {
-      <pf-step-review />
+    @switch (state.currentStep()) {
+      @case (1) { <pf-step-project-info /> }
+      @case (2) { <pf-step-markets /> }
+      @case (3) { <pf-step-languages /> }
+      @case (4) { <pf-step-deploy-target /> }
+      @case (5) { <pf-step-review /> }
     }
   </div>
 

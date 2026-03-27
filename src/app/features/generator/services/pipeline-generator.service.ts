@@ -1,35 +1,52 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { GeneratorConfig } from '../models/generator.model';
 import { GeneratorStateService } from './generator-state.service';
-import { HistoryService } from '../../history/services/history.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 
 type GenerationStatus = 'idle' | 'generating' | 'success' | 'error';
 
 @Injectable({ providedIn: 'root' })
 export class PipelineGeneratorService {
+  private readonly http = inject(HttpClient);
   private readonly state = inject(GeneratorStateService);
-  private readonly historyService = inject(HistoryService);
+  private readonly toastService = inject(ToastService);
 
   private readonly _isGenerating = signal<boolean>(false);
   private readonly _generationStatus = signal<GenerationStatus>('idle');
+  private readonly _error = signal<string | null>(null);
 
   readonly isGenerating = this._isGenerating.asReadonly();
   readonly generationStatus = this._generationStatus.asReadonly();
+  readonly error = this._error.asReadonly();
 
   async generate(): Promise<void> {
     this._isGenerating.set(true);
     this._generationStatus.set('generating');
+    this._error.set(null);
 
     try {
-      await this.simulateGeneration();
-      this.downloadMockZip();
-      this.saveToHistory();
+      const config = this.buildConfig();
+      const blob = await firstValueFrom(
+        this.http.post(`${environment.apiUrl}/pipelines/generate`, config, {
+          responseType: 'blob',
+        }),
+      );
+
+      this.triggerDownload(blob, `${config.mfeName || 'pipelines'}-pipelines.zip`);
       this._generationStatus.set('success');
+      this.toastService.show('Pipelines generated successfully! Download started.', 'success');
 
       setTimeout(() => {
         this._generationStatus.set('idle');
       }, 3000);
-    } catch {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Generation failed';
+      this._error.set(message);
       this._generationStatus.set('error');
+      this.toastService.show(message, 'error');
 
       setTimeout(() => {
         this._generationStatus.set('idle');
@@ -39,43 +56,40 @@ export class PipelineGeneratorService {
     }
   }
 
-  private simulateGeneration(): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, 2000));
-  }
-
-  private saveToHistory(): void {
-    this.historyService.addProject({
-      id: crypto.randomUUID(),
+  private buildConfig(): GeneratorConfig {
+    return {
       mfeName: this.state.mfeName(),
       repositoryName: this.state.repositoryName(),
-      deployTarget: this.state.deployTarget()!,
-      markets: this.state.enabledMarkets().map(m => m.name),
-      environments: [...this.state.environments()],
-      languages: this.state.isMultiLanguage()
-        ? this.state.languages().map(l => l.name)
-        : ['Single'],
-      outputFormats: [...this.state.outputFormats()],
-      generatedAt: new Date(),
-      pipelineCount: this.state.totalPipelineCount(),
-    });
+      nodeVersion: this.state.nodeVersion(),
+      distFolder: this.state.distFolder(),
+      installFlags: this.state.installFlags(),
+      hasBrowserSubfolder: this.state.hasBrowserSubfolder(),
+      qaBranch: this.state.qaBranch(),
+      productionBranch: this.state.productionBranch(),
+      adoOrganization: this.state.adoOrganization(),
+      adoProjectName: this.state.adoProjectName(),
+      serviceConnectionId: this.state.serviceConnectionId(),
+      markets: this.state.markets(),
+      environments: this.state.environments(),
+      isMultiLanguage: this.state.isMultiLanguage(),
+      languages: this.state.languages(),
+      buildScripts: this.state.buildScripts(),
+      tokenReplacement: this.state.tokenReplacement(),
+      deployTarget: this.state.deployTarget(),
+      storageAccounts: this.state.storageAccounts(),
+      swaTokens: this.state.swaTokens(),
+      appServiceNames: this.state.appServiceNames(),
+      triggerPipelineAfterDeploy: this.state.triggerPipelineAfterDeploy(),
+      triggerPipelineId: this.state.triggerPipelineId(),
+      outputFormats: this.state.outputFormats(),
+    };
   }
 
-  private downloadMockZip(): void {
-    const content = [
-      'PipeForge Generated Pipelines',
-      `MFE: ${this.state.mfeName()}`,
-      `Generated: ${new Date().toISOString()}`,
-      `Pipelines: ${this.state.totalPipelineCount()}`,
-      '',
-      'This is a mock download.',
-      'Real pipeline generation coming soon.',
-    ].join('\n');
-
-    const blob = new Blob([content], { type: 'text/plain' });
+  private triggerDownload(blob: Blob, filename: string): void {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${this.state.mfeName() || 'my-app'}-pipelines-mock.txt`;
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
   }

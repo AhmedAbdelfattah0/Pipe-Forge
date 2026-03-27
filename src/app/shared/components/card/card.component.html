@@ -1,11 +1,11 @@
-<div class="rounded border border-border bg-card shadow-sm">
+<div class="min-w-0 rounded border border-border bg-card shadow-sm">
   @if (title || subtitle) {
     <div class="border-b border-border px-6 py-4">
       @if (title) {
-        <h3 class="text-sm font-semibold text-text-dark">{{ title }}</h3>
+        <h3 class="min-w-0 text-sm font-semibold text-navy">{{ title }}</h3>
       }
       @if (subtitle) {
-        <p class="mt-1 text-sm text-gray-500">{{ subtitle }}</p>
+        <p class="mt-1 min-w-0 text-sm text-navy/50">{{ subtitle }}</p>
       }
     </div>
   }

@@ -9,3 +9,26 @@
     grid-template-rows: 1fr;
   }
 }
+
+// Scroll fade on right edge — hints at horizontal overflow on small screens
+.scrollable-table {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2rem;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, var(--color-card));
+  }
+
+  // Hide fade on wider screens where table likely fits
+  @media (min-width: 1024px) {
+    &::after {
+      display: none;
+    }
+  }
+}

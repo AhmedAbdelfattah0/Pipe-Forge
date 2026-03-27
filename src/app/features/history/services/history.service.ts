@@ -1,26 +1,32 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { HistoryProject } from '../models/history.model';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { HistoryProject, HistoryProjectApi, mapApiToHistoryProject } from '../models/history.model';
+import { ToastService } from '../../../shared/components/toast/toast.service';
+
+interface HistoryListResponse {
+  projects: HistoryProjectApi[];
+  page: number;
+  limit: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class HistoryService {
-  private readonly _projects = signal<HistoryProject[]>(
-    this.loadFromStorage(),
-  );
+  private readonly http = inject(HttpClient);
+  private readonly toastService = inject(ToastService);
+
+  private readonly _projects = signal<HistoryProject[]>([]);
+  private readonly _loading = signal<boolean>(false);
+  private readonly _error = signal<string | null>(null);
   private readonly _searchQuery = signal<string>('');
+  private readonly _total = signal<number>(0);
 
   readonly projects = this._projects.asReadonly();
+  readonly loading = this._loading.asReadonly();
+  readonly error = this._error.asReadonly();
   readonly searchQuery = this._searchQuery.asReadonly();
-
-  readonly filteredProjects = computed<HistoryProject[]>(() => {
-    const query = this._searchQuery().toLowerCase().trim();
-    if (!query) return this._projects();
-    return this._projects().filter(
-      p =>
-        p.mfeName.toLowerCase().includes(query) ||
-        p.repositoryName.toLowerCase().includes(query) ||
-        p.markets.some(m => m.toLowerCase().includes(query)),
-    );
-  });
+  readonly total = this._total.asReadonly();
 
   readonly hasProjects = computed(() => this._projects().length > 0);
 
@@ -28,72 +34,99 @@ export class HistoryService {
     this._searchQuery.set(query);
   }
 
-  addProject(project: HistoryProject): void {
-    this._projects.update(p => [project, ...p]);
-    this.saveToStorage();
-  }
+  async getProjects(page = 1, limit = 20, search?: string): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
 
-  removeProject(id: string): void {
-    this._projects.update(p => p.filter(proj => proj.id !== id));
-    this.saveToStorage();
-  }
-
-  private saveToStorage(): void {
-    localStorage.setItem(
-      'pipeforge-history',
-      JSON.stringify(this._projects()),
-    );
-  }
-
-  private loadFromStorage(): HistoryProject[] {
     try {
-      const stored = localStorage.getItem('pipeforge-history');
-      if (!stored) return this.getMockProjects();
-      const parsed = JSON.parse(stored) as HistoryProject[];
-      return parsed.map(p => ({ ...p, generatedAt: new Date(p.generatedAt) }));
-    } catch {
-      return this.getMockProjects();
+      let params = new HttpParams()
+        .set('page', String(page))
+        .set('limit', String(limit));
+
+      const q = search ?? this._searchQuery();
+      if (q) {
+        params = params.set('q', q);
+      }
+
+      const response = await firstValueFrom(
+        this.http.get<HistoryListResponse>(`${environment.apiUrl}/history`, { params }),
+      );
+
+      this._projects.set(response.projects.map(mapApiToHistoryProject));
+      this._total.set(response.projects.length);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load history';
+      this._error.set(message);
+    } finally {
+      this._loading.set(false);
     }
   }
 
-  private getMockProjects(): HistoryProject[] {
-    return [
-      {
-        id: '1',
-        mfeName: 'shoppingbag',
-        repositoryName: 'Webapp-ShoppingBagV2',
-        deployTarget: 'storage-account',
-        markets: ['KSA', 'Bahrain'],
-        environments: ['QA', 'PROD'],
-        languages: ['EN', 'AR'],
-        outputFormats: ['yaml', 'classic-json'],
-        generatedAt: new Date('2024-03-10'),
-        pipelineCount: 16,
-      },
-      {
-        id: '2',
-        mfeName: 'checkout',
-        repositoryName: 'Webapp-newCheckout',
-        deployTarget: 'static-web-app',
-        markets: ['KSA', 'UAE'],
-        environments: ['QA', 'PROD'],
-        languages: ['EN'],
-        outputFormats: ['yaml', 'classic-json'],
-        generatedAt: new Date('2024-03-08'),
-        pipelineCount: 8,
-      },
-      {
-        id: '3',
-        mfeName: 'homepage',
-        repositoryName: 'Webapp-Homepage',
-        deployTarget: 'app-service',
-        markets: ['KSA'],
-        environments: ['QA'],
-        languages: ['EN', 'AR'],
-        outputFormats: ['yaml'],
-        generatedAt: new Date('2024-03-05'),
-        pipelineCount: 4,
-      },
-    ];
+  async getProject(id: string): Promise<HistoryProject | null> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      const response = await firstValueFrom(
+        this.http.get<{ project: HistoryProjectApi }>(`${environment.apiUrl}/history/${id}`),
+      );
+      return mapApiToHistoryProject(response.project);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load project';
+      this._error.set(message);
+      return null;
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  async deleteProject(id: string): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      await firstValueFrom(
+        this.http.delete<void>(`${environment.apiUrl}/history/${id}`),
+      );
+      this._projects.update(list => list.filter(p => p.id !== id));
+      this._total.update(n => Math.max(0, n - 1));
+      this.toastService.show('Project deleted successfully.', 'success');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to delete project';
+      this._error.set(message);
+      this.toastService.show(message, 'error');
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  async regenerate(id: string, mfeName: string): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+
+    try {
+      const blob = await firstValueFrom(
+        this.http.post(`${environment.apiUrl}/history/${id}/regenerate`, {}, {
+          responseType: 'blob',
+        }),
+      );
+      this.triggerDownload(blob, `${mfeName}-pipelines.zip`);
+      this.toastService.show('Pipelines re-downloaded successfully!', 'success');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to regenerate pipelines';
+      this._error.set(message);
+      this.toastService.show(message, 'error');
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  private triggerDownload(blob: Blob, filename: string): void {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 }

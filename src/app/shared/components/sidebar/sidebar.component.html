@@ -5,15 +5,16 @@
     <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
       <lucide-icon [img]="zapIcon" [size]="18" class="text-white" />
     </div>
-    <span class="text-xl font-bold">PipeForge</span>
+    <span class="font-display text-xl font-bold">PipeForge</span>
   </div>
 
   <!-- Navigation -->
-  <nav class="flex-1 space-y-1 px-3 py-4">
+  <nav aria-label="App navigation" class="flex-1 space-y-1 px-3 py-4">
     @for (item of navItems; track item.route) {
       <a
         [routerLink]="item.route"
         [class]="isActive(item.route) ? activeItemClass : inactiveItemClass"
+        (click)="linkClicked.emit()"
       >
         <lucide-icon [img]="item.icon" [size]="20" class="shrink-0" />
         {{ item.label }}
@@ -25,7 +26,7 @@
   <div class="border-t border-white/10 p-3">
     <button
       type="button"
-      class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+      class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
       (click)="logoutClicked.emit()"
     >
       <lucide-icon [img]="logOutIcon" [size]="20" class="shrink-0" />

@@ -6,28 +6,31 @@
       <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
         <lucide-icon [img]="zapIcon" [size]="18" class="text-white" />
       </div>
-      <span class="text-xl font-bold text-navy">PipeForge</span>
+      <span class="font-display text-xl font-bold text-navy">PipeForge</span>
     </a>
 
     <!-- Center Nav -->
-    <nav class="hidden items-center gap-8 md:flex">
-      <a
+    <nav aria-label="Main navigation" class="hidden items-center gap-8 md:flex">
+      <button
+        type="button"
         (click)="scrollTo('features')"
-        class="cursor-pointer text-sm font-medium text-gray-500 transition-colors hover:text-text-dark"
+        class="cursor-pointer bg-transparent border-none text-sm font-medium text-gray-500 transition-colors hover:text-text-dark outline-none focus-visible:text-text-dark"
       >
         Features
-      </a>
-      <a
+      </button>
+      <button
+        type="button"
         (click)="scrollTo('pricing')"
-        class="cursor-pointer text-sm font-medium text-gray-500 transition-colors hover:text-text-dark"
+        class="cursor-pointer bg-transparent border-none text-sm font-medium text-gray-500 transition-colors hover:text-text-dark outline-none focus-visible:text-text-dark"
       >
         Pricing
-      </a>
-      <a
-        class="cursor-pointer text-sm font-medium text-gray-500 transition-colors hover:text-text-dark"
+      </button>
+      <button
+        type="button"
+        class="cursor-pointer bg-transparent border-none text-sm font-medium text-gray-500 transition-colors hover:text-text-dark outline-none focus-visible:text-text-dark"
       >
         Docs
-      </a>
+      </button>
     </nav>
 
     <!-- Right Actions -->
@@ -38,168 +41,273 @@
       <a routerLink="/auth/signup" class="hidden sm:block">
         <pf-button variant="primary" size="sm">Start for Free</pf-button>
       </a>
+
+      <!-- Mobile hamburger -->
+      <button
+        type="button"
+        (click)="toggleMobileMenu()"
+        class="flex h-9 w-9 items-center justify-center rounded-lg text-navy transition-colors hover:bg-surface outline-none focus-visible:ring-2 focus-visible:ring-primary/50 sm:hidden"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-label="Toggle menu"
+      >
+        <lucide-icon [img]="mobileMenuOpen() ? xIcon : menuIcon" [size]="20" />
+      </button>
     </div>
   </div>
+
+  <!-- Mobile menu panel -->
+  @if (mobileMenuOpen()) {
+    <div class="border-t border-border bg-card px-4 pb-4 pt-2 sm:hidden">
+      <nav class="flex flex-col gap-1" aria-label="Mobile navigation">
+        <button
+          type="button"
+          (click)="scrollTo('features')"
+          class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-500 transition-colors hover:bg-surface hover:text-text-dark"
+        >
+          Features
+        </button>
+        <button
+          type="button"
+          (click)="scrollTo('pricing')"
+          class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-500 transition-colors hover:bg-surface hover:text-text-dark"
+        >
+          Pricing
+        </button>
+        <button
+          type="button"
+          class="rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-500 transition-colors hover:bg-surface hover:text-text-dark"
+        >
+          Docs
+        </button>
+      </nav>
+      <div class="mt-3 flex flex-col gap-2 border-t border-border pt-3">
+        <a routerLink="/auth/login">
+          <pf-button variant="ghost" [fullWidth]="true" size="sm">Sign In</pf-button>
+        </a>
+        <a routerLink="/auth/signup">
+          <pf-button variant="primary" [fullWidth]="true" size="sm">Start for Free</pf-button>
+        </a>
+      </div>
+    </div>
+  }
 </header>
 
 <main>
-  <!-- ===== SECTION 2 — Hero ===== -->
-  <section class="bg-card pt-24 pb-16">
-    <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-      <!-- Beta Badge -->
-      <span class="inline-flex items-center gap-1.5 rounded-full bg-navy px-4 py-1.5 text-sm font-medium text-white">
-        <lucide-icon [img]="zapIcon" [size]="14" class="text-white" />
-        Now in Beta — Free to use
-      </span>
 
-      <!-- Headline -->
-      <h1 class="mt-8 text-4xl font-bold tracking-tight text-navy text-balance sm:text-5xl lg:text-6xl">
-        Stop manually creating Azure pipelines
-      </h1>
+  <!-- ===== HERO — Asymmetric, left-aligned with product preview ===== -->
+  <section class="bg-card">
+    <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+      <div class="grid items-center gap-12 lg:grid-cols-5">
 
-      <!-- Subheadline -->
-      <p class="mt-6 text-lg leading-relaxed text-gray-500 sm:text-xl">
-        Answer a few questions about your project.
-        Get production-ready CI/CD pipelines —
-        no DevOps degree required.
-      </p>
+        <!-- Left: Text content -->
+        <div class="lg:col-span-3">
+          <span class="stagger-1 inline-flex items-center gap-1.5 rounded-full bg-navy/8 px-3 py-1 text-xs font-medium text-navy">
+            <lucide-icon [img]="zapIcon" [size]="12" class="text-primary" />
+            Now in Beta
+          </span>
 
-      <!-- CTA Buttons -->
-      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <a routerLink="/generator">
-          <pf-button variant="primary" size="lg">Generate Your Pipelines</pf-button>
-        </a>
-        <a (click)="scrollTo('how-it-works')" class="cursor-pointer">
-          <pf-button variant="ghost" size="lg">See How It Works</pf-button>
-        </a>
+          <h1 class="stagger-2 mt-6 font-display text-display-hero font-bold text-navy">
+            64 pipelines.<br class="hidden sm:block">
+            5 minutes.<br class="hidden sm:block">
+            Zero guesswork.
+          </h1>
+
+          <p class="stagger-3 mt-6 max-w-xl text-lg leading-relaxed text-navy/60">
+            Stop manually creating Azure DevOps pipelines.
+            Answer a few questions about your project —
+            get production-ready CI/CD pipelines instantly.
+          </p>
+
+          <div class="stagger-4 mt-10 flex flex-wrap items-center gap-4">
+            <a routerLink="/generator">
+              <pf-button variant="primary" size="lg">Generate Your Pipelines</pf-button>
+            </a>
+            <pf-button variant="ghost" size="lg" (clicked)="scrollTo('how-it-works')">See How It Works</pf-button>
+          </div>
+
+          <p class="mt-8 text-sm text-navy/35">
+            5 questions &middot; 64 pipeline files &middot; One ZIP download
+          </p>
+        </div>
+
+        <!-- Right: Product preview — the product IS the visual -->
+        <div class="stagger-5 lg:col-span-2">
+          <div class="overflow-hidden rounded-lg bg-navy shadow-2xl">
+            <!-- File tabs -->
+            <div class="flex items-center gap-1 border-b border-white/10 px-4 py-2">
+              <span class="rounded bg-white/10 px-2.5 py-1 font-mono text-xs text-white/70">build-ksa-qa.yml</span>
+              <span class="px-2.5 py-1 font-mono text-xs text-white/30">release-ksa.json</span>
+              <span class="px-2.5 py-1 font-mono text-xs text-white/30">+12 more</span>
+            </div>
+            <!-- Generated YAML preview -->
+            <pre class="overflow-hidden p-5 font-mono text-xs leading-relaxed"><code class="text-white/50"><span class="text-primary">trigger</span>:
+  branches:
+    include:
+      - <span class="text-white/80">qa-feature-*</span>
+
+<span class="text-primary">pool</span>:
+  vmImage: <span class="text-white/80">'ubuntu-latest'</span>
+
+<span class="text-primary">steps</span>:
+  - task: <span class="text-white/80">NodeTool&#64;0</span>
+    inputs:
+      versionSpec: <span class="text-white/80">'20.x'</span>
+  - script: <span class="text-white/80">npm ci</span>
+  - script: <span class="text-white/80">npm run build:ksa:qa</span>
+  - task: <span class="text-white/80">AzureStaticWebApp&#64;0</span></code></pre>
+          </div>
+        </div>
+
       </div>
-
-      <!-- Social Proof -->
-      <p class="mt-8 text-sm text-gray-400">
-        Trusted by frontend engineers at enterprise companies
-      </p>
     </div>
   </section>
 
-  <!-- ===== SECTION 3 — How It Works ===== -->
-  <section id="how-it-works" class="bg-surface py-24">
+  <!-- ===== HOW IT WORKS — Oversized numbers, left-aligned ===== -->
+  <section id="how-it-works" class="bg-surface bg-dot-pattern py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <!-- Section Header -->
-      <div class="text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-navy sm:text-4xl">
-          How it works
-        </h2>
-        <p class="mt-4 text-lg text-gray-500">
-          Three simple steps to production-ready pipelines
-        </p>
-      </div>
+      <p class="text-sm font-medium uppercase tracking-widest text-primary">How it works</p>
+      <h2 class="mt-3 font-display text-display font-bold text-navy">
+        Three steps to production-ready pipelines
+      </h2>
 
-      <!-- Steps -->
-      <div class="relative mt-16 grid gap-8 sm:grid-cols-3">
-        <!-- Connecting line (desktop only) -->
-        <div class="absolute top-8 left-[16.6%] right-[16.6%] hidden h-0.5 bg-border sm:block"></div>
-
-        @for (step of howItWorksSteps; track step.title) {
-          <div class="relative flex flex-col items-center text-center">
-            <div class="z-10 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <lucide-icon [img]="step.icon" [size]="28" class="text-primary" />
+      <div class="mt-16 flex flex-col gap-12 lg:gap-16">
+        @for (step of howItWorksSteps; track step.title; let i = $index) {
+          <div class="grid items-start gap-4 sm:grid-cols-12 sm:gap-6">
+            <div class="sm:col-span-2">
+              <span class="font-display text-5xl font-bold text-navy/10 lg:text-7xl">0{{ i + 1 }}</span>
             </div>
-            <h3 class="mt-6 text-lg font-semibold text-navy">{{ step.title }}</h3>
-            <p class="mt-2 text-sm text-gray-500 sm:text-base">{{ step.description }}</p>
+            <div class="sm:col-span-10 lg:col-span-6">
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <lucide-icon [img]="step.icon" [size]="20" class="text-primary" />
+                </div>
+                <h3 class="font-display text-xl font-semibold text-navy">{{ step.title }}</h3>
+              </div>
+              <p class="mt-3 text-base leading-relaxed text-navy/60">{{ step.description }}</p>
+            </div>
           </div>
         }
       </div>
     </div>
   </section>
 
-  <!-- ===== SECTION 4 — Features ===== -->
+  <!-- ===== FEATURES — Spotlight + compact supporting ===== -->
   <section id="features" class="bg-card py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <!-- Section Header -->
-      <div class="text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-navy sm:text-4xl">
-          Everything you need
-        </h2>
-        <p class="mt-4 text-lg text-gray-500">
-          Powerful features for enterprise-grade pipelines
-        </p>
-      </div>
+      <p class="text-sm font-medium uppercase tracking-widest text-primary">Capabilities</p>
+      <h2 class="mt-3 font-display text-display font-bold text-navy">
+        Everything you need
+      </h2>
+      <p class="mt-4 max-w-2xl text-lg text-navy/60">
+        Powerful features for enterprise-grade pipeline generation
+      </p>
 
-      <!-- Feature Cards -->
-      <div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        @for (feature of features; track feature.title) {
-          <div class="rounded border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md">
-            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+      <!-- Spotlight: first 2 features — larger treatment -->
+      <div class="mt-16 grid gap-6 lg:grid-cols-2">
+        @for (feature of features.slice(0, 2); track feature.title) {
+          <div class="flex gap-5 rounded-lg border border-border bg-surface/50 p-6 transition-colors hover:border-primary/30">
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
               <lucide-icon [img]="feature.icon" [size]="24" class="text-primary" />
             </div>
-            <h3 class="mt-4 text-lg font-semibold text-navy">{{ feature.title }}</h3>
-            <p class="mt-2 text-base text-gray-500">{{ feature.description }}</p>
+            <div>
+              <h3 class="font-display text-lg font-semibold text-navy">{{ feature.title }}</h3>
+              <p class="mt-2 text-base leading-relaxed text-navy/60">{{ feature.description }}</p>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Supporting: remaining 4 features — compact, no cards -->
+      <div class="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+        @for (feature of features.slice(2); track feature.title) {
+          <div>
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <lucide-icon [img]="feature.icon" [size]="20" class="text-primary" />
+            </div>
+            <h3 class="mt-4 font-display text-base font-semibold text-navy">{{ feature.title }}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-navy/60">{{ feature.description }}</p>
           </div>
         }
       </div>
     </div>
   </section>
 
-  <!-- ===== SECTION 5 — Pricing ===== -->
-  <section id="pricing" class="bg-surface py-24">
+  <!-- ===== PRICING — Dark highlighted plan for visual hierarchy ===== -->
+  <section id="pricing" class="bg-surface bg-dot-pattern py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <!-- Section Header -->
       <div class="text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-navy sm:text-4xl">
+        <p class="text-sm font-medium uppercase tracking-widest text-primary">Pricing</p>
+        <h2 class="mt-3 font-display text-display font-bold text-navy">
           Simple, transparent pricing
         </h2>
-        <p class="mt-4 text-lg text-gray-500">
+        <p class="mt-4 text-lg text-navy/60">
           Choose the plan that works for you
         </p>
       </div>
 
-      <!-- Pricing Cards -->
-      <div class="mx-auto mt-16 grid max-w-sm gap-8 sm:max-w-none sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mx-auto mt-16 grid max-w-sm items-start gap-6 sm:max-w-none sm:grid-cols-2 lg:grid-cols-3">
         @for (plan of pricingPlans; track plan.name) {
           <div
-            class="relative flex flex-col rounded bg-card p-8 shadow-sm"
             [class]="plan.highlighted
-              ? 'relative flex flex-col rounded bg-card p-8 shadow-lg border-2 border-primary ring-2 ring-primary/20'
-              : 'relative flex flex-col rounded bg-card p-8 shadow-sm border border-border'"
+              ? 'relative flex flex-col rounded-lg bg-navy p-8 shadow-xl'
+              : 'flex flex-col rounded-lg border border-border bg-card p-8'"
           >
-            <!-- Most Popular Badge -->
             @if (plan.highlighted) {
-              <div class="absolute -top-4 left-1/2 -translate-x-1/2">
-                <span class="rounded-full bg-primary px-4 py-1 text-sm font-medium text-white">
-                  Most Popular
-                </span>
-              </div>
+              <span class="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-white">
+                Most Popular
+              </span>
             }
 
-            <!-- Plan Header -->
-            <div class="text-center">
-              <h3 class="text-xl font-semibold text-navy">{{ plan.name }}</h3>
-              <div class="mt-4">
-                <span class="text-4xl font-bold text-navy">{{ plan.price }}</span>
-                <span class="text-gray-500">{{ plan.period }}</span>
-              </div>
-              <p class="mt-2 text-sm text-gray-500">{{ plan.subtitle }}</p>
+            <h3
+              class="font-display text-lg font-semibold"
+              [class.text-white]="plan.highlighted"
+              [class.text-navy]="!plan.highlighted"
+            >{{ plan.name }}</h3>
+
+            <div class="mt-4 flex items-baseline gap-1">
+              <span
+                class="font-display text-4xl font-bold tracking-tight"
+                [class.text-white]="plan.highlighted"
+                [class.text-navy]="!plan.highlighted"
+              >{{ plan.price }}</span>
+              <span
+                [class.text-white/50]="plan.highlighted"
+                [class.text-navy/40]="!plan.highlighted"
+              >{{ plan.period }}</span>
             </div>
 
-            <!-- Features List -->
-            <ul class="mt-8 flex-1 space-y-3">
+            <p
+              class="mt-2 text-sm"
+              [class.text-white/60]="plan.highlighted"
+              [class.text-navy/50]="!plan.highlighted"
+            >{{ plan.subtitle }}</p>
+
+            <ul class="mt-8 flex flex-1 flex-col gap-3">
               @for (feature of plan.features; track feature) {
                 <li class="flex items-center gap-3">
-                  <lucide-icon [img]="checkIcon" [size]="18" class="shrink-0 text-success" />
-                  <span class="text-sm text-text-dark">{{ feature }}</span>
+                  <lucide-icon
+                    [img]="checkIcon"
+                    [size]="16"
+                    class="shrink-0"
+                    [class.text-primary]="plan.highlighted"
+                    [class.text-success]="!plan.highlighted"
+                  />
+                  <span
+                    class="text-sm"
+                    [class.text-white/80]="plan.highlighted"
+                    [class.text-navy/70]="!plan.highlighted"
+                  >{{ feature }}</span>
                 </li>
               }
             </ul>
 
-            <!-- CTA Button -->
             <div class="mt-8">
               <a routerLink="/auth/signup">
-                <pf-button
-                  [variant]="plan.highlighted ? 'primary' : 'ghost'"
-                  [fullWidth]="true"
-                >
-                  {{ plan.cta }}
-                </pf-button>
+                @if (plan.highlighted) {
+                  <pf-button variant="primary" [fullWidth]="true">{{ plan.cta }}</pf-button>
+                } @else {
+                  <pf-button variant="ghost" [fullWidth]="true">{{ plan.cta }}</pf-button>
+                }
               </a>
             </div>
           </div>
@@ -208,25 +316,26 @@
     </div>
   </section>
 
-  <!-- ===== SECTION 6 — CTA Banner ===== -->
-  <section class="bg-navy py-16">
+  <!-- ===== CTA — Clean, high-contrast ===== -->
+  <section class="bg-navy py-20">
     <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+      <h2 class="font-display text-display font-bold text-white">
         Ready to stop manually creating pipelines?
       </h2>
-      <p class="mt-4 text-lg text-white/70">
+      <p class="mt-4 text-lg text-white/60">
         Join frontend engineers who ship faster with PipeForge
       </p>
-      <div class="mt-8">
+      <div class="mt-10">
         <a
           routerLink="/auth/signup"
-          class="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded border border-white px-6 text-base font-medium text-white transition-all hover:bg-white/10"
+          class="inline-flex h-11 items-center justify-center gap-2 rounded bg-white px-8 font-display text-base font-semibold text-navy transition-colors hover:bg-white/90 outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
         >
           Generate Your First Pipelines
         </a>
       </div>
     </div>
   </section>
+
 </main>
 
 <!-- ===== SECTION 7 — Footer ===== -->
@@ -239,14 +348,14 @@
         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
           <lucide-icon [img]="zapIcon" [size]="18" class="text-white" />
         </div>
-        <span class="text-lg font-semibold text-navy">PipeForge</span>
+        <span class="font-display text-lg font-semibold text-navy">PipeForge</span>
       </div>
 
       <!-- Links -->
-      <nav class="flex gap-6">
-        <a class="cursor-pointer text-sm text-gray-500 hover:text-text-dark">Privacy</a>
-        <a class="cursor-pointer text-sm text-gray-500 hover:text-text-dark">Terms</a>
-        <a class="cursor-pointer text-sm text-gray-500 hover:text-text-dark">Contact</a>
+      <nav aria-label="Footer navigation" class="flex gap-6">
+        <button type="button" class="cursor-pointer bg-transparent border-none text-sm text-gray-500 transition-colors hover:text-text-dark outline-none focus-visible:text-text-dark">Privacy</button>
+        <button type="button" class="cursor-pointer bg-transparent border-none text-sm text-gray-500 transition-colors hover:text-text-dark outline-none focus-visible:text-text-dark">Terms</button>
+        <button type="button" class="cursor-pointer bg-transparent border-none text-sm text-gray-500 transition-colors hover:text-text-dark outline-none focus-visible:text-text-dark">Contact</button>
       </nav>
     </div>
 

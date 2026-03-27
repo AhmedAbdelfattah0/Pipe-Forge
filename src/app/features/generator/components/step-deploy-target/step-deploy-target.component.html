@@ -10,7 +10,8 @@
       <!-- Storage Account -->
       <button
         type="button"
-        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200"
+        [attr.aria-pressed]="state.deployTarget() === 'storage-account'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
         [class.border-2]="state.deployTarget() === 'storage-account'"
         [class.border-primary]="state.deployTarget() === 'storage-account'"
         [class.bg-primary/5]="state.deployTarget() === 'storage-account'"
@@ -54,7 +55,8 @@
       <!-- Static Web App -->
       <button
         type="button"
-        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200"
+        [attr.aria-pressed]="state.deployTarget() === 'static-web-app'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
         [class.border-2]="state.deployTarget() === 'static-web-app'"
         [class.border-primary]="state.deployTarget() === 'static-web-app'"
         [class.bg-primary/5]="state.deployTarget() === 'static-web-app'"
@@ -98,7 +100,8 @@
       <!-- App Service -->
       <button
         type="button"
-        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200"
+        [attr.aria-pressed]="state.deployTarget() === 'app-service'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
         [class.border-2]="state.deployTarget() === 'app-service'"
         [class.border-primary]="state.deployTarget() === 'app-service'"
         [class.bg-primary/5]="state.deployTarget() === 'app-service'"
@@ -150,7 +153,7 @@
     <div class="animate-fade-in">
       <pf-card
         title="Storage Account Configuration"
-        subtitle="Enter the Azure Storage Account name for each market and environment"
+        subtitle="Found in Azure Portal → Storage accounts → Overview"
       >
         @if (marketEnvCombinations().length > 0) {
           <div class="flex flex-col gap-4">
@@ -190,7 +193,7 @@
     <div class="animate-fade-in flex flex-col gap-6">
       <pf-card
         title="Static Web App Configuration"
-        subtitle="Enter the deployment token for each market and environment"
+        subtitle="Found in Azure Portal → Static Web Apps → Manage deployment token"
       >
         @if (marketEnvCombinations().length > 0) {
           <div class="flex flex-col gap-4">
@@ -241,23 +244,17 @@
 
           <!-- Title + description -->
           <div class="flex-1">
-            <h3 class="text-sm font-semibold text-text-dark">Trigger another pipeline after deploy?</h3>
-            <p class="mt-0.5 text-sm text-gray-500">
+            <h3 class="text-sm font-semibold text-navy">Trigger another pipeline after deploy?</h3>
+            <p class="mt-0.5 text-sm text-navy/50">
               Useful for cache invalidation or post-deployment tasks
             </p>
           </div>
 
-          <!-- Inline peer-checkbox toggle -->
-          <label class="relative inline-flex shrink-0 cursor-pointer">
-            <input
-              type="checkbox"
-              class="peer sr-only"
-              [checked]="state.triggerPipelineAfterDeploy()"
-              (change)="onTriggerToggle($event)"
-            />
-            <span class="block h-5 w-9 rounded-full bg-gray-200 transition-colors peer-checked:bg-primary"></span>
-            <span class="absolute left-0.5 top-0.5 size-4 rounded-full bg-white shadow-sm ring-0 transition-transform peer-checked:translate-x-4"></span>
-          </label>
+          <pf-toggle-inline
+            [checked]="state.triggerPipelineAfterDeploy()"
+            ariaLabel="Toggle trigger pipeline after deploy"
+            (toggled)="onTriggerToggle($event)"
+          />
         </div>
 
         <!-- Expandable pipeline ID input -->
@@ -292,7 +289,7 @@
     <div class="animate-fade-in">
       <pf-card
         title="App Service Configuration"
-        subtitle="Enter the App Service name for each market and environment"
+        subtitle="Found in Azure Portal → App Services → Overview"
       >
         @if (marketEnvCombinations().length > 0) {
           <div class="flex flex-col gap-4">
@@ -328,7 +325,7 @@
   }
 
   <!-- ── Bottom bar: Back + Next ────────────────────────────────────────────── -->
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between border-t border-border pt-6">
     <pf-button variant="ghost" (clicked)="state.prevStep()">
       &larr; Back
     </pf-button>

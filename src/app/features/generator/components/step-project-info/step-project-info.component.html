@@ -1,87 +1,129 @@
-<div class="rounded border border-border bg-card shadow-sm">
+<div class="flex flex-col gap-6">
 
-  <!-- Form body -->
-  <div class="p-6 flex flex-col gap-6">
-
-    <!-- Row 1: MFE Name + Repository Name -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <pf-input
-        [control]="form.controls.mfeName"
-        label="MFE Name"
-        placeholder="e.g. shoppingbag"
-        helperText="The name of your micro-frontend application"
-      />
-      <pf-input
-        [control]="form.controls.repositoryName"
-        label="Repository Name"
-        placeholder="e.g. Webapp-ShoppingBagV2"
-        helperText="The Azure DevOps repository name"
-      />
-    </div>
-
-    <!-- Row 2: Node Version + Dist Folder -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-
-      <!-- Node Version — native select styled to match pf-input -->
-      <div class="flex flex-col gap-1">
-        <label class="text-sm font-medium text-text-dark">Node Version</label>
-        <select
-          [formControl]="form.controls.nodeVersion"
-          class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer"
-        >
-          <option value="18.x">18.x</option>
-          <option value="20.x">20.x</option>
-          <option value="22.x">22.x</option>
-        </select>
-      </div>
-
-      <pf-input
-        [control]="form.controls.distFolder"
-        label="Dist Folder"
-        placeholder="e.g. dist/my-app"
-        helperText="The output folder after building"
-      />
-    </div>
-
-    <!-- Row 3: Install Flags + Browser Subfolder toggle -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <pf-input
-        [control]="form.controls.installFlags"
-        label="Install Flags"
-        placeholder="--legacy-peer-deps"
-        helperText="Additional npm install flags"
-        badge="optional"
-      />
-
-      <div class="flex flex-col justify-center rounded-lg border border-border bg-surface p-4">
-        <pf-toggle
-          [control]="form.controls.hasBrowserSubfolder"
-          label="Has /browser subfolder"
-          helperText="Enable if dist output has /browser subfolder"
-        />
-      </div>
-    </div>
-
-    <!-- Section: Branch Configuration -->
-    <div class="border-t border-border pt-6 flex flex-col gap-4">
-      <h3 class="text-sm font-semibold text-navy">Branch Configuration</h3>
+  <!-- ── Section 1: Project Details ───────────────────────────────────────── -->
+  <pf-card
+    title="Project Details"
+    subtitle="Used to name your pipeline files and configure the build"
+  >
+    <div class="flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <pf-input
-          [control]="form.controls.qaBranch"
-          label="QA Branch"
-          placeholder="e.g. qa-feature-shoppingbag"
+          [control]="form.controls.mfeName"
+          label="MFE Name"
+          placeholder="e.g. shoppingbag"
+          helperText="Lowercase, no spaces. Used in pipeline file names."
         />
         <pf-input
-          [control]="form.controls.productionBranch"
-          label="Production Branch"
-          placeholder="e.g. main"
+          [control]="form.controls.repositoryName"
+          label="Repository Name"
+          placeholder="e.g. Webapp-ShoppingBagV2"
+          helperText="Found in Azure DevOps → Repos"
         />
       </div>
-    </div>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <!-- Node Version — native select styled to match pf-input -->
+        <div class="flex flex-col gap-1">
+          <label for="node-version" class="text-sm font-medium text-text-dark">Node Version</label>
+          <div class="relative">
+            <select
+              id="node-version"
+              [formControl]="form.controls.nodeVersion"
+              class="w-full rounded border border-border bg-card px-3 py-2 pr-8 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 appearance-none cursor-pointer"
+            >
+              <option value="18.x">18.x</option>
+              <option value="20.x">20.x</option>
+              <option value="22.x">22.x</option>
+            </select>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+        <pf-input
+          [control]="form.controls.distFolder"
+          label="Dist Folder"
+          placeholder="e.g. dist/my-app"
+          helperText="Check angular.json outputPath or your build config"
+        />
+      </div>
 
-    <!-- Section: Azure DevOps Configuration -->
-    <div class="border-t border-border pt-6 flex flex-col gap-4">
-      <h3 class="text-sm font-semibold text-navy">Azure DevOps Configuration</h3>
+      <!-- Advanced options — collapsed by default -->
+      <details class="group">
+        <summary class="flex cursor-pointer items-center gap-2 text-sm font-medium text-primary outline-none select-none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="shrink-0 transition-transform group-open:rotate-90"
+            aria-hidden="true"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+          Advanced options
+        </summary>
+        <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <pf-input
+            [control]="form.controls.installFlags"
+            label="Install Flags"
+            placeholder="--legacy-peer-deps"
+            helperText="Passed to npm ci during the build step"
+            badge="optional"
+          />
+          <div class="flex flex-col justify-center rounded-lg border border-border bg-surface p-4">
+            <pf-toggle
+              [control]="form.controls.hasBrowserSubfolder"
+              label="Has /browser subfolder"
+              helperText="Angular 17+ outputs to dist/{name}/browser by default"
+            />
+          </div>
+        </div>
+      </details>
+    </div>
+  </pf-card>
+
+  <!-- ── Section 2: Branch Configuration ──────────────────────────────────── -->
+  <pf-card
+    title="Branch Configuration"
+    subtitle="Branch patterns that trigger your pipelines"
+  >
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <pf-input
+        [control]="form.controls.qaBranch"
+        label="QA Branch"
+        placeholder="e.g. qa-feature-shoppingbag"
+      />
+      <pf-input
+        [control]="form.controls.productionBranch"
+        label="Production Branch"
+        placeholder="e.g. main"
+      />
+    </div>
+  </pf-card>
+
+  <!-- ── Section 3: Azure DevOps Configuration ────────────────────────────── -->
+  <pf-card
+    title="Azure DevOps Configuration"
+    subtitle="Found at dev.azure.com/{org}/{project}"
+  >
+    <div class="flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <pf-input
           [control]="form.controls.adoOrganization"
@@ -94,19 +136,17 @@
           placeholder="e.g. MyProject"
         />
       </div>
-
-      <!-- Service Connection ID — full width -->
       <pf-input
         [control]="form.controls.serviceConnectionId"
         label="Service Connection ID"
-        placeholder="Enter service connection ID"
+        placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        helperText="Project Settings → Service connections → select → copy ID from URL"
       />
     </div>
+  </pf-card>
 
-  </div>
-
-  <!-- Sticky footer: Next Step button -->
-  <div class="border-t border-border px-6 py-4 flex justify-end">
+  <!-- ── Bottom bar: Next Step ────────────────────────────────────────────── -->
+  <div class="flex items-center justify-end border-t border-border pt-6">
     <pf-button
       variant="primary"
       [disabled]="!state.isStep1Valid()"

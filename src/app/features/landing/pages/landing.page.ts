@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
   Check,
@@ -9,7 +9,9 @@ import {
   History,
   Languages,
   LucideAngularModule,
+  Menu,
   Server,
+  X,
   Zap,
 } from 'lucide-angular';
 
@@ -48,8 +50,21 @@ interface PricingPlan {
 export class LandingPage {
   private readonly router = inject(Router);
 
+  // Mobile menu state
+  protected readonly mobileMenuOpen = signal(false);
+
+  protected toggleMobileMenu(): void {
+    this.mobileMenuOpen.update(v => !v);
+  }
+
+  protected closeMobileMenu(): void {
+    this.mobileMenuOpen.set(false);
+  }
+
   // Lucide icons
   protected readonly zapIcon = Zap;
+  protected readonly menuIcon = Menu;
+  protected readonly xIcon = X;
   protected readonly fileCodeIcon = FileCode;
   protected readonly codeIcon = Code;
   protected readonly downloadIcon = Download;
@@ -169,6 +184,7 @@ export class LandingPage {
   ];
 
   protected scrollTo(fragment: string): void {
+    this.closeMobileMenu();
     this.router.navigate([], { fragment });
   }
 }

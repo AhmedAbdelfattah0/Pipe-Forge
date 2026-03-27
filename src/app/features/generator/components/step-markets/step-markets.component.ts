@@ -5,6 +5,7 @@ import { GeneratorStateService } from '../../services/generator-state.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
+import { ToggleInlineComponent } from '../../../../shared/components/toggle-inline/toggle-inline.component';
 
 interface EnvConfig {
   id: EnvironmentType;
@@ -18,7 +19,7 @@ interface EnvConfig {
   templateUrl: './step-markets.component.html',
   styleUrl: './step-markets.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass, ButtonComponent, BadgeComponent, CardComponent],
+  imports: [NgClass, ButtonComponent, BadgeComponent, CardComponent, ToggleInlineComponent],
 })
 export class StepMarketsComponent {
   protected readonly state = inject(GeneratorStateService);
