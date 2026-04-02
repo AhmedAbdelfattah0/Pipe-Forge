@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Check, LucideAngularModule, Zap } from 'lucide-angular';
+import { Check, LucideAngularModule } from 'lucide-angular';
 
 import { ButtonComponent, InputComponent } from '../../../shared/components';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
@@ -20,7 +20,6 @@ export class AuthSignupPage {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
-  protected readonly zapIcon = Zap;
   protected readonly checkIcon = Check;
 
   protected readonly features = [

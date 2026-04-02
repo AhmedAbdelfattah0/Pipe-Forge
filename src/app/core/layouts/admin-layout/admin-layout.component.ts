@@ -16,7 +16,6 @@ import {
   Settings,
   HandCoins,
   ArrowLeft,
-  Zap,
   Menu,
   X,
   ShieldCheck,
@@ -52,7 +51,6 @@ export class AdminLayoutComponent implements OnInit {
   protected readonly settingsIcon = Settings;
   protected readonly handCoinsIcon = HandCoins;
   protected readonly arrowLeftIcon = ArrowLeft;
-  protected readonly zapIcon = Zap;
   protected readonly menuIcon = Menu;
   protected readonly xIcon = X;
   protected readonly shieldCheckIcon = ShieldCheck;
