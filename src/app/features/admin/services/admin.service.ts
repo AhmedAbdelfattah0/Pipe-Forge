@@ -120,9 +120,12 @@ export class AdminService {
   // ── Admin check (used by guard) ───────────────────────────────────────────────
 
   async checkAdminAccess(): Promise<boolean> {
+    // Return cached result — avoids a DB round-trip on every admin navigation.
+    if (this._isAdmin()) return true;
+
     try {
       await firstValueFrom(
-        this.http.get<MetricsResponse>(`${this.apiUrl}/admin/metrics`),
+        this.http.get<{ isAdmin: boolean }>(`${this.apiUrl}/admin/me`),
       );
       this._isAdmin.set(true);
       return true;
@@ -132,16 +135,26 @@ export class AdminService {
     }
   }
 
+  // ── Guard helper — all load methods call this before touching the API ─────────
+
+  private assertAdmin(): boolean {
+    if (!this._isAdmin()) {
+      console.warn('[AdminService] API call blocked — admin status not confirmed.');
+      return false;
+    }
+    return true;
+  }
+
   // ── Metrics ───────────────────────────────────────────────────────────────────
 
   async loadMetrics(): Promise<void> {
+    if (!this.assertAdmin()) return;
     this._isLoading.set(true);
     try {
       const data = await firstValueFrom(
         this.http.get<MetricsResponse>(`${this.apiUrl}/admin/metrics`),
       );
       this._metrics.set(data);
-      this._isAdmin.set(true);
     } catch {
       this.toastService.show('Failed to load metrics', 'error');
     } finally {
@@ -152,6 +165,7 @@ export class AdminService {
   // ── Users ─────────────────────────────────────────────────────────────────────
 
   async loadUsers(params: UserListParams = {}): Promise<void> {
+    if (!this.assertAdmin()) return;
     this._isLoading.set(true);
     try {
       const query = new URLSearchParams();
@@ -174,6 +188,7 @@ export class AdminService {
   }
 
   async updateUserPlan(userId: string, plan: string): Promise<void> {
+    if (!this.assertAdmin()) return;
     try {
       await firstValueFrom(
         this.http.patch(`${this.apiUrl}/admin/users/${userId}/plan`, { plan }),
@@ -190,6 +205,7 @@ export class AdminService {
     userId: string,
     payload: { type: string; value: string; reason?: string },
   ): Promise<void> {
+    if (!this.assertAdmin()) return;
     try {
       await firstValueFrom(
         this.http.post(`${this.apiUrl}/admin/users/${userId}/compensate`, payload),
@@ -203,6 +219,7 @@ export class AdminService {
   // ── Feedback ──────────────────────────────────────────────────────────────────
 
   async loadFeedback(status: 'pending' | 'approved' | 'rejected' = 'pending', page = 1): Promise<void> {
+    if (!this.assertAdmin()) return;
     this._isLoading.set(true);
     try {
       const data = await firstValueFrom(
@@ -220,6 +237,7 @@ export class AdminService {
   }
 
   async updateFeedback(id: string, action: 'approve' | 'reject'): Promise<void> {
+    if (!this.assertAdmin()) return;
     try {
       await firstValueFrom(
         this.http.patch(`${this.apiUrl}/admin/feedback/${id}`, { action }),
@@ -236,6 +254,7 @@ export class AdminService {
   // ── Coupons ───────────────────────────────────────────────────────────────────
 
   async loadCoupons(): Promise<void> {
+    if (!this.assertAdmin()) return;
     this._isLoading.set(true);
     try {
       const data = await firstValueFrom(
@@ -286,6 +305,7 @@ export class AdminService {
   }
 
   async toggleCoupon(id: string, isActive: boolean): Promise<void> {
+    if (!this.assertAdmin()) return;
     try {
       await firstValueFrom(
         this.http.patch(`${this.apiUrl}/admin/coupons/${id}`, { is_active: isActive }),
@@ -300,6 +320,7 @@ export class AdminService {
   // ── Generations ───────────────────────────────────────────────────────────────
 
   async loadGenerations(): Promise<void> {
+    if (!this.assertAdmin()) return;
     this._isLoading.set(true);
     try {
       const data = await firstValueFrom(
@@ -316,6 +337,7 @@ export class AdminService {
   // ── Compensations history ─────────────────────────────────────────────────────
 
   async loadCompensations(): Promise<void> {
+    if (!this.assertAdmin()) return;
     this._isLoading.set(true);
     try {
       const data = await firstValueFrom(
@@ -342,6 +364,7 @@ export class AdminService {
   // ── System health ─────────────────────────────────────────────────────────────
 
   async loadHealth(): Promise<void> {
+    if (!this.assertAdmin()) return;
     this._isLoading.set(true);
     try {
       const data = await firstValueFrom(
