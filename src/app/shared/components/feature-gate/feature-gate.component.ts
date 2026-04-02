@@ -8,6 +8,15 @@
  * pointer-events-none) with a lock overlay showing the feature name,
  * required plan badge, and an upgrade CTA.
  *
+ * CRITICAL IMPLEMENTATION NOTE:
+ * <ng-content> appears exactly ONCE in the template. Angular resolves
+ * ng-content projection slots at compile time — multiple ng-content tags
+ * inside @if/@else branches each become distinct slots, and only the first
+ * captures projected content (all others render empty).
+ *
+ * Lock state is applied via CSS (opacity + pointer-events), never via
+ * conditional ng-content.
+ *
  * Usage:
  *   <pf-feature-gate feature="ai_diagnosis" featureName="AI Diagnosis">
  *     <button>Run AI Diagnosis</button>
@@ -20,7 +29,7 @@ import {
   Input,
   inject,
   computed,
-  signal,
+  HostBinding,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PlanGateService, PlanFeature } from '../../../features/billing/services/plan-gate.service';
@@ -63,4 +72,19 @@ export class FeatureGateComponent {
     };
     return labels[plan] ?? plan;
   });
+
+  /**
+   * Inline mode needs the host element to be a flex row so the lock badge
+   * renders beside the projected content without an extra wrapper div.
+   */
+  @HostBinding('class') get hostClasses(): string {
+    const locked = !this.isAvailable() && !this.limitWarning;
+    if (locked && this.inline) {
+      return 'inline-flex items-center gap-2';
+    }
+    if (locked && !this.inline) {
+      return 'relative block';
+    }
+    return '';
+  }
 }
