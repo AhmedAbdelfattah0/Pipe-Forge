@@ -1,87 +1,99 @@
-.plan-toggle {
-  display: flex;
+// ─── Pill Toggle ────────────────────────────────────────────────────────────
+
+.pf-toggle {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
   user-select: none;
+  line-height: 1;
 }
 
-.plan-toggle__input {
+.pf-toggle__input {
   position: absolute;
-  opacity: 0;
   width: 0;
   height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.plan-toggle__track {
+.pf-toggle__track {
+  position: relative;
   width: 40px;
   height: 22px;
-  background: #E2E8F0;
   border-radius: 11px;
-  position: relative;
-  transition: background 0.2s;
+  background: #E2E8F0;
+  transition: background 0.2s ease;
   flex-shrink: 0;
 }
 
-.plan-toggle__input:checked + .plan-toggle__track {
+.pf-toggle--on .pf-toggle__track {
   background: #3B82F6;
 }
 
-.plan-toggle__thumb {
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
+.pf-toggle__thumb {
   position: absolute;
   top: 2px;
   left: 2px;
-  transition: transform 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease;
 }
 
-.plan-toggle__input:checked + .plan-toggle__track .plan-toggle__thumb {
+.pf-toggle--on .pf-toggle__thumb {
   transform: translateX(18px);
 }
 
-.plan-toggle__label {
+.pf-toggle__text {
   font-size: 13px;
   font-weight: 500;
   color: #94A3B8;
-
-  &.active {
-    color: #16A34A;
-  }
+  transition: color 0.2s ease;
 }
 
+.pf-toggle--on .pf-toggle__text {
+  color: #16A34A;
+}
+
+// ─── Feature Delete Button ───────────────────────────────────────────────────
+
 .feature-delete-btn {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  margin: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
   border: none;
+  border-radius: 6px;
   background: transparent;
   cursor: pointer;
   flex-shrink: 0;
-  padding: 0;
   color: #CBD5E1;
-  transition: background 0.15s ease, color 0.15s ease;
-
-  lucide-icon,
-  svg,
-  ng-icon {
-    width: 16px !important;
-    height: 16px !important;
-    display: block;
-    flex-shrink: 0;
-    pointer-events: none;
-  }
+  transition: background-color 0.15s ease, color 0.15s ease;
+  overflow: hidden;
 
   &:hover {
-    background: #FEE2E2;
+    background-color: #FEE2E2;
     color: #DC2626;
+  }
+
+  svg,
+  lucide-icon,
+  i-lucide,
+  ng-icon {
+    width: 15px !important;
+    height: 15px !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none;
   }
 }

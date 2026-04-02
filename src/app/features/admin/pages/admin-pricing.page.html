@@ -54,17 +54,20 @@
             </div>
 
             <!-- Active toggle — always visible, even when inactive -->
-            <label class="plan-toggle">
+            <label
+              class="pf-toggle"
+              [class.pf-toggle--on]="isActivePlan(plan)"
+            >
               <input
                 type="checkbox"
-                class="plan-toggle__input"
+                class="pf-toggle__input"
                 [checked]="isActivePlan(plan)"
                 (change)="setEdit(plan.id, 'isActive', $any($event.target).checked ? 'true' : 'false')"
               />
-              <span class="plan-toggle__track">
-                <span class="plan-toggle__thumb"></span>
+              <span class="pf-toggle__track">
+                <span class="pf-toggle__thumb"></span>
               </span>
-              <span class="plan-toggle__label" [class.active]="isActivePlan(plan)">
+              <span class="pf-toggle__text">
                 {{ isActivePlan(plan) ? 'Active' : 'Inactive' }}
               </span>
             </label>
@@ -172,7 +175,7 @@
                     class="feature-delete-btn"
                     (click)="removeFeature(plan.id, feature)"
                   >
-                    <lucide-icon [img]="trashIcon" [size]="16" />
+                    <lucide-icon [img]="trashIcon" [size]="15" />
                   </button>
                 </li>
               }
