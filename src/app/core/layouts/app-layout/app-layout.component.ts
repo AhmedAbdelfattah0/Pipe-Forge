@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { LucideAngularModule, Menu, X, Zap } from 'lucide-angular';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { LucideAngularModule, Menu, X } from 'lucide-angular';
 
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { FeedbackWidgetComponent } from '../../../shared/components/feedback-widget/feedback-widget.component';
 import { ProfileService } from '../../../features/profile/services/profile.service';
+import { AuthService } from '../../../features/auth/services/auth.service';
 
 @Component({
   standalone: true,
@@ -12,15 +13,15 @@ import { ProfileService } from '../../../features/profile/services/profile.servi
   templateUrl: './app-layout.component.html',
   styleUrl: './app-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, SidebarComponent, LucideAngularModule, FeedbackWidgetComponent],
+  imports: [RouterOutlet, RouterLink, SidebarComponent, LucideAngularModule, FeedbackWidgetComponent],
 })
 export class AppLayoutComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfileService);
+  private readonly authService = inject(AuthService);
 
   protected readonly menuIcon = Menu;
   protected readonly xIcon = X;
-  protected readonly zapIcon = Zap;
 
   protected readonly sidebarOpen = signal(false);
 
@@ -36,8 +37,9 @@ export class AppLayoutComponent implements OnInit {
     this.sidebarOpen.set(false);
   }
 
-  protected onLogout(): void {
+  protected async onLogout(): Promise<void> {
     this.closeSidebar();
-    this.router.navigate(['/auth/login']);
+    await this.authService.logout();
+    await this.router.navigate(['/']);
   }
 }

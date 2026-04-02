@@ -21,11 +21,10 @@ const landingGuard: CanActivateFn = async () => {
 };
 
 export const routes: Routes = [
-  // Landing page — public, but redirects to /generator when already logged in
+  // Landing page — public, accessible to all users including authenticated ones
   {
     path: '',
     pathMatch: 'full',
-    canActivate: [landingGuard],
     loadComponent: () =>
       import('./features/landing/pages/landing.page').then(
         m => m.LandingPage,

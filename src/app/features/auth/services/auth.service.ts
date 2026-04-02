@@ -1,4 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { Session, User } from '@supabase/supabase-js';
 import { SupabaseService } from '../../../core/services/supabase.service';
 import { AuthUser } from '../models/auth.model';
@@ -6,6 +7,7 @@ import { AuthUser } from '../models/auth.model';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly supabase = inject(SupabaseService);
+  private readonly router = inject(Router);
 
   private readonly _isLoggedIn = signal<boolean>(false);
   private readonly _currentUser = signal<AuthUser | null>(null);
@@ -64,7 +66,10 @@ export class AuthService {
     if (error) {
       this._error.set(error.message);
     }
+    this._isLoggedIn.set(false);
+    this._currentUser.set(null);
     this._loading.set(false);
+    await this.router.navigate(['/']);
   }
 
   async signInWithGoogle(): Promise<void> {
