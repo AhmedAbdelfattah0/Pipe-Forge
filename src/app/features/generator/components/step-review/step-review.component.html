@@ -3,14 +3,19 @@
   <!-- Generating overlay -->
   @if (generator.isGenerating()) {
     <div
-      class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-lg bg-white/80 backdrop-blur-sm"
+      class="generation-loading"
       aria-busy="true"
       aria-label="Generating pipelines"
     >
-      <pf-spinner size="lg" />
-      <div class="text-center">
-        <p class="font-display text-base font-semibold text-navy">Generating {{ state.totalPipelineCount() }} pipeline files&hellip;</p>
-        <p class="mt-1 text-sm text-navy/50">Packaging build and release configurations</p>
+      <div class="generation-loading__content">
+        <div class="generation-loading__spinner"></div>
+        <h2 class="generation-loading__title">Generating your pipelines...</h2>
+        <p class="generation-loading__subtitle">
+          Building {{ state.totalPipelineCount() }} pipeline files
+        </p>
+        <p class="generation-loading__detail">
+          Packaging build and release configurations
+        </p>
       </div>
     </div>
   }

@@ -454,43 +454,65 @@
           <div class="flex-1">
             <h3 class="text-sm font-semibold text-navy">Preserve files during deployment?</h3>
             <p class="mt-0.5 text-sm text-navy/50">
-              Protects files like .well-known/ that get wiped when $web is cleared
+              Copies files from a source container into a folder inside your destination container before deploying
             </p>
           </div>
 
           <pf-toggle-inline
-            [checked]="state.protectedPaths().length > 0"
-            ariaLabel="Toggle protected files preservation"
-            (toggled)="onProtectedPathsToggle($event)"
+            [checked]="state.preserveFiles()"
+            ariaLabel="Toggle file preservation"
+            (toggled)="onPreserveFilesToggle($event)"
           />
         </div>
 
-        <!-- Expandable protected paths textarea -->
-        <div class="expandable" [class.is-open]="state.protectedPaths().length > 0">
+        <!-- Expandable 3-field preserve config -->
+        <div class="expandable" [class.is-open]="state.preserveFiles()">
           <div class="overflow-hidden">
             <div class="border-t border-border px-5 pb-5 pt-4">
-              <div class="flex flex-col gap-3">
-                <label for="protected-paths" class="text-sm font-medium text-text-dark">
-                  Protected paths (one per line)
-                </label>
-                <textarea
-                  id="protected-paths"
-                  rows="4"
-                  [value]="protectedPathsText()"
-                  (input)="onProtectedPathsChange($event)"
-                  placeholder=".well-known/apple-developer-merchantid-domain-association"
-                  class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 resize-y"
-                ></textarea>
-                <div class="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 16v-4" />
-                    <path d="M12 8h.01" />
-                  </svg>
-                  <div class="text-xs text-navy/80">
-                    <p>Stored in a separate container <span class="font-mono font-medium">{{ state.protectedPathsContainer() }}</span>, restored after every deploy.</p>
-                  </div>
+              <div class="flex flex-col gap-4">
+
+                <!-- Source container -->
+                <div class="flex flex-col gap-1">
+                  <label for="preserve-source" class="text-sm font-medium text-text-dark">Source container</label>
+                  <input
+                    id="preserve-source"
+                    type="text"
+                    [value]="state.preserveSourceContainer()"
+                    (input)="onPreserveSourceContainerChange($event)"
+                    placeholder="e.g. certificates"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                  <p class="text-xs text-gray-500">Azure container where your preserved files are stored</p>
                 </div>
+
+                <!-- Destination folder -->
+                <div class="flex flex-col gap-1">
+                  <label for="preserve-dest-folder" class="text-sm font-medium text-text-dark">Destination folder</label>
+                  <input
+                    id="preserve-dest-folder"
+                    type="text"
+                    [value]="state.preserveDestinationFolder()"
+                    (input)="onPreserveDestinationFolderChange($event)"
+                    placeholder="e.g. .well-known"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                  <p class="text-xs text-gray-500">Folder name to create inside your destination container</p>
+                </div>
+
+                <!-- Destination container -->
+                <div class="flex flex-col gap-1">
+                  <label for="preserve-dest-container" class="text-sm font-medium text-text-dark">Destination container</label>
+                  <input
+                    id="preserve-dest-container"
+                    type="text"
+                    [value]="state.preserveDestinationContainer()"
+                    (input)="onPreserveDestinationContainerChange($event)"
+                    placeholder="$web"
+                    class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                  />
+                  <p class="text-xs text-gray-500">Container where your static site is deployed (usually $web)</p>
+                </div>
+
               </div>
             </div>
           </div>

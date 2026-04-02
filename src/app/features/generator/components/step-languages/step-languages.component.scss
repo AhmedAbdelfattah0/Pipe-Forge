@@ -1,3 +1,10 @@
+// Build scripts matrix — make placeholder text visually distinct from real input
+input::placeholder {
+  color: #94A3B8;
+  font-style: italic;
+  opacity: 1;
+}
+
 // Grid-row expand/collapse animation for the token replacement section.
 // Uses CSS grid trick: 0fr collapses content while keeping smooth transition.
 .expandable {

@@ -101,6 +101,22 @@ export class StepDeployTargetComponent {
     return this.state.protectedPaths().join('\n');
   }
 
+  protected onPreserveFilesToggle(checked: boolean): void {
+    this.state.setPreserveFiles(checked);
+  }
+
+  protected onPreserveSourceContainerChange(event: Event): void {
+    this.state.setPreserveSourceContainer((event.target as HTMLInputElement).value);
+  }
+
+  protected onPreserveDestinationFolderChange(event: Event): void {
+    this.state.setPreserveDestinationFolder((event.target as HTMLInputElement).value);
+  }
+
+  protected onPreserveDestinationContainerChange(event: Event): void {
+    this.state.setPreserveDestinationContainer((event.target as HTMLInputElement).value);
+  }
+
   protected onFtpRemotePathChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.state.setFtpRemotePath(value);

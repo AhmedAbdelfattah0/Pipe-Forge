@@ -199,25 +199,6 @@
     </div>
   </pf-card>
 
-  <!-- ── Section 2: Branch Configuration ──────────────────────────────────── -->
-  <pf-card
-    title="Branch Configuration"
-    subtitle="Branch patterns that trigger your pipelines"
-  >
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <pf-input
-        [control]="form.controls.qaBranch"
-        label="QA Branch"
-        placeholder="e.g. qa-feature-shoppingbag"
-      />
-      <pf-input
-        [control]="form.controls.productionBranch"
-        label="Production Branch"
-        placeholder="e.g. main"
-      />
-    </div>
-  </pf-card>
-
   <!-- ── Section 3a: Azure DevOps Configuration ───────────────────────────── -->
   @if (state.platform() === 'azure-devops') {
     <pf-card

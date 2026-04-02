@@ -111,7 +111,7 @@
             ? 'border-primary bg-blue-50'
             : 'border-border bg-surface'"
         >
-          <!-- Left: label, badge, branch pattern -->
+          <!-- Left: label + badge -->
           <div class="flex flex-col gap-1">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-navy">{{ env.label }}</span>
@@ -120,10 +120,6 @@
                 [text]="state.environments().includes(env.id) ? 'Active' : 'Inactive'"
               />
             </div>
-            <p class="text-xs text-gray-500">
-              Branch pattern:
-              <code class="rounded bg-gray-100 px-1">{{ env.branch }}</code>
-            </p>
           </div>
 
           <!-- Right: toggle -->
@@ -138,6 +134,53 @@
 
     </div>
   </pf-card>
+
+  <!-- ── Section 3: Branch Configuration ────────────────────────────────── -->
+  @if (showBranchSection()) {
+    <pf-card
+      title="Branch Configuration"
+      subtitle="Branch patterns that trigger your pipelines"
+    >
+      <div class="flex flex-col gap-6">
+        @if (hasQaEnv()) {
+          <div class="flex flex-col gap-1">
+            <label for="qa-branch" class="text-sm font-medium text-text-dark">QA Branch</label>
+            <input
+              id="qa-branch"
+              type="text"
+              [value]="state.qaBranch()"
+              (input)="onQaBranchChange($event)"
+              placeholder="e.g. qa-feature-shoppingbag"
+              class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+            />
+            @if (state.qaBranch()) {
+              <p class="text-xs text-gray-500">
+                Branch pattern: <code class="rounded bg-gray-100 px-1">{{ state.qaBranch() }}</code>
+              </p>
+            }
+          </div>
+        }
+        @if (hasProdEnv()) {
+          <div class="flex flex-col gap-1">
+            <label for="prod-branch" class="text-sm font-medium text-text-dark">Production Branch</label>
+            <input
+              id="prod-branch"
+              type="text"
+              [value]="state.productionBranch()"
+              (input)="onProductionBranchChange($event)"
+              placeholder="e.g. main"
+              class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+            />
+            @if (state.productionBranch()) {
+              <p class="text-xs text-gray-500">
+                Branch pattern: <code class="rounded bg-gray-100 px-1">{{ state.productionBranch() }}</code>
+              </p>
+            }
+          </div>
+        }
+      </div>
+    </pf-card>
+  }
 
   <!-- ── Bottom bar: Back + Next ────────────────────────────────────────── -->
   <div class="flex items-center justify-between border-t border-border pt-6">

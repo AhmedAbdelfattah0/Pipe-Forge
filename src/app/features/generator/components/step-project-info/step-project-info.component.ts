@@ -34,8 +34,6 @@ export class StepProjectInfoComponent implements OnInit {
     distFolder: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(256)] }),
     installFlags: new FormControl('', { nonNullable: true, validators: Validators.maxLength(256) }),
     hasBrowserSubfolder: new FormControl(false, { nonNullable: true }),
-    qaBranch: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
-    productionBranch: new FormControl('main', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
     adoOrganization: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(64)] }),
     adoProjectName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
     serviceConnectionId: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(128)] }),
@@ -54,8 +52,6 @@ export class StepProjectInfoComponent implements OnInit {
       distFolder: this.state.distFolder(),
       installFlags: this.state.installFlags(),
       hasBrowserSubfolder: this.state.hasBrowserSubfolder(),
-      qaBranch: this.state.qaBranch(),
-      productionBranch: this.state.productionBranch(),
       adoOrganization: this.state.adoOrganization(),
       adoProjectName: this.state.adoProjectName(),
       serviceConnectionId: this.state.serviceConnectionId(),
@@ -75,8 +71,6 @@ export class StepProjectInfoComponent implements OnInit {
         this.state.setDistFolder(v.distFolder ?? '');
         this.state.setInstallFlags(v.installFlags ?? '');
         this.state.setHasBrowserSubfolder(v.hasBrowserSubfolder ?? false);
-        this.state.setQaBranch(v.qaBranch ?? '');
-        this.state.setProductionBranch(v.productionBranch ?? '');
         this.state.setAdoOrganization(v.adoOrganization ?? '');
         this.state.setAdoProjectName(v.adoProjectName ?? '');
         this.state.setServiceConnectionId(v.serviceConnectionId ?? '');

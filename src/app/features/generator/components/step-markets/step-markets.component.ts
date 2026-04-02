@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { EnvironmentType } from '../../models/generator.model';
 import { GeneratorStateService } from '../../services/generator-state.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
@@ -10,7 +10,6 @@ import { ToggleInlineComponent } from '../../../../shared/components/toggle-inli
 interface EnvConfig {
   id: EnvironmentType;
   label: string;
-  branch: string;
 }
 
 @Component({
@@ -25,9 +24,13 @@ export class StepMarketsComponent {
   protected readonly state = inject(GeneratorStateService);
 
   protected readonly envConfigs: readonly EnvConfig[] = [
-    { id: 'QA', label: 'QA', branch: 'qa-*' },
-    { id: 'PROD', label: 'Production', branch: 'main' },
+    { id: 'QA', label: 'QA' },
+    { id: 'PROD', label: 'Production' },
   ];
+
+  protected readonly hasQaEnv = computed(() => this.state.environments().includes('QA'));
+  protected readonly hasProdEnv = computed(() => this.state.environments().includes('PROD'));
+  protected readonly showBranchSection = computed(() => this.hasQaEnv() || this.hasProdEnv());
 
   protected addMarket(): void {
     this.state.addMarket({ name: '', code: '', enabled: true });
@@ -43,5 +46,15 @@ export class StepMarketsComponent {
     const value = (event.target as HTMLInputElement).value;
     const market = this.state.markets()[index];
     this.state.updateMarket(index, { ...market, code: value });
+  }
+
+  protected onQaBranchChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.state.setQaBranch(value);
+  }
+
+  protected onProductionBranchChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.state.setProductionBranch(value);
   }
 }

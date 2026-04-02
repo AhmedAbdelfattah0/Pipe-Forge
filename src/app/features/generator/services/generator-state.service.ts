@@ -116,6 +116,10 @@ export class GeneratorStateService {
   private readonly _triggerPipelineId = signal<string>('');
   private readonly _ftpRemotePath = signal<string>('/public_html/');
   private readonly _protectedPaths = signal<string[]>([]);
+  private readonly _preserveFiles = signal<boolean>(false);
+  private readonly _preserveSourceContainer = signal<string>('');
+  private readonly _preserveDestinationFolder = signal<string>('');
+  private readonly _preserveDestinationContainer = signal<string>('$web');
   private readonly _modernHosting = signal<ModernHostingConfig>({
     ghPagesBranch: 'gh-pages',
   });
@@ -160,6 +164,10 @@ export class GeneratorStateService {
   readonly triggerPipelineId = this._triggerPipelineId.asReadonly();
   readonly ftpRemotePath = this._ftpRemotePath.asReadonly();
   readonly protectedPaths = this._protectedPaths.asReadonly();
+  readonly preserveFiles = this._preserveFiles.asReadonly();
+  readonly preserveSourceContainer = this._preserveSourceContainer.asReadonly();
+  readonly preserveDestinationFolder = this._preserveDestinationFolder.asReadonly();
+  readonly preserveDestinationContainer = this._preserveDestinationContainer.asReadonly();
   readonly protectedPathsContainer = computed(() => {
     const project = this._projectName().toLowerCase().replace(/[^a-z0-9-]/g, '') || 'my-app';
     return `${project}-protected`;
@@ -504,6 +512,19 @@ export class GeneratorStateService {
     this._protectedPaths.set(v);
   }
 
+  setPreserveFiles(v: boolean): void {
+    this._preserveFiles.set(v);
+    if (!v) {
+      this._preserveSourceContainer.set('');
+      this._preserveDestinationFolder.set('');
+      this._preserveDestinationContainer.set('$web');
+    }
+  }
+
+  setPreserveSourceContainer(v: string): void { this._preserveSourceContainer.set(v); }
+  setPreserveDestinationFolder(v: string): void { this._preserveDestinationFolder.set(v); }
+  setPreserveDestinationContainer(v: string): void { this._preserveDestinationContainer.set(v); }
+
   setModernHosting(updates: Partial<ModernHostingConfig>): void {
     this._modernHosting.update(h => ({ ...h, ...updates }));
   }
@@ -571,6 +592,10 @@ export class GeneratorStateService {
     this._triggerPipelineId.set('');
     this._ftpRemotePath.set('/public_html/');
     this._protectedPaths.set([]);
+    this._preserveFiles.set(false);
+    this._preserveSourceContainer.set('');
+    this._preserveDestinationFolder.set('');
+    this._preserveDestinationContainer.set('$web');
     this._modernHosting.set({ ghPagesBranch: 'gh-pages' });
     this._outputFormats.set(['yaml', 'classic-json']);
 
