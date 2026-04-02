@@ -8,6 +8,7 @@ import {
 import { SlicePipe } from '@angular/common';
 import { LucideAngularModule, ThumbsUp, ThumbsDown, Star } from 'lucide-angular';
 import { AdminService } from '../services/admin.service';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 type FeedbackTab = 'pending' | 'approved' | 'rejected';
 
@@ -16,7 +17,7 @@ type FeedbackTab = 'pending' | 'approved' | 'rejected';
   selector: 'pf-admin-feedback',
   templateUrl: './admin-feedback.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule, SlicePipe],
+  imports: [LucideAngularModule, SlicePipe, ButtonComponent],
 })
 export class AdminFeedbackPage implements OnInit {
   protected readonly adminService = inject(AdminService);

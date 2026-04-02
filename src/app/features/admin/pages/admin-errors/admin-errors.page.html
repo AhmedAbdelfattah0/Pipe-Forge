@@ -80,14 +80,10 @@
       Unresolved only
     </label>
 
-    <button
-      type="button"
-      class="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-text-dark transition-colors hover:bg-surface"
-      (click)="load()"
-    >
+    <pf-button variant="ghost" size="sm" (clicked)="load()">
       <lucide-icon [img]="refreshIcon" [size]="14" />
       Refresh
-    </button>
+    </pf-button>
 
   </div>
 
@@ -197,19 +193,17 @@
                             <p class="text-xs font-semibold uppercase tracking-wide text-text-dark/50">
                               Full Request Payload
                             </p>
-                            <button
-                              type="button"
-                              class="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-dark transition-colors hover:bg-surface"
-                              (click)="copyConfig(error); $event.stopPropagation()"
-                            >
-                              @if (copiedId() === error.id) {
-                                <lucide-icon [img]="checkIcon" [size]="13" class="text-success" />
-                                Copied
-                              } @else {
-                                <lucide-icon [img]="copyIcon" [size]="13" />
-                                Copy Config
-                              }
-                            </button>
+                            <span (click)="$event.stopPropagation()">
+                              <pf-button variant="ghost" size="sm" (clicked)="copyConfig(error)">
+                                @if (copiedId() === error.id) {
+                                  <lucide-icon [img]="checkIcon" [size]="13" class="text-success" />
+                                  Copied
+                                } @else {
+                                  <lucide-icon [img]="copyIcon" [size]="13" />
+                                  Copy Config
+                                }
+                              </pf-button>
+                            </span>
                           </div>
                           <pre class="overflow-x-auto rounded-lg bg-surface p-4 text-xs text-text-dark/80 font-mono whitespace-pre-wrap break-all">{{ formatJson(error.requestPayload) }}</pre>
                           @if (error.platform || error.deployTarget || error.marketsCount !== null) {
@@ -247,14 +241,12 @@
                           </div>
                           @if (error.stackTrace) {
                             <div>
-                              <button
-                                type="button"
-                                class="flex items-center gap-1.5 text-xs font-medium text-primary"
-                                (click)="toggleStack(); $event.stopPropagation()"
-                              >
-                                <lucide-icon [img]="stackExpanded() ? chevronUpIcon : chevronDownIcon" [size]="13" />
-                                {{ stackExpanded() ? 'Hide' : 'Show' }} Stack Trace
-                              </button>
+                              <span (click)="$event.stopPropagation()">
+                                <pf-button variant="ghost" size="sm" (clicked)="toggleStack()">
+                                  <lucide-icon [img]="stackExpanded() ? chevronUpIcon : chevronDownIcon" [size]="13" />
+                                  {{ stackExpanded() ? 'Hide' : 'Show' }} Stack Trace
+                                </pf-button>
+                              </span>
                               @if (stackExpanded()) {
                                 <pre class="mt-2 overflow-x-auto rounded-lg bg-surface p-4 text-xs text-text-dark/70 font-mono whitespace-pre-wrap break-all">{{ error.stackTrace }}</pre>
                               }
@@ -295,30 +287,18 @@
                               [value]="resolveNote()"
                               (input)="resolveNote.set($any($event.target).value)"
                             />
-                            <button
-                              type="button"
-                              class="rounded-lg bg-success px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
-                              (click)="confirmResolve(error.id)"
-                            >
+                            <pf-button variant="primary" size="sm" (clicked)="confirmResolve(error.id)">
                               Confirm
-                            </button>
-                            <button
-                              type="button"
-                              class="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-dark hover:bg-surface"
-                              (click)="cancelResolve()"
-                            >
+                            </pf-button>
+                            <pf-button variant="ghost" size="sm" (clicked)="cancelResolve()">
                               Cancel
-                            </button>
+                            </pf-button>
                           </div>
                         } @else {
-                          <button
-                            type="button"
-                            class="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-dark transition-colors hover:bg-surface"
-                            (click)="startResolve(error.id)"
-                          >
+                          <pf-button variant="ghost" size="sm" (clicked)="startResolve(error.id)">
                             <lucide-icon [img]="checkCircleIcon" [size]="13" />
                             Mark Resolved
-                          </button>
+                          </pf-button>
                         }
                       </div>
                     }

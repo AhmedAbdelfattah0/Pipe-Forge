@@ -7,13 +7,14 @@ import {
 import { LucideAngularModule, RefreshCw, ExternalLink } from 'lucide-angular';
 import { AdminService } from '../services/admin.service';
 import { computed } from '@angular/core';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   standalone: true,
   selector: 'pf-admin-system',
   templateUrl: './admin-system.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule],
+  imports: [LucideAngularModule, ButtonComponent],
 })
 export class AdminSystemPage implements OnInit {
   protected readonly adminService = inject(AdminService);

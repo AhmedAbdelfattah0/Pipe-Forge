@@ -86,13 +86,9 @@
           ></textarea>
         </div>
 
-        <button
-          type="submit"
-          [disabled]="compensationForm.invalid || isSubmitting()"
-          class="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-        >
+        <pf-button variant="primary" size="md" type="submit" [disabled]="compensationForm.invalid || isSubmitting()">
           @if (isSubmitting()) { Applying... } @else { Confirm Compensation }
-        </button>
+        </pf-button>
       </form>
     }
 

@@ -29,6 +29,8 @@ export interface HistoryProject {
   outputFormats: OutputFormat[];
   generatedAt: Date;
   pipelineCount: number;
+  /** Full generator config snapshot — used to pre-fill the wizard via Edit. */
+  configSnapshot: Record<string, unknown>;
 }
 
 /** Map API response to frontend model */
@@ -44,5 +46,6 @@ export function mapApiToHistoryProject(api: HistoryProjectApi): HistoryProject {
     outputFormats: api.output_formats,
     generatedAt: new Date(api.generated_at),
     pipelineCount: api.pipeline_count,
+    configSnapshot: api.config_snapshot ?? {},
   };
 }

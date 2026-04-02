@@ -130,13 +130,9 @@
         ></textarea>
       </div>
 
-      <button
-        type="submit"
-        disabled
-        class="rounded-lg bg-surface border border-border px-5 py-2.5 text-sm font-medium text-text-dark/50 cursor-not-allowed"
-      >
+      <pf-button variant="ghost" size="md" [disabled]="true" type="submit">
         Create Coupon (Coming Soon)
-      </button>
+      </pf-button>
     </form>
   </div>
 
@@ -185,22 +181,12 @@
                 </td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-2">
-                    <button
-                      type="button"
-                      class="rounded p-1 text-text-dark/40 hover:text-text-dark"
-                      title="Copy coupon link"
-                      (click)="copyLink(coupon.code)"
-                    >
+                    <pf-button variant="ghost" size="sm" (clicked)="copyLink(coupon.code)">
                       <lucide-icon [img]="copyIcon" [size]="14" />
-                    </button>
-                    <button
-                      type="button"
-                      class="rounded p-1 text-text-dark/40 hover:text-text-dark"
-                      [title]="coupon.isActive ? 'Pause' : 'Resume'"
-                      (click)="toggleCoupon(coupon.id, !coupon.isActive)"
-                    >
+                    </pf-button>
+                    <pf-button variant="ghost" size="sm" (clicked)="toggleCoupon(coupon.id, !coupon.isActive)">
                       <lucide-icon [img]="coupon.isActive ? pauseIcon : playIcon" [size]="14" />
-                    </button>
+                    </pf-button>
                   </div>
                 </td>
               </tr>

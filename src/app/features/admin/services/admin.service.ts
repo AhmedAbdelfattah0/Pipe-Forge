@@ -92,6 +92,8 @@ export class AdminService {
   // ── State signals ────────────────────────────────────────────────────────────
 
   private readonly _isAdmin = signal<boolean>(false);
+  /** True once /api/admin/me has been resolved — prevents redundant API calls. */
+  private _adminChecked = false;
   private readonly _metrics = signal<AdminMetrics | null>(null);
   private readonly _users = signal<AdminUserOverview[]>([]);
   private readonly _userTotal = signal<number>(0);
@@ -120,17 +122,20 @@ export class AdminService {
   // ── Admin check (used by guard) ───────────────────────────────────────────────
 
   async checkAdminAccess(): Promise<boolean> {
-    // Return cached result — avoids a DB round-trip on every admin navigation.
-    if (this._isAdmin()) return true;
+    // Return cached result — avoids a DB round-trip on every navigation.
+    if (this._adminChecked) return this._isAdmin();
 
     try {
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.http.get<{ isAdmin: boolean }>(`${this.apiUrl}/admin/me`),
       );
-      this._isAdmin.set(true);
-      return true;
+      // Backend always returns { isAdmin: boolean } for logged-in users — never 403.
+      this._isAdmin.set(response.isAdmin);
+      this._adminChecked = true;
+      return response.isAdmin;
     } catch {
       this._isAdmin.set(false);
+      this._adminChecked = true;
       return false;
     }
   }

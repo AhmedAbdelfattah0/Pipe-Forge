@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { LucideAngularModule, Save, Plus, Trash2, Info, Check } from 'lucide-angular';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 import type { Plan, PlanFeature, PlansApiResponse } from '../../billing/models/plan.model';
 import { mapApiItemToPlan } from '../../billing/models/plan.model';
 import { environment } from '../../../../environments/environment';
@@ -20,7 +21,7 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
   templateUrl: './admin-pricing.page.html',
   styleUrl: './admin-pricing.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, LucideAngularModule],
+  imports: [ReactiveFormsModule, LucideAngularModule, ButtonComponent],
 })
 export class AdminPricingPage implements OnInit {
   private readonly http = inject(HttpClient);

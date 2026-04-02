@@ -4,15 +4,10 @@
       <h1 class="text-2xl font-bold text-text-dark">System</h1>
       <p class="mt-1 text-sm text-text-dark/60">Health indicators and external service links.</p>
     </div>
-    <button
-      type="button"
-      class="flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-text-dark hover:bg-surface"
-      [disabled]="adminService.isLoading()"
-      (click)="refresh()"
-    >
+    <pf-button variant="ghost" size="sm" [disabled]="adminService.isLoading()" (clicked)="refresh()">
       <lucide-icon [img]="refreshIcon" [size]="15" [class.animate-spin]="adminService.isLoading()" />
       Refresh
-    </button>
+    </pf-button>
   </div>
 
   <!-- Health card -->

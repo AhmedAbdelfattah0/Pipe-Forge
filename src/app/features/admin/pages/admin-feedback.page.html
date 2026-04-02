@@ -89,22 +89,14 @@
             <!-- Actions (only on Pending tab) -->
             @if (activeTab() === 'pending') {
               <div class="flex shrink-0 gap-2">
-                <button
-                  type="button"
-                  class="flex items-center gap-1.5 rounded-lg bg-success/10 px-3 py-1.5 text-xs font-medium text-success hover:bg-success/20"
-                  (click)="approve(item.id)"
-                >
+                <pf-button variant="ghost" size="sm" (clicked)="approve(item.id)">
                   <lucide-icon [img]="thumbsUpIcon" [size]="13" />
                   Approve
-                </button>
-                <button
-                  type="button"
-                  class="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100"
-                  (click)="reject(item.id)"
-                >
+                </pf-button>
+                <pf-button variant="danger" size="sm" (clicked)="reject(item.id)">
                   <lucide-icon [img]="thumbsDownIcon" [size]="13" />
                   Reject
-                </button>
+                </pf-button>
               </div>
             }
           </div>

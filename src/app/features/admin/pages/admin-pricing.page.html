@@ -191,14 +191,10 @@
                 placeholder="New feature text..."
                 style="flex:1;font-size:14px;padding:10px 12px;border:1px dashed #CBD5E1;border-radius:6px;width:100%;outline:none;box-sizing:border-box;"
               />
-              <button
-                type="button"
-                style="display:flex;align-items:center;gap:4px;border-radius:6px;border:1px solid #E2E8F0;padding:10px 12px;font-size:13px;font-weight:500;color:#374151;background:transparent;cursor:pointer;white-space:nowrap;"
-                (click)="addFeature(plan)"
-              >
+              <pf-button variant="ghost" size="sm" (clicked)="addFeature(plan)">
                 <lucide-icon [img]="plusIcon" [size]="14" />
                 Add
-              </button>
+              </pf-button>
             </div>
           </div>
 

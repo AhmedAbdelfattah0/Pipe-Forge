@@ -20,6 +20,7 @@ import {
 } from 'lucide-angular';
 import { ErrorLogService } from '../../services/error-log.service';
 import type { ErrorLog } from '../../models/error-log.model';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 type ActiveTab = 'request' | 'error' | 'user';
 
@@ -28,7 +29,7 @@ type ActiveTab = 'request' | 'error' | 'user';
   selector: 'pf-admin-errors',
   templateUrl: './admin-errors.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule, DatePipe, FormsModule],
+  imports: [LucideAngularModule, DatePipe, FormsModule, ButtonComponent],
 })
 export class AdminErrorsPage implements OnInit {
   protected readonly errorLogService = inject(ErrorLogService);

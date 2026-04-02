@@ -193,9 +193,18 @@
                   </div>
                 </div>
               } @else {
-                <!-- Default actions -->
+                <!-- Default actions: Edit | Download | Delete -->
                 <div class="flex items-center justify-between gap-2 flex-wrap">
+                  <!-- Left: Edit + Delete + Diagnose -->
                   <div class="flex items-center gap-2">
+                    <!-- Edit button — opens wizard pre-filled with saved config -->
+                    <pf-button variant="ghost" size="sm" (clicked)="onEdit(project)">
+                      <!-- Pencil icon -->
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                      </svg>
+                      Edit
+                    </pf-button>
                     <pf-button variant="ghost" size="sm" (clicked)="onDeleteRequest(project)">
                       <!-- Trash icon -->
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

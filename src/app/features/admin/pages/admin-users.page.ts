@@ -12,13 +12,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { LucideAngularModule, Search, ChevronDown } from 'lucide-angular';
 import { AdminService } from '../services/admin.service';
 import type { AdminUserOverview } from '../models/admin.model';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   standalone: true,
   selector: 'pf-admin-users',
   templateUrl: './admin-users.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, LucideAngularModule, SlicePipe],
+  imports: [ReactiveFormsModule, LucideAngularModule, SlicePipe, ButtonComponent],
 })
 export class AdminUsersPage implements OnInit {
   protected readonly adminService = inject(AdminService);

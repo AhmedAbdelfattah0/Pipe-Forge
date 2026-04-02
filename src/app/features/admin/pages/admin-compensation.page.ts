@@ -11,13 +11,14 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { LucideAngularModule, Search, CheckCircle } from 'lucide-angular';
 import { AdminService } from '../services/admin.service';
 import type { AdminUserOverview } from '../models/admin.model';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   standalone: true,
   selector: 'pf-admin-compensation',
   templateUrl: './admin-compensation.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, LucideAngularModule, SlicePipe],
+  imports: [ReactiveFormsModule, LucideAngularModule, SlicePipe, ButtonComponent],
 })
 export class AdminCompensationPage implements OnInit {
   protected readonly adminService = inject(AdminService);

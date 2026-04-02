@@ -603,6 +603,144 @@ export class GeneratorStateService {
     this.applyProfileDefaults();
   }
 
+  /**
+   * Pre-fills the wizard from a saved config_snapshot (used by History → Edit).
+   * Resets to defaults first, then applies every field present in the snapshot.
+   * Navigates to step 1 so the user can review and modify before regenerating.
+   */
+  loadFromConfig(snapshot: Record<string, unknown>): void {
+    // Start from a clean state
+    this.reset();
+
+    // Helper — safely read a string field
+    const str = (key: string): string | undefined => {
+      const v = snapshot[key];
+      return typeof v === 'string' ? v : undefined;
+    };
+    const bool = (key: string): boolean | undefined => {
+      const v = snapshot[key];
+      return typeof v === 'boolean' ? v : undefined;
+    };
+
+    // ── Step 1 ────────────────────────────────────────────────────────────────
+    const projectName = str('projectName') ?? str('mfeName');
+    if (projectName) this._projectName.set(projectName);
+
+    const repositoryName = str('repositoryName');
+    if (repositoryName) this._repositoryName.set(repositoryName);
+
+    const nodeVersion = str('nodeVersion');
+    if (nodeVersion === '18.x' || nodeVersion === '20.x' || nodeVersion === '22.x') {
+      this._nodeVersion.set(nodeVersion);
+    }
+
+    const distFolder = str('distFolder');
+    if (distFolder) this._distFolder.set(distFolder);
+
+    const installFlags = str('installFlags');
+    if (installFlags) this._installFlags.set(installFlags);
+
+    const hasBrowserSubfolder = bool('hasBrowserSubfolder');
+    if (hasBrowserSubfolder !== undefined) this._hasBrowserSubfolder.set(hasBrowserSubfolder);
+
+    const qaBranch = str('qaBranch');
+    if (qaBranch) this._qaBranch.set(qaBranch);
+
+    const productionBranch = str('productionBranch');
+    if (productionBranch) this._productionBranch.set(productionBranch);
+
+    const adoOrganization = str('adoOrganization');
+    if (adoOrganization) this._adoOrganization.set(adoOrganization);
+
+    const adoProjectName = str('adoProjectName');
+    if (adoProjectName) this._adoProjectName.set(adoProjectName);
+
+    const serviceConnectionId = str('serviceConnectionId');
+    if (serviceConnectionId) this._serviceConnectionId.set(serviceConnectionId);
+
+    const platform = str('platform');
+    if (platform === 'azure-devops' || platform === 'github-actions') {
+      this._platform.set(platform);
+    }
+
+    const githubOwner = str('githubOwner');
+    if (githubOwner) this._githubOwner.set(githubOwner);
+
+    const githubRepo = str('githubRepo');
+    if (githubRepo) this._githubRepo.set(githubRepo);
+
+    // ── Step 2 ────────────────────────────────────────────────────────────────
+    if (Array.isArray(snapshot['markets'])) {
+      this._markets.set(snapshot['markets'] as Market[]);
+      this._isMultiMarket.set((snapshot['markets'] as Market[]).length > 1);
+    }
+
+    if (Array.isArray(snapshot['environments'])) {
+      this._environments.set(snapshot['environments'] as EnvironmentType[]);
+    }
+
+    // ── Step 3 ────────────────────────────────────────────────────────────────
+    if (Array.isArray(snapshot['languages'])) {
+      this._languages.set(snapshot['languages'] as Language[]);
+      const isMultiLang = (snapshot['languages'] as Language[]).length > 1;
+      this._isMultiLanguage.set(isMultiLang);
+      this._isMultiLanguageBuild.set(isMultiLang);
+    }
+
+    if (snapshot['buildScripts'] && typeof snapshot['buildScripts'] === 'object') {
+      this._buildScripts.set(snapshot['buildScripts'] as BuildScriptMatrix);
+    }
+
+    if (snapshot['tokenReplacement'] && typeof snapshot['tokenReplacement'] === 'object') {
+      this._tokenReplacement.set(snapshot['tokenReplacement'] as TokenReplacement);
+    }
+
+    if (snapshot['qualityGates'] && typeof snapshot['qualityGates'] === 'object') {
+      const qg = snapshot['qualityGates'] as QualityGates;
+      this._qualityGates.set(qg);
+      this._hasQualityChecks.set(qg.enabled);
+    }
+
+    // ── Step 4 ────────────────────────────────────────────────────────────────
+    const deployTarget = str('deployTarget');
+    if (deployTarget) this._deployTarget.set(deployTarget as DeployTarget);
+
+    if (snapshot['storageAccounts'] && typeof snapshot['storageAccounts'] === 'object') {
+      this._storageAccounts.set(snapshot['storageAccounts'] as StorageAccountConfig);
+    }
+
+    if (snapshot['swaTokens'] && typeof snapshot['swaTokens'] === 'object') {
+      this._swaTokens.set(snapshot['swaTokens'] as StaticWebAppConfig);
+    }
+
+    if (snapshot['appServiceNames'] && typeof snapshot['appServiceNames'] === 'object') {
+      this._appServiceNames.set(snapshot['appServiceNames'] as AppServiceConfig);
+    }
+
+    const ftpRemotePath = str('ftpRemotePath');
+    if (ftpRemotePath) this._ftpRemotePath.set(ftpRemotePath);
+
+    const preserveFiles = bool('preserveFiles');
+    if (preserveFiles !== undefined) this._preserveFiles.set(preserveFiles);
+
+    const preserveSourceContainer = str('preserveSourceContainer');
+    if (preserveSourceContainer) this._preserveSourceContainer.set(preserveSourceContainer);
+
+    const preserveDestinationFolder = str('preserveDestinationFolder');
+    if (preserveDestinationFolder) this._preserveDestinationFolder.set(preserveDestinationFolder);
+
+    const preserveDestinationContainer = str('preserveDestinationContainer');
+    if (preserveDestinationContainer) this._preserveDestinationContainer.set(preserveDestinationContainer);
+
+    // ── Step 5 ────────────────────────────────────────────────────────────────
+    if (Array.isArray(snapshot['outputFormats'])) {
+      this._outputFormats.set(snapshot['outputFormats'] as OutputFormat[]);
+    }
+
+    // Reset to step 1 so user reviews from start
+    this._currentStep.set(1);
+  }
+
   /** Pre-fills wizard fields from the user's saved profile defaults. */
   applyProfileDefaults(): void {
     const p = this.profileService.profile();

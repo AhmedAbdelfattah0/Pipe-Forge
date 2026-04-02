@@ -8,13 +8,14 @@ import { SlicePipe } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { LucideAngularModule, Copy, Pause, Play } from 'lucide-angular';
 import { AdminService } from '../services/admin.service';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   standalone: true,
   selector: 'pf-admin-coupons',
   templateUrl: './admin-coupons.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, LucideAngularModule, SlicePipe],
+  imports: [ReactiveFormsModule, LucideAngularModule, SlicePipe, ButtonComponent],
 })
 export class AdminCouponsPage implements OnInit {
   protected readonly adminService = inject(AdminService);

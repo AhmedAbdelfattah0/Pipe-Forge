@@ -82,13 +82,9 @@
                 <div class="flex items-center gap-2">
                   <!-- Change plan dropdown -->
                   <div class="relative">
-                    <button
-                      type="button"
-                      class="rounded border border-border bg-card px-2.5 py-1 text-xs font-medium text-text-dark hover:bg-surface"
-                      (click)="toggleChangePlan(user.userId)"
-                    >
+                    <pf-button variant="ghost" size="sm" (clicked)="toggleChangePlan(user.userId)">
                       Change Plan
-                    </button>
+                    </pf-button>
                     @if (activeChangePlanUserId() === user.userId) {
                       <div class="absolute left-0 top-full z-10 mt-1 w-36 rounded-lg border border-border bg-card shadow-md">
                         @for (plan of plans; track plan) {
@@ -106,13 +102,9 @@
                   </div>
 
                   <!-- Compensate button -->
-                  <button
-                    type="button"
-                    class="rounded border border-border bg-card px-2.5 py-1 text-xs font-medium text-text-dark hover:bg-surface"
-                    (click)="toggleCompensate(user.userId)"
-                  >
+                  <pf-button variant="ghost" size="sm" (clicked)="toggleCompensate(user.userId)">
                     Compensate
-                  </button>
+                  </pf-button>
                 </div>
 
                 <!-- Compensation inline form -->
@@ -138,20 +130,12 @@
                       class="w-full rounded border border-border bg-card px-2 py-1.5 text-xs focus:outline-none resize-none"
                     ></textarea>
                     <div class="flex gap-2">
-                      <button
-                        type="button"
-                        class="rounded bg-primary px-3 py-1 text-xs font-medium text-white"
-                        (click)="submitCompensation(user)"
-                      >
+                      <pf-button variant="primary" size="sm" (clicked)="submitCompensation(user)">
                         Confirm
-                      </button>
-                      <button
-                        type="button"
-                        class="rounded border border-border px-3 py-1 text-xs font-medium text-text-dark"
-                        (click)="toggleCompensate(user.userId)"
-                      >
+                      </pf-button>
+                      <pf-button variant="ghost" size="sm" (clicked)="toggleCompensate(user.userId)">
                         Cancel
-                      </button>
+                      </pf-button>
                     </div>
                   </div>
                 }
@@ -170,22 +154,12 @@
         Page {{ currentPage() }} of {{ totalPages }}
       </span>
       <div class="flex gap-2">
-        <button
-          type="button"
-          [disabled]="currentPage() === 1"
-          class="rounded border border-border px-3 py-1.5 text-sm disabled:opacity-40"
-          (click)="goToPage(currentPage() - 1)"
-        >
+        <pf-button variant="ghost" size="sm" [disabled]="currentPage() === 1" (clicked)="goToPage(currentPage() - 1)">
           Previous
-        </button>
-        <button
-          type="button"
-          [disabled]="currentPage() === totalPages"
-          class="rounded border border-border px-3 py-1.5 text-sm disabled:opacity-40"
-          (click)="goToPage(currentPage() + 1)"
-        >
+        </pf-button>
+        <pf-button variant="ghost" size="sm" [disabled]="currentPage() === totalPages" (clicked)="goToPage(currentPage() + 1)">
           Next
-        </button>
+        </pf-button>
       </div>
     </div>
   }
