@@ -18,6 +18,7 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
   standalone: true,
   selector: 'pf-admin-pricing',
   templateUrl: './admin-pricing.page.html',
+  styleUrl: './admin-pricing.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, LucideAngularModule],
 })
@@ -158,6 +159,14 @@ export class AdminPricingPage implements OnInit {
     } catch {
       this.toastService.show('Failed to remove feature', 'error');
     }
+  }
+
+  protected isActivePlan(plan: Plan): boolean {
+    const edited = this.edits()[plan.id]?.['isActive'];
+    if (edited !== undefined) {
+      return edited === 'true';
+    }
+    return plan.isActive;
   }
 
   protected getNewFeatureText(planId: string): string {

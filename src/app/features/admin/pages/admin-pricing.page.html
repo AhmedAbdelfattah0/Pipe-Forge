@@ -54,14 +54,19 @@
             </div>
 
             <!-- Active toggle — always visible, even when inactive -->
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#64748B;cursor:pointer;flex-shrink:0;">
+            <label class="plan-toggle">
               <input
                 type="checkbox"
-                [checked]="getEdit(plan.id, 'isActive', plan.isActive) === 'true' || (getEdit(plan.id, 'isActive', plan.isActive) === '' && plan.isActive)"
+                class="plan-toggle__input"
+                [checked]="isActivePlan(plan)"
                 (change)="setEdit(plan.id, 'isActive', $any($event.target).checked ? 'true' : 'false')"
-                style="border-radius:3px;"
               />
-              Active
+              <span class="plan-toggle__track">
+                <span class="plan-toggle__thumb"></span>
+              </span>
+              <span class="plan-toggle__label" [class.active]="isActivePlan(plan)">
+                {{ isActivePlan(plan) ? 'Active' : 'Inactive' }}
+              </span>
             </label>
           </div>
 
@@ -161,15 +166,13 @@
                   <!-- Change 6: Check icon bullet -->
                   <lucide-icon [img]="checkIcon" [size]="16" style="color:#3B82F6;flex-shrink:0;width:16px;height:16px;" />
                   <span style="font-size:15px;color:#374151;line-height:1.5;flex:1;">{{ feature.featureText }}</span>
-                  <!-- Change 7: Delete button 36x36 -->
+                  <!-- Delete button 36x36 -->
                   <button
                     type="button"
-                    style="min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center;border-radius:6px;border:none;background:transparent;cursor:pointer;flex-shrink:0;color:#CBD5E1;transition:background 0.15s,color 0.15s;"
+                    class="feature-delete-btn"
                     (click)="removeFeature(plan.id, feature)"
-                    (mouseenter)="$any($event.currentTarget).style.background='#FEE2E2';$any($event.currentTarget).style.color='#DC2626'"
-                    (mouseleave)="$any($event.currentTarget).style.background='transparent';$any($event.currentTarget).style.color='#CBD5E1'"
                   >
-                    <lucide-icon [img]="trashIcon" style="width:16px;height:16px;" />
+                    <lucide-icon [img]="trashIcon" [size]="16" />
                   </button>
                 </li>
               }
