@@ -5,12 +5,12 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { LucideAngularModule, Save, Plus, Trash2 } from 'lucide-angular';
-import { PlansService } from '../../billing/services/plans.service';
-import type { Plan, PlanFeature } from '../../billing/models/plan.model';
+import { LucideAngularModule, Save, Plus, Trash2, Info, Check } from 'lucide-angular';
+import type { Plan, PlanFeature, PlansApiResponse } from '../../billing/models/plan.model';
+import { mapApiItemToPlan } from '../../billing/models/plan.model';
 import { environment } from '../../../../environments/environment';
 import { ToastService } from '../../../shared/components/toast/toast.service';
 
@@ -24,13 +24,16 @@ import { ToastService } from '../../../shared/components/toast/toast.service';
 export class AdminPricingPage implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly toastService = inject(ToastService);
-  protected readonly plansService = inject(PlansService);
 
   protected readonly saveIcon = Save;
   protected readonly plusIcon = Plus;
   protected readonly trashIcon = Trash2;
+  protected readonly infoIcon = Info;
+  protected readonly checkIcon = Check;
 
   protected readonly savingPlanId = signal<string | null>(null);
+  protected readonly adminPlans = signal<Plan[]>([]);
+  protected readonly adminPlansLoading = signal<boolean>(false);
 
   // Tracks editable field values per plan id: { [planId]: { field: value } }
   protected readonly edits = signal<Record<string, Record<string, string>>>({});
@@ -39,7 +42,21 @@ export class AdminPricingPage implements OnInit {
   protected readonly newFeatureText = signal<Record<string, string>>({});
 
   ngOnInit(): void {
-    this.plansService.reloadPlans();
+    void this.loadAdminPlans();
+  }
+
+  private async loadAdminPlans(): Promise<void> {
+    this.adminPlansLoading.set(true);
+    try {
+      const response = await firstValueFrom(
+        this.http.get<PlansApiResponse>(`${environment.apiUrl}/admin/plans`),
+      );
+      this.adminPlans.set(response.plans.map(mapApiItemToPlan));
+    } catch {
+      this.toastService.show('Failed to load plans', 'error');
+    } finally {
+      this.adminPlansLoading.set(false);
+    }
   }
 
   protected getEdit(planId: string, field: string, fallback: string | number | boolean | null): string {
@@ -51,6 +68,27 @@ export class AdminPricingPage implements OnInit {
       ...prev,
       [planId]: { ...(prev[planId] ?? {}), [field]: value },
     }));
+  }
+
+  protected isDirty(planId: string): boolean {
+    return Object.keys(this.edits()[planId] ?? {}).length > 0;
+  }
+
+  protected getPriceDisplay(planId: string, plan: Plan): string {
+    const raw = this.edits()[planId]?.['priceMonthly'];
+    if (raw !== undefined) {
+      const num = parseFloat(raw);
+      return isNaN(num) ? '0' : String(num);
+    }
+    return String(plan.priceMonthly);
+  }
+
+  protected isInactivePlan(plan: Plan): boolean {
+    const editedActive = this.edits()[plan.id]?.['isActive'];
+    if (editedActive !== undefined) {
+      return editedActive !== 'true';
+    }
+    return !plan.isActive;
   }
 
   protected async savePlan(plan: Plan): Promise<void> {
@@ -81,7 +119,7 @@ export class AdminPricingPage implements OnInit {
         delete updated[plan.id];
         return updated;
       });
-      await this.plansService.reloadPlans();
+      await this.loadAdminPlans();
     } catch {
       this.toastService.show('Failed to save plan', 'error');
     } finally {
@@ -102,7 +140,7 @@ export class AdminPricingPage implements OnInit {
       );
       this.newFeatureText.update(prev => ({ ...prev, [plan.id]: '' }));
       this.toastService.show('Feature added', 'success');
-      await this.plansService.reloadPlans();
+      await this.loadAdminPlans();
     } catch {
       this.toastService.show('Failed to add feature', 'error');
     }
@@ -116,7 +154,7 @@ export class AdminPricingPage implements OnInit {
         ),
       );
       this.toastService.show('Feature removed', 'success');
-      await this.plansService.reloadPlans();
+      await this.loadAdminPlans();
     } catch {
       this.toastService.show('Failed to remove feature', 'error');
     }
