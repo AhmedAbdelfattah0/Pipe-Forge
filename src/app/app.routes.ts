@@ -134,6 +134,13 @@ export const routes: Routes = [
             m => m.AdminSystemPage,
           ),
       },
+      {
+        path: 'errors',
+        loadComponent: () =>
+          import('./features/admin/pages/admin-errors/admin-errors.page').then(
+            m => m.AdminErrorsPage,
+          ),
+      },
     ],
   },
 

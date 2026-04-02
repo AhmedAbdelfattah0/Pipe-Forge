@@ -20,8 +20,10 @@ import {
   Menu,
   X,
   ShieldCheck,
+  AlertCircle,
 } from 'lucide-angular';
 import { AdminService } from '../../../features/admin/services/admin.service';
+import { ErrorLogService } from '../../../features/admin/services/error-log.service';
 
 interface AdminNavItem {
   label: string;
@@ -40,6 +42,7 @@ interface AdminNavItem {
 })
 export class AdminLayoutComponent implements OnInit {
   protected readonly adminService = inject(AdminService);
+  protected readonly errorLogService = inject(ErrorLogService);
 
   protected readonly layoutDashboardIcon = LayoutDashboard;
   protected readonly usersIcon = Users;
@@ -53,6 +56,7 @@ export class AdminLayoutComponent implements OnInit {
   protected readonly menuIcon = Menu;
   protected readonly xIcon = X;
   protected readonly shieldCheckIcon = ShieldCheck;
+  protected readonly alertCircleIcon = AlertCircle;
 
   protected readonly sidebarOpen = signal(false);
 
@@ -63,12 +67,14 @@ export class AdminLayoutComponent implements OnInit {
     { label: 'Compensation', route: '/admin/compensation',icon: HandCoins },
     { label: 'Coupons',      route: '/admin/coupons',     icon: Tag },
     { label: 'Feedback',     route: '/admin/feedback',    icon: MessageSquare, showBadge: true },
+    { label: 'Errors',       route: '/admin/errors',      icon: AlertCircle, showBadge: true },
     { label: 'Generations',  route: '/admin/generations', icon: BarChart2 },
     { label: 'System',       route: '/admin/system',      icon: Settings },
   ];
 
   ngOnInit(): void {
     this.adminService.loadMetrics();
+    this.errorLogService.loadStats();
   }
 
   protected toggleSidebar(): void {
@@ -81,5 +87,9 @@ export class AdminLayoutComponent implements OnInit {
 
   protected get pendingFeedback(): number {
     return this.adminService.metrics()?.pendingFeedback ?? 0;
+  }
+
+  protected get unresolvedErrors(): number {
+    return this.errorLogService.stats()?.unresolved ?? 0;
   }
 }

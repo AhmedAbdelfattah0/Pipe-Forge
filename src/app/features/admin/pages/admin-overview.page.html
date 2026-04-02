@@ -57,6 +57,34 @@
         </p>
       </div>
     </div>
+
+    <!-- Errors card -->
+    @if (errorLogService.stats()) {
+      <a
+        routerLink="/admin/errors"
+        class="flex items-center justify-between rounded-xl border p-5 transition-colors hover:bg-surface"
+        [class.border-red-300]="(errorLogService.stats()!.unresolved) > 0"
+        [class.bg-red-50]="(errorLogService.stats()!.unresolved) > 0"
+        [class.border-border]="(errorLogService.stats()!.unresolved) === 0"
+        [class.bg-card]="(errorLogService.stats()!.unresolved) === 0"
+      >
+        <div class="flex items-center gap-3">
+          <lucide-icon [img]="alertCircleIcon" [size]="20"
+            [class.text-red-600]="(errorLogService.stats()!.unresolved) > 0"
+            [class.text-text-dark/40]="(errorLogService.stats()!.unresolved) === 0"
+          />
+          <div>
+            <p class="text-sm font-semibold"
+               [class.text-red-700]="(errorLogService.stats()!.unresolved) > 0"
+               [class.text-text-dark]="(errorLogService.stats()!.unresolved) === 0">
+              {{ errorLogService.stats()!.unresolved }} Unresolved Error{{ errorLogService.stats()!.unresolved === 1 ? '' : 's' }}
+            </p>
+            <p class="text-xs text-text-dark/50">{{ errorLogService.stats()!.total }} total &bull; {{ errorLogService.stats()!.last24h }} in last 24h</p>
+          </div>
+        </div>
+        <span class="text-xs font-medium text-primary">View Errors &rarr;</span>
+      </a>
+    }
   }
 
   <!-- Quick actions -->

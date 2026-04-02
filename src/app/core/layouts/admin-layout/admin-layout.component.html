@@ -37,9 +37,14 @@
         >
           <lucide-icon [img]="item.icon" [size]="17" />
           <span>{{ item.label }}</span>
-          @if (item.showBadge && pendingFeedback > 0) {
+          @if (item.showBadge && item.route === '/admin/feedback' && pendingFeedback > 0) {
             <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
               {{ pendingFeedback > 99 ? '99+' : pendingFeedback }}
+            </span>
+          }
+          @if (item.showBadge && item.route === '/admin/errors' && unresolvedErrors > 0) {
+            <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+              {{ unresolvedErrors > 99 ? '99+' : unresolvedErrors }}
             </span>
           }
         </a>

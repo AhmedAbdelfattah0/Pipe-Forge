@@ -1,0 +1,342 @@
+<div class="space-y-5">
+
+  <!-- Page header -->
+  <div>
+    <h1 class="text-2xl font-bold text-text-dark">Error Logs</h1>
+    <p class="mt-1 text-sm text-text-dark/60">Every failed API request — payload, error, and what the user saw.</p>
+  </div>
+
+  <!-- Stats bar -->
+  @if (errorLogService.stats()) {
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+
+      <div class="rounded-xl border border-border bg-card p-4">
+        <p class="text-xs font-medium text-text-dark/50 uppercase tracking-wide">Total</p>
+        <p class="mt-1 text-2xl font-bold text-text-dark">{{ errorLogService.stats()!.total }}</p>
+      </div>
+
+      <div
+        class="rounded-xl border p-4"
+        [class.border-red-300]="unresolvedCount() > 0"
+        [class.bg-red-50]="unresolvedCount() > 0"
+        [class.border-border]="unresolvedCount() === 0"
+        [class.bg-card]="unresolvedCount() === 0"
+      >
+        <p class="text-xs font-medium uppercase tracking-wide"
+           [class.text-red-600]="unresolvedCount() > 0"
+           [class.text-text-dark/50]="unresolvedCount() === 0">Unresolved</p>
+        <p class="mt-1 text-2xl font-bold"
+           [class.text-red-600]="unresolvedCount() > 0"
+           [class.text-text-dark]="unresolvedCount() === 0">{{ unresolvedCount() }}</p>
+      </div>
+
+      <div class="rounded-xl border border-border bg-card p-4">
+        <p class="text-xs font-medium text-text-dark/50 uppercase tracking-wide">Last 24h</p>
+        <p class="mt-1 text-2xl font-bold text-text-dark">{{ errorLogService.stats()!.last24h }}</p>
+      </div>
+
+      <div class="rounded-xl border border-border bg-card p-4">
+        <p class="text-xs font-medium text-text-dark/50 uppercase tracking-wide">Resolved</p>
+        <p class="mt-1 text-2xl font-bold text-success">
+          {{ errorLogService.stats()!.total - unresolvedCount() }}
+        </p>
+      </div>
+
+    </div>
+  }
+
+  <!-- Filters -->
+  <div class="flex flex-wrap items-center gap-3">
+
+    <select
+      class="rounded-lg border border-border bg-card px-3 py-2 text-sm text-text-dark focus:outline-none focus:ring-2 focus:ring-primary/30"
+      [value]="filterErrorType()"
+      (change)="onFilterErrorTypeChange($any($event.target).value)"
+    >
+      <option value="">All Error Types</option>
+      @for (type of errorTypes; track type) {
+        <option [value]="type">{{ type }}</option>
+      }
+    </select>
+
+    <select
+      class="rounded-lg border border-border bg-card px-3 py-2 text-sm text-text-dark focus:outline-none focus:ring-2 focus:ring-primary/30"
+      [value]="filterPlatform()"
+      (change)="onFilterPlatformChange($any($event.target).value)"
+    >
+      <option value="">All Platforms</option>
+      @for (p of platforms; track p) {
+        <option [value]="p">{{ p }}</option>
+      }
+    </select>
+
+    <label class="flex cursor-pointer items-center gap-2 text-sm text-text-dark">
+      <input
+        type="checkbox"
+        class="h-4 w-4 rounded border-border accent-primary"
+        [checked]="filterUnresolvedOnly()"
+        (change)="onUnresolvedOnlyChange($any($event.target).checked)"
+      />
+      Unresolved only
+    </label>
+
+    <button
+      type="button"
+      class="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-text-dark transition-colors hover:bg-surface"
+      (click)="load()"
+    >
+      <lucide-icon [img]="refreshIcon" [size]="14" />
+      Refresh
+    </button>
+
+  </div>
+
+  <!-- Table -->
+  @if (errorLogService.isLoading()) {
+    <div class="flex items-center justify-center py-12">
+      <div class="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+    </div>
+  } @else if (errorLogService.errors().length === 0) {
+    <div class="rounded-xl border border-border bg-card py-12 text-center text-sm text-text-dark/50">
+      No error logs found.
+    </div>
+  } @else {
+    <div class="overflow-x-auto rounded-xl border border-border bg-card">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border bg-surface text-left text-xs font-semibold uppercase tracking-wide text-text-dark/50">
+            <th class="px-4 py-3">Time</th>
+            <th class="px-4 py-3">User</th>
+            <th class="px-4 py-3">Endpoint</th>
+            <th class="px-4 py-3">Error Type</th>
+            <th class="px-4 py-3">User Saw</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (error of errorLogService.errors(); track error.id) {
+            <!-- Main row -->
+            <tr
+              class="cursor-pointer border-b border-border transition-colors hover:bg-surface"
+              [class.bg-surface]="expandedRowId() === error.id"
+              (click)="toggleRow(error.id)"
+            >
+              <td class="px-4 py-3 text-text-dark/60 whitespace-nowrap">
+                {{ error.createdAt | date:'MMM d, HH:mm' }}
+              </td>
+              <td class="px-4 py-3 max-w-32 truncate text-text-dark/70">
+                {{ error.userEmail ?? '—' }}
+              </td>
+              <td class="px-4 py-3 font-mono text-xs text-text-dark max-w-40 truncate">
+                {{ error.endpoint }}
+              </td>
+              <td class="px-4 py-3">
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold" [class]="errorTypeBadgeClass(error.errorType)">
+                  {{ error.errorType }}
+                </span>
+              </td>
+              <td class="px-4 py-3 max-w-48 truncate text-text-dark/70">
+                {{ error.userFacingError ?? '—' }}
+              </td>
+              <td class="px-4 py-3">
+                @if (error.resolved) {
+                  <span class="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
+                    <lucide-icon [img]="checkCircleIcon" [size]="11" />
+                    Resolved
+                  </span>
+                } @else {
+                  <span class="inline-block rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600">
+                    Open
+                  </span>
+                }
+              </td>
+              <td class="px-4 py-3">
+                <lucide-icon
+                  [img]="expandedRowId() === error.id ? chevronUpIcon : chevronDownIcon"
+                  [size]="15"
+                  class="text-text-dark/40"
+                />
+              </td>
+            </tr>
+
+            <!-- Expanded detail panel -->
+            @if (expandedRowId() === error.id) {
+              <tr>
+                <td colspan="7" class="border-b border-border bg-surface px-4 pb-5 pt-4">
+                  <div class="rounded-xl border border-border bg-card">
+
+                    <!-- Tabs -->
+                    <div class="flex gap-0 border-b border-border">
+                      @for (tab of [
+                        { id: 'request', label: 'Request' },
+                        { id: 'error',   label: 'Error'   },
+                        { id: 'user',    label: 'User Saw' }
+                      ]; track tab.id) {
+                        <button
+                          type="button"
+                          class="px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px"
+                          [class.border-primary]="activeTab() === tab.id"
+                          [class.text-primary]="activeTab() === tab.id"
+                          [class.border-transparent]="activeTab() !== tab.id"
+                          [class.text-text-dark/60]="activeTab() !== tab.id"
+                          (click)="setTab($any(tab.id)); $event.stopPropagation()"
+                        >
+                          {{ tab.label }}
+                        </button>
+                      }
+                    </div>
+
+                    <!-- Tab content -->
+                    <div class="p-4">
+
+                      <!-- Tab 1: Request -->
+                      @if (activeTab() === 'request') {
+                        <div class="space-y-3">
+                          <div class="flex items-center justify-between">
+                            <p class="text-xs font-semibold uppercase tracking-wide text-text-dark/50">
+                              Full Request Payload
+                            </p>
+                            <button
+                              type="button"
+                              class="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-dark transition-colors hover:bg-surface"
+                              (click)="copyConfig(error); $event.stopPropagation()"
+                            >
+                              @if (copiedId() === error.id) {
+                                <lucide-icon [img]="checkIcon" [size]="13" class="text-success" />
+                                Copied
+                              } @else {
+                                <lucide-icon [img]="copyIcon" [size]="13" />
+                                Copy Config
+                              }
+                            </button>
+                          </div>
+                          <pre class="overflow-x-auto rounded-lg bg-surface p-4 text-xs text-text-dark/80 font-mono whitespace-pre-wrap break-all">{{ formatJson(error.requestPayload) }}</pre>
+                          @if (error.platform || error.deployTarget || error.marketsCount !== null) {
+                            <div class="flex flex-wrap gap-3 text-xs text-text-dark/60">
+                              @if (error.platform) {
+                                <span><span class="font-medium">Platform:</span> {{ error.platform }}</span>
+                              }
+                              @if (error.deployTarget) {
+                                <span><span class="font-medium">Deploy Target:</span> {{ error.deployTarget }}</span>
+                              }
+                              @if (error.marketsCount !== null) {
+                                <span><span class="font-medium">Markets:</span> {{ error.marketsCount }}</span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      <!-- Tab 2: Error -->
+                      @if (activeTab() === 'error') {
+                        <div class="space-y-4">
+                          <div class="flex flex-wrap items-center gap-3">
+                            <span class="rounded-full px-2 py-0.5 text-xs font-semibold" [class]="errorTypeBadgeClass(error.errorType)">
+                              {{ error.errorType }}
+                            </span>
+                            @if (error.httpStatus) {
+                              <span class="rounded-full bg-surface px-2 py-0.5 text-xs font-mono font-semibold text-text-dark/70">
+                                HTTP {{ error.httpStatus }}
+                              </span>
+                            }
+                          </div>
+                          <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-text-dark/50">Error Message</p>
+                            <p class="mt-1 text-sm text-text-dark">{{ error.errorMessage }}</p>
+                          </div>
+                          @if (error.stackTrace) {
+                            <div>
+                              <button
+                                type="button"
+                                class="flex items-center gap-1.5 text-xs font-medium text-primary"
+                                (click)="toggleStack(); $event.stopPropagation()"
+                              >
+                                <lucide-icon [img]="stackExpanded() ? chevronUpIcon : chevronDownIcon" [size]="13" />
+                                {{ stackExpanded() ? 'Hide' : 'Show' }} Stack Trace
+                              </button>
+                              @if (stackExpanded()) {
+                                <pre class="mt-2 overflow-x-auto rounded-lg bg-surface p-4 text-xs text-text-dark/70 font-mono whitespace-pre-wrap break-all">{{ error.stackTrace }}</pre>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      <!-- Tab 3: User Saw -->
+                      @if (activeTab() === 'user') {
+                        <div class="space-y-3">
+                          <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-text-dark/50">Message Shown to User</p>
+                            <p class="mt-2 rounded-lg border border-border bg-red-50 p-3 text-sm text-red-700">
+                              {{ error.userFacingError ?? 'No user-facing message recorded.' }}
+                            </p>
+                          </div>
+                          <div class="flex flex-wrap gap-4 text-xs text-text-dark/60">
+                            <span><span class="font-medium">When:</span> {{ error.createdAt | date:'medium' }}</span>
+                            @if (error.userEmail) {
+                              <span><span class="font-medium">User:</span> {{ error.userEmail }}</span>
+                            }
+                          </div>
+                        </div>
+                      }
+
+                    </div>
+
+                    <!-- Resolution footer -->
+                    @if (!error.resolved) {
+                      <div class="border-t border-border px-4 py-3" (click)="$event.stopPropagation()">
+                        @if (resolvingId() === error.id) {
+                          <div class="flex flex-wrap items-center gap-2">
+                            <input
+                              type="text"
+                              class="flex-1 rounded-lg border border-border px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                              placeholder="Resolution note (optional)"
+                              [value]="resolveNote()"
+                              (input)="resolveNote.set($any($event.target).value)"
+                            />
+                            <button
+                              type="button"
+                              class="rounded-lg bg-success px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
+                              (click)="confirmResolve(error.id)"
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              type="button"
+                              class="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-dark hover:bg-surface"
+                              (click)="cancelResolve()"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        } @else {
+                          <button
+                            type="button"
+                            class="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-dark transition-colors hover:bg-surface"
+                            (click)="startResolve(error.id)"
+                          >
+                            <lucide-icon [img]="checkCircleIcon" [size]="13" />
+                            Mark Resolved
+                          </button>
+                        }
+                      </div>
+                    }
+                    @if (error.resolved && error.resolvedNote) {
+                      <div class="border-t border-border px-4 py-3 text-xs text-text-dark/50">
+                        <span class="font-medium">Resolution note:</span> {{ error.resolvedNote }}
+                      </div>
+                    }
+
+                  </div>
+                </td>
+              </tr>
+            }
+
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
