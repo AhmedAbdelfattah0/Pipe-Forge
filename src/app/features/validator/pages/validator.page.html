@@ -14,6 +14,16 @@
     </p>
   </div>
 
+  <!-- ── Validator limit warning (Free plan — 3 files/month) ──────────────── -->
+  @if (validatorLimitWarning()) {
+    <pf-feature-gate
+      feature="validator"
+      featureName="Unlimited Validator"
+      [limitWarning]="true"
+      [limitWarningMessage]="validatorLimitWarning()"
+    />
+  }
+
   @if (!validator.result() && !validator.isAnalysing()) {
 
     <!-- ── Upload Area ──────────────────────────────────────────────────────── -->

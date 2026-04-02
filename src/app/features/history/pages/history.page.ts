@@ -6,8 +6,10 @@ import { HistoryProject } from '../models/history.model';
 import { DeployTarget } from '../../generator/models/generator.model';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { FeatureGateComponent } from '../../../shared/components/feature-gate/feature-gate.component';
 import { DiagnoseService } from '../../diagnose/services/diagnose.service';
 import { DiagnosisPanelComponent } from '../../diagnose/components/diagnosis-panel/diagnosis-panel.component';
+import { PlanGateService } from '../../billing/services/plan-gate.service';
 
 @Component({
   standalone: true,
@@ -15,11 +17,12 @@ import { DiagnosisPanelComponent } from '../../diagnose/components/diagnosis-pan
   templateUrl: './history.page.html',
   styleUrl: './history.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, BadgeComponent, ButtonComponent, RouterLink, DiagnosisPanelComponent],
+  imports: [DatePipe, BadgeComponent, ButtonComponent, RouterLink, DiagnosisPanelComponent, FeatureGateComponent],
 })
 export class HistoryPage implements OnInit {
   protected readonly history = inject(HistoryService);
   protected readonly diagnose = inject(DiagnoseService);
+  protected readonly planGate = inject(PlanGateService);
   private readonly router = inject(Router);
 
   protected readonly skeletonItems = [1, 2, 3, 4];

@@ -6,6 +6,7 @@ import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.com
 import { FeedbackWidgetComponent } from '../../../shared/components/feedback-widget/feedback-widget.component';
 import { ProfileService } from '../../../features/profile/services/profile.service';
 import { AuthService } from '../../../features/auth/services/auth.service';
+import { PlanGateService } from '../../../features/billing/services/plan-gate.service';
 
 @Component({
   standalone: true,
@@ -19,6 +20,7 @@ export class AppLayoutComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly profileService = inject(ProfileService);
   private readonly authService = inject(AuthService);
+  private readonly planGate = inject(PlanGateService);
 
   protected readonly menuIcon = Menu;
   protected readonly xIcon = X;
@@ -27,6 +29,7 @@ export class AppLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.profileService.loadProfile();
+    this.planGate.loadGateData();
   }
 
   protected toggleSidebar(): void {

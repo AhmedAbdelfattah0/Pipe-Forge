@@ -4,12 +4,14 @@ import {
   computed,
   inject,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DeployTarget, ModernHostingConfig } from '../../models/generator.model';
 import { GeneratorStateService } from '../../services/generator-state.service';
 import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { ToggleInlineComponent } from '../../../../shared/components/toggle-inline/toggle-inline.component';
+import { PlanGateService } from '../../../billing/services/plan-gate.service';
 
 interface MarketEnvCombo {
   label: string;
@@ -22,10 +24,11 @@ interface MarketEnvCombo {
   templateUrl: './step-deploy-target.component.html',
   styleUrl: './step-deploy-target.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BadgeComponent, ButtonComponent, CardComponent, ToggleInlineComponent],
+  imports: [RouterLink, BadgeComponent, ButtonComponent, CardComponent, ToggleInlineComponent],
 })
 export class StepDeployTargetComponent {
   protected readonly state = inject(GeneratorStateService);
+  protected readonly planGate = inject(PlanGateService);
 
   // Display-only computed — market×env label/key pairs are a pure presentation concern.
   protected readonly marketEnvCombinations = computed<MarketEnvCombo[]>(() => {

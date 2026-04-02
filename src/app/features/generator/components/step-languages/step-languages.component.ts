@@ -14,6 +14,8 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { ToggleInlineComponent } from '../../../../shared/components/toggle-inline/toggle-inline.component';
+import { FeatureGateComponent } from '../../../../shared/components/feature-gate/feature-gate.component';
+import { PlanGateService } from '../../../billing/services/plan-gate.service';
 
 interface MatrixColumn {
   env: EnvironmentType;
@@ -28,11 +30,12 @@ interface MatrixColumn {
   templateUrl: './step-languages.component.html',
   styleUrl: './step-languages.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ButtonComponent, CardComponent, InputComponent, ToggleInlineComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, CardComponent, InputComponent, ToggleInlineComponent, FeatureGateComponent],
 })
 export class StepLanguagesComponent implements OnInit {
   protected readonly state = inject(GeneratorStateService);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly planGate = inject(PlanGateService);
 
   // Token format options — defined here to avoid Angular template parser issues with ${...} literals.
   protected readonly tokenFormatOptions: { value: '#{TOKEN}#' | '__TOKEN__' | '${TOKEN}'; label: string; description: string }[] = [

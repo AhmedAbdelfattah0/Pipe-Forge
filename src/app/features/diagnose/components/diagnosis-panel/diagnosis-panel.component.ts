@@ -27,6 +27,8 @@ import {
 } from 'lucide-angular';
 import { DiagnoseService } from '../../services/diagnose.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { FeatureGateComponent } from '../../../../shared/components/feature-gate/feature-gate.component';
+import { PlanGateService } from '../../../billing/services/plan-gate.service';
 
 @Component({
   standalone: true,
@@ -34,13 +36,14 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
   templateUrl: './diagnosis-panel.component.html',
   styleUrl: './diagnosis-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule, ButtonComponent],
+  imports: [LucideAngularModule, ButtonComponent, FeatureGateComponent],
 })
 export class DiagnosisPanelComponent implements OnInit {
   /** The generation (project) ID this panel was opened for. */
   @Input({ required: true }) generationId!: string;
 
   protected readonly diagnose = inject(DiagnoseService);
+  protected readonly planGate = inject(PlanGateService);
 
   // Lucide icons
   protected readonly xIcon = X;

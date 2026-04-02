@@ -235,6 +235,17 @@
         }
 
       </div>
+
+      <!-- ── History limit upgrade prompt (Free plan: 1 item limit) ─────────── -->
+      @if (planGate.getHistoryLimit() !== null && history.projects().length >= (planGate.getHistoryLimit() ?? 1)) {
+        <pf-feature-gate
+          feature="history"
+          featureName="Unlimited History"
+          [limitWarning]="true"
+          [limitWarningMessage]="'You\'ve reached your ' + planGate.getHistoryLimit() + '-project history limit. Upgrade for unlimited history.'"
+        />
+      }
+
     } @else {
 
       <!-- Empty state -->

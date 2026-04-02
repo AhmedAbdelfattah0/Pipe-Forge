@@ -20,6 +20,8 @@ import { LucideAngularModule, ShieldCheck, Upload, X, CheckCircle, AlertTriangle
 import { ValidatorService } from '../services/validator.service';
 import { IssueSeverity, ValidationIssue } from '../models/validator.model';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { FeatureGateComponent } from '../../../shared/components/feature-gate/feature-gate.component';
+import { PlanGateService } from '../../billing/services/plan-gate.service';
 
 /** Cached file content for the fix download — held in the component because
  *  it is only needed in this view and is ephemeral per upload session. */
@@ -29,10 +31,14 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
   templateUrl: './validator.page.html',
   styleUrl: './validator.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule, ButtonComponent],
+  imports: [LucideAngularModule, ButtonComponent, FeatureGateComponent],
 })
 export class ValidatorPage {
   protected readonly validator = inject(ValidatorService);
+  protected readonly planGate = inject(PlanGateService);
+
+  /** Session-local validation count for the limit warning. */
+  protected readonly sessionValidationCount = signal<number>(0);
 
   // Lucide icons
   protected readonly shieldCheckIcon = ShieldCheck;
@@ -54,6 +60,20 @@ export class ValidatorPage {
   protected readonly hasAutoFixable = computed(() =>
     this.validator.result()?.issues.some(i => i.autoFixable) ?? false
   );
+
+  /** Limit warning message for the validator (shown after 3 validations on Free plan). */
+  protected readonly validatorLimitWarning = computed<string>(() => {
+    const limit = this.planGate.getValidatorMonthlyLimit();
+    if (limit === null) return '';
+    const used = this.sessionValidationCount();
+    if (used >= limit) {
+      return `You've used ${used} of ${limit} file validations for this period. Upgrade for unlimited validations.`;
+    }
+    if (used >= limit - 1) {
+      return `${limit - used} validation remaining this period. Upgrade for unlimited.`;
+    }
+    return '';
+  });
 
   /** Group issues by severity for the results panel. */
   protected readonly issuesBySeverity = computed(() => {
@@ -135,6 +155,7 @@ export class ValidatorPage {
     // Cache raw content for the fix endpoint.
     this._fileContent = await file.text();
     await this.validator.analyseFile(file);
+    this.sessionValidationCount.update(n => n + 1);
   }
 
   protected severityLabel(s: IssueSeverity): string {

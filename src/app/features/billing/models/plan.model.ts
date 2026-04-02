@@ -32,6 +32,12 @@ export interface Plan {
   annualMonthlyEquivalent: number;
   maxProjectsPerMonth: number | null;
   maxTeamMembers: number | null;
+  /** null = unlimited, 0 = feature blocked on this plan */
+  maxAiDiagnosesPerDay: number | null;
+  /** null = unlimited, 0 = feature blocked on this plan */
+  maxValidatorFilesPerMonth: number | null;
+  /** null = unlimited */
+  maxHistoryItems: number | null;
   stripePriceIdMonthly: string | null;
   stripePriceIdAnnual: string | null;
   features: PlanFeature[];
@@ -59,6 +65,9 @@ export interface PlanApiItem {
   annual_monthly_equivalent: number;
   max_projects_per_month: number | null;
   max_team_members: number | null;
+  max_ai_diagnoses_per_day: number | null;
+  max_validator_files_per_month: number | null;
+  max_history_items: number | null;
   stripe_price_id_monthly: string | null;
   stripe_price_id_annual: string | null;
   features: PlanFeatureApiItem[];
@@ -90,6 +99,9 @@ export function mapApiItemToPlan(api: PlanApiItem): Plan {
     annualMonthlyEquivalent: api.annual_monthly_equivalent,
     maxProjectsPerMonth: api.max_projects_per_month,
     maxTeamMembers: api.max_team_members,
+    maxAiDiagnosesPerDay: api.max_ai_diagnoses_per_day ?? null,
+    maxValidatorFilesPerMonth: api.max_validator_files_per_month ?? null,
+    maxHistoryItems: api.max_history_items ?? null,
     stripePriceIdMonthly: api.stripe_price_id_monthly,
     stripePriceIdAnnual: api.stripe_price_id_annual,
     features: (api.features ?? []).map(f => ({

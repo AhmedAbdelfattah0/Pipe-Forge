@@ -33,11 +33,14 @@
         </p>
       </div>
 
-      <pf-toggle-inline
-        [checked]="state.isMultiLanguage()"
-        ariaLabel="Toggle multi-language builds"
-        (toggled)="onMultiLanguageToggle($event)"
-      />
+      <!-- Gate: locked on Free plan -->
+      <pf-feature-gate feature="multi_language" featureName="Multi-Language Builds" [inline]="true">
+        <pf-toggle-inline
+          [checked]="state.isMultiLanguage()"
+          ariaLabel="Toggle multi-language builds"
+          (toggled)="onMultiLanguageToggle($event)"
+        />
+      </pf-feature-gate>
 
     </div>
   </div>
@@ -235,11 +238,14 @@
         <h3 class="text-sm font-semibold text-navy">Replace environment tokens during build?</h3>
         <p class="mt-1 text-sm text-navy/50">Enable if you use token placeholders like <code class="rounded bg-gray-100 px-1 text-xs">&#35;&#123;VAR&#125;&#35;</code> in environment files</p>
       </div>
-      <pf-toggle-inline
-        [checked]="state.tokenReplacement().enabled"
-        ariaLabel="Toggle token replacement"
-        (toggled)="onTokenEnabledToggle($event)"
-      />
+      <!-- Gate: locked on Free plan -->
+      <pf-feature-gate feature="token_replacement" featureName="Token Replacement" [inline]="true">
+        <pf-toggle-inline
+          [checked]="state.tokenReplacement().enabled"
+          ariaLabel="Toggle token replacement"
+          (toggled)="onTokenEnabledToggle($event)"
+        />
+      </pf-feature-gate>
     </div>
 
     @if (state.tokenReplacement().enabled) {
@@ -370,11 +376,14 @@
         </p>
       </div>
 
-      <pf-toggle-inline
-        [checked]="state.qualityGates().enabled"
-        ariaLabel="Toggle quality gates"
-        (toggled)="onQualityGatesToggle($event)"
-      />
+      <!-- Gate: locked on Free plan -->
+      <pf-feature-gate feature="quality_gates" featureName="Quality Gates" [inline]="true">
+        <pf-toggle-inline
+          [checked]="state.qualityGates().enabled"
+          ariaLabel="Toggle quality gates"
+          (toggled)="onQualityGatesToggle($event)"
+        />
+      </pf-feature-gate>
     </div>
 
     <!-- Expandable quality gates checklist -->

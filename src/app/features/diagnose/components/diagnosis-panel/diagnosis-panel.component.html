@@ -134,15 +134,17 @@
         Regenerate with Fix
       </pf-button>
     } @else if (!diagnose.result()) {
-      <pf-button
-        variant="primary"
-        size="sm"
-        [disabled]="!errorLog().trim() || diagnose.isAnalysing()"
-        [loading]="diagnose.isAnalysing()"
-        (clicked)="onAnalyse()"
-      >
-        Analyse Error
-      </pf-button>
+      <pf-feature-gate feature="ai_diagnosis" featureName="AI Diagnosis" [inline]="true">
+        <pf-button
+          variant="primary"
+          size="sm"
+          [disabled]="!errorLog().trim() || diagnose.isAnalysing() || !planGate.isFeatureAvailable('ai_diagnosis')"
+          [loading]="diagnose.isAnalysing()"
+          (clicked)="onAnalyse()"
+        >
+          Analyse Error
+        </pf-button>
+      </pf-feature-gate>
     }
   </div>
 
