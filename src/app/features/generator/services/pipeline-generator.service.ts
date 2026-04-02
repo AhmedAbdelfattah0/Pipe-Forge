@@ -29,13 +29,17 @@ export class PipelineGeneratorService {
 
     try {
       const config = this.buildConfig();
+      const endpoint = config.platform === 'github-actions'
+        ? `${environment.apiUrl}/pipelines/generate/github-actions`
+        : `${environment.apiUrl}/pipelines/generate`;
+
       const blob = await firstValueFrom(
-        this.http.post(`${environment.apiUrl}/pipelines/generate`, config, {
+        this.http.post(endpoint, config, {
           responseType: 'blob',
         }),
       );
 
-      this.triggerDownload(blob, `${config.mfeName || 'pipelines'}-pipelines.zip`);
+      this.triggerDownload(blob, `${config.projectName || 'pipelines'}-pipelines.zip`);
       this._generationStatus.set('success');
       this.toastService.show('Pipelines generated successfully! Download started.', 'success');
 
@@ -58,7 +62,16 @@ export class PipelineGeneratorService {
 
   private buildConfig(): GeneratorConfig {
     return {
-      mfeName: this.state.mfeName(),
+      // Platform
+      platform: this.state.platform(),
+      githubConfig: {
+        owner: this.state.githubOwner(),
+        repositoryName: this.state.githubRepo(),
+        triggers: this.state.triggers(),
+        cronExpression: this.state.cronExpression(),
+      },
+      githubSwaSecretNames: this.state.githubSwaSecretNames(),
+      projectName: this.state.projectName(),
       repositoryName: this.state.repositoryName(),
       nodeVersion: this.state.nodeVersion(),
       distFolder: this.state.distFolder(),
@@ -75,12 +88,20 @@ export class PipelineGeneratorService {
       languages: this.state.languages(),
       buildScripts: this.state.buildScripts(),
       tokenReplacement: this.state.tokenReplacement(),
+      qualityGates: this.state.qualityGates(),
       deployTarget: this.state.deployTarget(),
       storageAccounts: this.state.storageAccounts(),
       swaTokens: this.state.swaTokens(),
       appServiceNames: this.state.appServiceNames(),
       triggerPipelineAfterDeploy: this.state.triggerPipelineAfterDeploy(),
       triggerPipelineId: this.state.triggerPipelineId(),
+      ftpRemotePath: this.state.ftpRemotePath(),
+      protectedPaths: this.state.protectedPaths(),
+      protectedPathsContainer: this.state.protectedPathsContainer(),
+      isMultiMarket: this.state.isMultiMarket(),
+      isMultiLanguageBuild: this.state.isMultiLanguageBuild(),
+      hasQualityChecks: this.state.hasQualityChecks(),
+      modernHosting: this.state.modernHosting(),
       outputFormats: this.state.outputFormats(),
     };
   }

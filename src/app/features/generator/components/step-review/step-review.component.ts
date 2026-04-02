@@ -24,23 +24,40 @@ export class StepReviewComponent {
   protected readonly state = inject(GeneratorStateService);
   protected readonly generator = inject(PipelineGeneratorService);
 
-  protected readonly summaryRows: readonly SummaryRow[] = [
-    { label: 'MFE Name', value: 'mfeName' },
-    { label: 'Repository', value: 'repositoryName' },
-    { label: 'Node Version', value: 'nodeVersion' },
-    { label: 'Dist Folder', value: 'distFolder' },
-    { label: 'ADO Organization', value: 'adoOrganization' },
-    { label: 'ADO Project', value: 'adoProjectName' },
-  ];
+  protected summaryRows(): SummaryRow[] {
+    const isGHA = this.state.platform() === 'github-actions';
+    const rows: SummaryRow[] = [
+      { label: 'Platform', value: 'platform' },
+      { label: 'Project Name', value: 'projectName' },
+      { label: 'Repository', value: 'repositoryName' },
+      { label: 'Node Version', value: 'nodeVersion' },
+      { label: 'Dist Folder', value: 'distFolder' },
+    ];
+    if (isGHA) {
+      rows.push(
+        { label: 'GitHub Owner', value: 'githubOwner' },
+        { label: 'GitHub Repo', value: 'githubRepo' },
+      );
+    } else {
+      rows.push(
+        { label: 'ADO Organization', value: 'adoOrganization' },
+        { label: 'ADO Project', value: 'adoProjectName' },
+      );
+    }
+    return rows;
+  }
 
   protected summaryValue(key: string): string {
     const map: Record<string, () => string> = {
-      mfeName: () => this.state.mfeName(),
+      platform: () => this.state.platform() === 'github-actions' ? 'GitHub Actions' : 'Azure DevOps',
+      projectName: () => this.state.projectName(),
       repositoryName: () => this.state.repositoryName(),
       nodeVersion: () => this.state.nodeVersion(),
       distFolder: () => this.state.distFolder(),
       adoOrganization: () => this.state.adoOrganization(),
       adoProjectName: () => this.state.adoProjectName(),
+      githubOwner: () => this.state.githubOwner(),
+      githubRepo: () => this.state.githubRepo(),
     };
     return map[key]?.() || '';
   }
@@ -66,6 +83,12 @@ export class StepReviewComponent {
     return this.state
       .generatedFileList()
       .filter(f => f.type === 'release-json');
+  }
+
+  protected workflowFiles(): { name: string; type: string }[] {
+    return this.state
+      .generatedFileList()
+      .filter(f => f.type === 'gha-workflow');
   }
 
   protected onGenerate(): void {

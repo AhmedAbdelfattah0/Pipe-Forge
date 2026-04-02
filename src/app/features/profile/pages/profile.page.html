@@ -1,0 +1,219 @@
+@if (profileService.isLoading()) {
+  <div class="flex h-64 items-center justify-center">
+    <pf-spinner size="lg" />
+  </div>
+} @else {
+  <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <h1 class="font-display text-2xl font-bold text-navy">Profile</h1>
+    <p class="mt-1 text-sm text-navy/50">Manage your account and pipeline defaults</p>
+
+    <div class="mt-8 grid gap-8 lg:grid-cols-3">
+
+      <!-- ── LEFT COLUMN — Avatar + Summary ─────────────────────────── -->
+      <div class="lg:col-span-1">
+        <pf-card>
+          <div class="flex flex-col items-center py-4">
+            <!-- Avatar -->
+            <div class="relative">
+              @if (profileService.profile()?.avatar_url) {
+                <img
+                  [src]="profileService.profile()!.avatar_url!"
+                  alt="Profile photo"
+                  class="h-24 w-24 rounded-full object-cover ring-4 ring-primary/10"
+                />
+              } @else {
+                <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary ring-4 ring-primary/5">
+                  {{ initials }}
+                </div>
+              }
+              <!-- Upload button overlay -->
+              <label
+                class="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-md transition-colors hover:bg-primary/90"
+                title="Upload photo"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  class="sr-only"
+                  (change)="onAvatarChange($event)"
+                />
+              </label>
+            </div>
+
+            <!-- Name + subtitle -->
+            <h2 class="mt-4 text-lg font-semibold text-navy">{{ displayName }}</h2>
+            @if (subtitle) {
+              <p class="mt-1 text-sm text-navy/50">{{ subtitle }}</p>
+            }
+
+            <!-- Member since -->
+            @if (memberSince) {
+              <p class="mt-3 text-xs text-gray-400">Member since {{ memberSince }}</p>
+            }
+
+            <!-- Email (read-only) -->
+            <div class="mt-4 w-full border-t border-border pt-4">
+              <p class="text-xs font-medium text-gray-400 uppercase tracking-wide">Email</p>
+              <p class="mt-1 text-sm text-navy/70">{{ profileService.profile()?.email }}</p>
+            </div>
+          </div>
+        </pf-card>
+      </div>
+
+      <!-- ── RIGHT COLUMN — Edit Form ───────────────────────────────── -->
+      <div class="flex flex-col gap-6 lg:col-span-2">
+
+        <!-- Section 1: Personal Info -->
+        <pf-card title="Personal Info" subtitle="Your public profile information">
+          <div class="flex flex-col gap-4">
+            <pf-input
+              [control]="fullName"
+              label="Full Name"
+              placeholder="Ahmed Abdelfatah"
+            />
+            <pf-input
+              [control]="jobTitle"
+              label="Job Title"
+              placeholder="Senior Frontend Engineer"
+              badge="optional"
+            />
+            <pf-input
+              [control]="company"
+              label="Company"
+              placeholder="IKEA MENA"
+              badge="optional"
+            />
+            <pf-input
+              [control]="linkedinUrl"
+              label="LinkedIn URL"
+              placeholder="https://linkedin.com/in/your-profile"
+              badge="optional"
+            />
+          </div>
+        </pf-card>
+
+        <!-- Section 2: Pipeline Defaults -->
+        <pf-card
+          title="Pipeline Defaults"
+          subtitle="These will pre-fill your generator wizard"
+        >
+          <div class="flex flex-col gap-5">
+
+            <!-- Platform selector -->
+            <div>
+              <p class="mb-2 text-sm font-medium text-text-dark">Default Platform</p>
+              <div class="grid grid-cols-2 gap-3">
+                <!-- Azure DevOps -->
+                <button
+                  type="button"
+                  class="relative flex items-center gap-3 rounded-lg p-4 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
+                  [class.border-2]="selectedPlatform() === 'azure-devops'"
+                  [class.border-primary]="selectedPlatform() === 'azure-devops'"
+                  [class.bg-primary/5]="selectedPlatform() === 'azure-devops'"
+                  [class.border]="selectedPlatform() !== 'azure-devops'"
+                  [class.border-border]="selectedPlatform() !== 'azure-devops'"
+                  [class.bg-card]="selectedPlatform() !== 'azure-devops'"
+                  (click)="selectPlatform('azure-devops')"
+                >
+                  @if (selectedPlatform() === 'azure-devops') {
+                    <div class="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+                      <svg class="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  }
+                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+                      <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+                      <line x1="6" y1="6" x2="6.01" y2="6" />
+                      <line x1="6" y1="18" x2="6.01" y2="18" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-navy">Azure DevOps</p>
+                    <p class="text-xs text-navy/50">YAML + Classic JSON</p>
+                  </div>
+                </button>
+
+                <!-- GitHub Actions -->
+                <button
+                  type="button"
+                  class="relative flex items-center gap-3 rounded-lg p-4 text-left transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
+                  [class.border-2]="selectedPlatform() === 'github-actions'"
+                  [class.border-primary]="selectedPlatform() === 'github-actions'"
+                  [class.bg-primary/5]="selectedPlatform() === 'github-actions'"
+                  [class.border]="selectedPlatform() !== 'github-actions'"
+                  [class.border-border]="selectedPlatform() !== 'github-actions'"
+                  [class.bg-card]="selectedPlatform() !== 'github-actions'"
+                  (click)="selectPlatform('github-actions')"
+                >
+                  @if (selectedPlatform() === 'github-actions') {
+                    <div class="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-primary">
+                      <svg class="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  }
+                  <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <line x1="6" y1="3" x2="6" y2="15" />
+                      <circle cx="18" cy="6" r="3" />
+                      <circle cx="6" cy="18" r="3" />
+                      <path d="M18 9a9 9 0 0 1-9 9" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-navy">GitHub Actions</p>
+                    <p class="text-xs text-navy/50">Workflow YAML</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- ADO fields -->
+            <pf-input
+              [control]="adoOrganization"
+              label="ADO Organization"
+              placeholder="your-ado-org"
+              badge="optional"
+              helperText="Default Azure DevOps organization for new projects"
+            />
+            <pf-input
+              [control]="adoProject"
+              label="ADO Project"
+              placeholder="your-ado-project"
+              badge="optional"
+              helperText="Default Azure DevOps project name"
+            />
+            <pf-input
+              [control]="githubUsername"
+              label="GitHub Username"
+              placeholder="your-github-username"
+              badge="optional"
+              helperText="Default GitHub owner for new projects"
+            />
+          </div>
+        </pf-card>
+
+        <!-- Save button -->
+        <div class="flex justify-end">
+          <pf-button
+            variant="primary"
+            [loading]="profileService.isSaving()"
+            [disabled]="profileService.isSaving()"
+            (clicked)="onSave()"
+          >
+            Save Changes
+          </pf-button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+}

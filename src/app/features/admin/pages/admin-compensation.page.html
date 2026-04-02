@@ -1,0 +1,140 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-text-dark">Compensation</h1>
+    <p class="mt-1 text-sm text-text-dark/60">Grant free months or plan upgrades to users.</p>
+  </div>
+
+  <!-- Search & form -->
+  <div class="rounded-xl border border-border bg-card p-5 space-y-4">
+    <!-- User search -->
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-text-dark">Search User</label>
+      <div class="relative">
+        <lucide-icon
+          [img]="searchIcon"
+          [size]="16"
+          class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dark/40"
+        />
+        <input
+          type="email"
+          [formControl]="userSearchControl"
+          placeholder="Search by email..."
+          class="w-full rounded-lg border border-border bg-surface py-2 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"
+        />
+      </div>
+
+      <!-- User results dropdown -->
+      @if (adminService.users().length > 0 && !selectedUser()) {
+        <div class="mt-1 rounded-lg border border-border bg-card shadow-md">
+          @for (user of adminService.users(); track user.userId) {
+            <button
+              type="button"
+              class="w-full px-4 py-2.5 text-left text-sm hover:bg-surface"
+              (click)="selectUser(user)"
+            >
+              <span class="font-medium text-text-dark">{{ user.email }}</span>
+              <span class="ml-2 text-xs text-text-dark/50">{{ user.plan }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      @if (selectedUser()) {
+        <div class="mt-2 flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2">
+          <lucide-icon [img]="checkCircleIcon" [size]="16" class="text-primary" />
+          <span class="text-sm font-medium text-text-dark">{{ selectedUser()!.email }}</span>
+          <span class="ml-auto rounded-full bg-surface px-2 py-0.5 text-xs text-text-dark/60">
+            {{ selectedUser()!.plan }}
+          </span>
+        </div>
+      }
+    </div>
+
+    <!-- Compensation form -->
+    @if (selectedUser()) {
+      <form [formGroup]="compensationForm" (ngSubmit)="submitCompensation()" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-text-dark">Type</label>
+            <select
+              formControlName="type"
+              class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:outline-none"
+            >
+              <option value="free_month">Free Month</option>
+              <option value="plan_upgrade">Plan Upgrade</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-text-dark">Value</label>
+            <input
+              type="text"
+              formControlName="value"
+              placeholder="e.g. 30days or pro:30days"
+              class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Reason (internal note)</label>
+          <textarea
+            formControlName="reason"
+            rows="3"
+            placeholder="Describe why you are granting this compensation..."
+            class="w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-primary focus:outline-none"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="compensationForm.invalid || isSubmitting()"
+          class="rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+        >
+          @if (isSubmitting()) { Applying... } @else { Confirm Compensation }
+        </button>
+      </form>
+    }
+
+    @if (submitted()) {
+      <p class="text-sm font-medium text-success">Compensation recorded successfully.</p>
+    }
+  </div>
+
+  <!-- Compensation history -->
+  <div>
+    <h2 class="mb-3 text-base font-semibold text-text-dark">History</h2>
+    <div class="rounded-xl border border-border bg-card overflow-x-auto">
+      @if (adminService.compensations().length === 0) {
+        <div class="py-8 text-center text-sm text-text-dark/50">No compensation records yet.</div>
+      } @else {
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border bg-surface">
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">User ID</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Type</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Value</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Reason</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Applied</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (comp of adminService.compensations(); track comp.id) {
+              <tr class="border-b border-border last:border-0">
+                <td class="px-4 py-3 font-mono text-xs text-text-dark/60">{{ comp.userId | slice:0:8 }}...</td>
+                <td class="px-4 py-3">
+                  <span class="rounded-full bg-surface px-2.5 py-0.5 text-xs font-medium text-text-dark">
+                    {{ comp.type }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-text-dark">{{ comp.value }}</td>
+                <td class="px-4 py-3 text-text-dark/60 text-xs">{{ comp.reason || '—' }}</td>
+                <td class="px-4 py-3 text-text-dark/60 text-xs">{{ comp.appliedAt | slice:0:10 }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+</div>

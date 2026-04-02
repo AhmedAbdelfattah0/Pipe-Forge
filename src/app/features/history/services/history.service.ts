@@ -100,7 +100,7 @@ export class HistoryService {
     }
   }
 
-  async regenerate(id: string, mfeName: string): Promise<void> {
+  async regenerate(id: string, projectName: string): Promise<void> {
     this._loading.set(true);
     this._error.set(null);
 
@@ -110,7 +110,7 @@ export class HistoryService {
           responseType: 'blob',
         }),
       );
-      this.triggerDownload(blob, `${mfeName}-pipelines.zip`);
+      this.triggerDownload(blob, `${projectName}-pipelines.zip`);
       this.toastService.show('Pipelines re-downloaded successfully!', 'success');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to regenerate pipelines';

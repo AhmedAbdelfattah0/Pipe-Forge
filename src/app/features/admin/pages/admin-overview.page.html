@@ -1,0 +1,86 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-text-dark">Overview</h1>
+    <p class="mt-1 text-sm text-text-dark/60">Product metrics at a glance.</p>
+  </div>
+
+  <!-- Stat cards -->
+  @if (adminService.isLoading()) {
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      @for (_ of [1,2,3,4]; track $index) {
+        <div class="animate-pulse rounded-xl border border-border bg-card p-5">
+          <div class="mb-3 h-4 w-24 rounded bg-surface"></div>
+          <div class="h-8 w-16 rounded bg-surface"></div>
+        </div>
+      }
+    </div>
+  } @else if (adminService.metrics()) {
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Total Users -->
+      <div class="rounded-xl border border-border bg-card p-5">
+        <div class="mb-3 flex items-center gap-2 text-sm font-medium text-text-dark/60">
+          <lucide-icon [img]="usersIcon" [size]="16" />
+          Total Users
+        </div>
+        <p class="text-3xl font-bold text-text-dark">{{ adminService.metrics()!.totalUsers }}</p>
+      </div>
+
+      <!-- Active Subscriptions -->
+      <div class="rounded-xl border border-border bg-card p-5">
+        <div class="mb-3 flex items-center gap-2 text-sm font-medium text-text-dark/60">
+          <lucide-icon [img]="activityIcon" [size]="16" />
+          Paid Subscriptions
+        </div>
+        <p class="text-3xl font-bold text-text-dark">{{ adminService.metrics()!.activeSubscriptions }}</p>
+      </div>
+
+      <!-- Total Generations -->
+      <div class="rounded-xl border border-border bg-card p-5">
+        <div class="mb-3 flex items-center gap-2 text-sm font-medium text-text-dark/60">
+          <lucide-icon [img]="gitBranchIcon" [size]="16" />
+          Total Generations
+        </div>
+        <p class="text-3xl font-bold text-text-dark">{{ adminService.metrics()!.totalGenerations }}</p>
+      </div>
+
+      <!-- Pending Feedback -->
+      <div class="rounded-xl border border-border bg-card p-5"
+           [class.border-amber-300]="adminService.metrics()!.pendingFeedback > 0">
+        <div class="mb-3 flex items-center gap-2 text-sm font-medium text-text-dark/60">
+          <lucide-icon [img]="messageSquareIcon" [size]="16" />
+          Pending Feedback
+        </div>
+        <p class="text-3xl font-bold"
+           [class.text-amber-600]="adminService.metrics()!.pendingFeedback > 0"
+           [class.text-text-dark]="adminService.metrics()!.pendingFeedback === 0">
+          {{ adminService.metrics()!.pendingFeedback }}
+        </p>
+      </div>
+    </div>
+  }
+
+  <!-- Quick actions -->
+  <div>
+    <h2 class="mb-3 text-base font-semibold text-text-dark">Quick Actions</h2>
+    <div class="flex flex-wrap gap-3">
+      <a
+        routerLink="/admin/users"
+        class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+      >
+        View Users
+      </a>
+      <a
+        routerLink="/admin/feedback"
+        class="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-text-dark transition-colors hover:bg-surface"
+      >
+        Review Feedback
+      </a>
+      <a
+        routerLink="/admin/pricing"
+        class="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium text-text-dark transition-colors hover:bg-surface"
+      >
+        Manage Pricing
+      </a>
+    </div>
+  </div>
+</div>

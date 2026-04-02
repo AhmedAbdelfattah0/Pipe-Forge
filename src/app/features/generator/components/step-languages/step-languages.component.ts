@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { EnvironmentType, Language } from '../../models/generator.model';
+import { EnvironmentType, Language, TokenMapping } from '../../models/generator.model';
 import { GeneratorStateService } from '../../services/generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
@@ -33,6 +33,13 @@ interface MatrixColumn {
 export class StepLanguagesComponent implements OnInit {
   protected readonly state = inject(GeneratorStateService);
   private readonly destroyRef = inject(DestroyRef);
+
+  // Token format options — defined here to avoid Angular template parser issues with ${...} literals.
+  protected readonly tokenFormatOptions: { value: '#{TOKEN}#' | '__TOKEN__' | '${TOKEN}'; label: string; description: string }[] = [
+    { value: '#{TOKEN}#', label: '#{TOKEN_NAME}#', description: 'Azure DevOps standard' },
+    { value: '__TOKEN__', label: '__TOKEN_NAME__', description: 'Double underscore' },
+    { value: '${TOKEN}', label: '${TOKEN_NAME}', description: 'Dollar sign' },
+  ];
 
   // Display-only computed — matrix column headers are a pure presentation concern.
   // Branches on isMultiLanguage: multi produces Env×Lang columns, single produces Env-only columns.
@@ -62,31 +69,25 @@ export class StepLanguagesComponent implements OnInit {
     return columns;
   });
 
-  // FormControls for the two static token-replacement text inputs.
-  // Initialized in ngOnInit from service state (supports back-navigation).
+  // FormControl for the file pattern input (new TokenReplacement model).
+  protected readonly filePatternControl = new FormControl('src/environments/environment.*.ts', { nonNullable: true });
+  /** @deprecated Kept for backward compatibility — not shown in UI. */
   protected readonly envFilePathControl = new FormControl('', { nonNullable: true });
+  /** @deprecated Kept for backward compatibility — not shown in UI. */
   protected readonly secretVarNamesControl = new FormControl('', { nonNullable: true });
 
   ngOnInit(): void {
     const tr = this.state.tokenReplacement();
-    this.envFilePathControl.setValue(tr.environmentFilePath, { emitEvent: false });
-    this.secretVarNamesControl.setValue(tr.secretVariableNames, { emitEvent: false });
+    this.filePatternControl.setValue(tr.filePattern || 'src/environments/environment.*.ts', { emitEvent: false });
 
-    this.envFilePathControl.valueChanges
+    this.filePatternControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(v =>
         this.state.setTokenReplacement({
           ...this.state.tokenReplacement(),
+          filePattern: v,
+          // Also keep deprecated field in sync for existing backend templates
           environmentFilePath: v,
-        })
-      );
-
-    this.secretVarNamesControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(v =>
-        this.state.setTokenReplacement({
-          ...this.state.tokenReplacement(),
-          secretVariableNames: v,
         })
       );
   }
@@ -114,13 +115,59 @@ export class StepLanguagesComponent implements OnInit {
   }
 
   protected onTokenEnabledToggle(checked: boolean): void {
+    const tr = this.state.tokenReplacement();
+    this.state.setTokenReplacement({
+      ...tr,
+      enabled: checked,
+      tokenMappings: tr.tokenMappings?.length ? tr.tokenMappings : [{ tokenName: '', variableName: '' }],
+    });
+  }
+
+  protected onTokenFormatChange(format: '#{TOKEN}#' | '__TOKEN__' | '${TOKEN}'): void {
     this.state.setTokenReplacement({
       ...this.state.tokenReplacement(),
-      enabled: checked,
+      tokenFormat: format,
     });
+  }
+
+  protected addTokenMapping(): void {
+    const tr = this.state.tokenReplacement();
+    this.state.setTokenReplacement({
+      ...tr,
+      tokenMappings: [...(tr.tokenMappings ?? []), { tokenName: '', variableName: '' }],
+    });
+  }
+
+  protected removeTokenMapping(index: number): void {
+    const tr = this.state.tokenReplacement();
+    this.state.setTokenReplacement({
+      ...tr,
+      tokenMappings: (tr.tokenMappings ?? []).filter((_, i) => i !== index),
+    });
+  }
+
+  protected onTokenMappingChange(index: number, field: 'tokenName' | 'variableName', event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    const tr = this.state.tokenReplacement();
+    const mappings: TokenMapping[] = [...(tr.tokenMappings ?? [])];
+    mappings[index] = { ...mappings[index], [field]: value };
+    this.state.setTokenReplacement({ ...tr, tokenMappings: mappings });
   }
 
   protected buildScriptValue(marketCode: string, keySuffix: string): string {
     return this.state.buildScripts()[marketCode + keySuffix] ?? '';
+  }
+
+  protected onQualityGatesToggle(checked: boolean): void {
+    this.state.setQualityGatesEnabled(checked);
+  }
+
+  protected onQualityGateToggle(gate: 'typescript' | 'lint' | 'tests' | 'format', checked: boolean): void {
+    this.state.setQualityGate(gate, { enabled: checked });
+  }
+
+  protected onQualityGateCommandChange(gate: 'typescript' | 'lint' | 'tests' | 'format', event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.state.setQualityGate(gate, { command: value });
   }
 }

@@ -4,8 +4,9 @@ import {
   computed,
   inject,
 } from '@angular/core';
-import { DeployTarget } from '../../models/generator.model';
+import { DeployTarget, ModernHostingConfig } from '../../models/generator.model';
 import { GeneratorStateService } from '../../services/generator-state.service';
+import { BadgeComponent } from '../../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 import { ToggleInlineComponent } from '../../../../shared/components/toggle-inline/toggle-inline.component';
@@ -21,7 +22,7 @@ interface MarketEnvCombo {
   templateUrl: './step-deploy-target.component.html',
   styleUrl: './step-deploy-target.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonComponent, CardComponent, ToggleInlineComponent],
+  imports: [BadgeComponent, ButtonComponent, CardComponent, ToggleInlineComponent],
 })
 export class StepDeployTargetComponent {
   protected readonly state = inject(GeneratorStateService);
@@ -76,5 +77,49 @@ export class StepDeployTargetComponent {
       return this.state.appServiceNames()[key] ?? '';
     }
     return '';
+  }
+
+  protected onProtectedPathsToggle(checked: boolean): void {
+    if (!checked) {
+      this.state.setProtectedPaths([]);
+    }
+  }
+
+  protected onProtectedPathsChange(event: Event): void {
+    const value = (event.target as HTMLTextAreaElement).value;
+    const paths = value
+      .split('\n')
+      .map(p => p.trim())
+      .filter(p => p.length > 0);
+    this.state.setProtectedPaths(paths);
+  }
+
+  protected protectedPathsText(): string {
+    return this.state.protectedPaths().join('\n');
+  }
+
+  protected onFtpRemotePathChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.state.setFtpRemotePath(value);
+  }
+
+  protected onGithubSwaSecretChange(key: string, event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.state.setGithubSwaSecretName(key, value);
+  }
+
+  protected githubSwaSecretValue(key: string): string {
+    return this.state.githubSwaSecretNames()[key] ?? '';
+  }
+
+  /** Returns true when the selected deploy target is a modern hosting platform (GHA-only). */
+  protected isModernHostingTarget(): boolean {
+    const modernTargets: DeployTarget[] = ['vercel', 'netlify', 'firebase', 'github-pages', 'cloudflare-pages'];
+    return modernTargets.includes(this.state.deployTarget() as DeployTarget);
+  }
+
+  protected onModernHostingChange(field: keyof ModernHostingConfig, event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.state.setModernHosting({ [field]: value });
   }
 }

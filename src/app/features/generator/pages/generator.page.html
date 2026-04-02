@@ -4,21 +4,70 @@
   <div class="px-6 py-5 border-b border-border bg-card">
     <h1 class="font-display text-2xl font-bold tracking-tight text-navy">New Pipeline Set</h1>
     <p class="mt-1 text-sm text-navy/50">
-      5 steps to production-ready CI/CD
+      Configure your project and generate production-ready CI/CD pipelines
     </p>
   </div>
 
   <!-- Stepper -->
   <div class="px-6 pt-6 pb-4">
-    <pf-stepper [currentStep]="state.currentStep()" [steps]="steps" />
+    <pf-stepper [currentStep]="state.currentStep()" [steps]="steps()" />
   </div>
 
   <!-- Step Content -->
   <div class="flex-1 overflow-y-auto p-6">
     @switch (state.currentStep()) {
       @case (1) { <pf-step-project-info /> }
-      @case (2) { <pf-step-markets /> }
-      @case (3) { <pf-step-languages /> }
+      @case (2) {
+        @if (state.isMultiMarket()) {
+          <pf-step-markets />
+        } @else {
+          <!-- Skipped step notice -->
+          <div class="flex flex-col items-center justify-center gap-4 py-12 text-center">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+              </svg>
+            </div>
+            <p class="text-sm text-gray-500 max-w-xs">
+              Enable the <strong class="text-navy">"Multi-market project?"</strong> toggle in Step 1 to configure markets and environments.
+            </p>
+            <button
+              type="button"
+              class="text-xs font-medium text-primary hover:underline"
+              (click)="state.goToStep(1)"
+            >
+              Go to Step 1
+            </button>
+          </div>
+        }
+      }
+      @case (3) {
+        @if (state.isMultiLanguageBuild() || state.hasQualityChecks()) {
+          <pf-step-languages />
+        } @else {
+          <!-- Skipped step notice -->
+          <div class="flex flex-col items-center justify-center gap-4 py-12 text-center">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+            </div>
+            <p class="text-sm text-gray-500 max-w-xs">
+              Enable <strong class="text-navy">"Multi-language build?"</strong> or <strong class="text-navy">"Add quality checks?"</strong> in Step 1 to configure languages and scripts.
+            </p>
+            <button
+              type="button"
+              class="text-xs font-medium text-primary hover:underline"
+              (click)="state.goToStep(1)"
+            >
+              Go to Step 1
+            </button>
+          </div>
+        }
+      }
       @case (4) { <pf-step-deploy-target /> }
       @case (5) { <pf-step-review /> }
     }

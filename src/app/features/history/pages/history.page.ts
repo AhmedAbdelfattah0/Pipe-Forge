@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { HistoryService } from '../services/history.service';
@@ -6,6 +6,8 @@ import { HistoryProject } from '../models/history.model';
 import { DeployTarget } from '../../generator/models/generator.model';
 import { BadgeComponent } from '../../../shared/components/badge/badge.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { DiagnoseService } from '../../diagnose/services/diagnose.service';
+import { DiagnosisPanelComponent } from '../../diagnose/components/diagnosis-panel/diagnosis-panel.component';
 
 @Component({
   standalone: true,
@@ -13,13 +15,17 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
   templateUrl: './history.page.html',
   styleUrl: './history.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, BadgeComponent, ButtonComponent, RouterLink],
+  imports: [DatePipe, BadgeComponent, ButtonComponent, RouterLink, DiagnosisPanelComponent],
 })
 export class HistoryPage implements OnInit {
   protected readonly history = inject(HistoryService);
+  protected readonly diagnose = inject(DiagnoseService);
   private readonly router = inject(Router);
 
   protected readonly skeletonItems = [1, 2, 3, 4];
+
+  /** Tracks which project card is showing the delete confirmation inline */
+  protected readonly confirmingDeleteId = signal<string | null>(null);
 
   ngOnInit(): void {
     this.history.getProjects();
@@ -36,6 +42,12 @@ export class HistoryPage implements OnInit {
       'storage-account': 'storage',
       'static-web-app': 'swa',
       'app-service': 'app-service',
+      'ftp-cpanel': 'ftp-cpanel',
+      'vercel': 'vercel',
+      'netlify': 'netlify',
+      'firebase': 'firebase',
+      'github-pages': 'github-pages',
+      'cloudflare-pages': 'cloudflare-pages',
     };
     return map[target];
   }
@@ -45,6 +57,12 @@ export class HistoryPage implements OnInit {
       'storage-account': 'Storage',
       'static-web-app': 'SWA',
       'app-service': 'App Service',
+      'ftp-cpanel': 'cPanel / FTP',
+      'vercel': 'Vercel',
+      'netlify': 'Netlify',
+      'firebase': 'Firebase',
+      'github-pages': 'GitHub Pages',
+      'cloudflare-pages': 'Cloudflare Pages',
     };
     return map[target];
   }
@@ -54,14 +72,27 @@ export class HistoryPage implements OnInit {
   }
 
   protected onRegenerate(project: HistoryProject): void {
-    this.history.regenerate(project.id, project.mfeName);
+    this.history.regenerate(project.id, project.projectName);
   }
 
-  protected onDelete(project: HistoryProject): void {
+  protected onDeleteRequest(project: HistoryProject): void {
+    this.confirmingDeleteId.set(project.id);
+  }
+
+  protected confirmDelete(project: HistoryProject): void {
+    this.confirmingDeleteId.set(null);
     this.history.deleteProject(project.id);
+  }
+
+  protected cancelDelete(): void {
+    this.confirmingDeleteId.set(null);
   }
 
   protected goToGenerator(): void {
     this.router.navigate(['/generator']);
+  }
+
+  protected onDiagnose(project: HistoryProject): void {
+    this.diagnose.openPanel(project.id);
   }
 }

@@ -1,3 +1,31 @@
 :host {
   display: block;
 }
+
+// Scroll-driven section reveals — progressive enhancement
+// Browsers without support show content immediately (no opacity:0 trap)
+@supports (animation-timeline: view()) {
+  .scroll-reveal {
+    animation: scrollFadeUp linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+
+  // Staggered children within a revealed section
+  .scroll-reveal-child {
+    animation: scrollFadeUp linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+
+  @keyframes scrollFadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

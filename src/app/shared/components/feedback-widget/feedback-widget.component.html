@@ -1,0 +1,241 @@
+<!-- Floating trigger button — right edge, vertically centered -->
+<button
+  type="button"
+  (click)="feedbackService.toggle()"
+  class="fixed right-0 top-1/2 z-50 -translate-y-1/2 rounded-l-lg bg-primary px-2 py-4 text-white shadow-lg transition-all duration-200 hover:bg-primary/90 hover:shadow-xl focus-visible:ring-2 focus-visible:ring-primary/50 outline-none"
+  [class.opacity-0]="feedbackService.isOpen()"
+  [class.pointer-events-none]="feedbackService.isOpen()"
+  aria-label="Give feedback"
+>
+  <span class="writing-mode-vertical text-xs font-semibold tracking-wider uppercase">Feedback</span>
+</button>
+
+<!-- Slide-in panel -->
+<div
+  class="fixed right-0 top-0 z-50 h-full w-[360px] transform bg-card shadow-2xl transition-transform duration-300 ease-out"
+  [class.translate-x-0]="feedbackService.isOpen()"
+  [class.translate-x-full]="!feedbackService.isOpen()"
+>
+  <!-- Header -->
+  <div class="flex items-center justify-between border-b border-border px-5 py-4">
+    <h2 class="font-display text-base font-semibold text-navy">Share your feedback</h2>
+    <button
+      type="button"
+      (click)="feedbackService.close()"
+      class="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-surface hover:text-navy outline-none"
+      aria-label="Close feedback panel"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="overflow-y-auto px-5 py-5" style="height: calc(100% - 65px)">
+
+    <!-- Success state -->
+    @if (feedbackService.submitted()) {
+      <div class="flex flex-col items-center justify-center gap-4 py-16 text-center">
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-success"><polyline points="20 6 9 17 4 12" /></svg>
+        </div>
+        <p class="font-display text-lg font-semibold text-navy">Thank you!</p>
+        <p class="text-sm text-navy/60">Your feedback helps us improve PipeForge.</p>
+      </div>
+    } @else {
+
+      <!-- Step indicators -->
+      <div class="mb-6 flex items-center gap-1">
+        @for (step of [1,2,3,4,5]; track step) {
+          <div
+            class="h-1 flex-1 rounded-full transition-colors"
+            [class.bg-primary]="currentStep() >= step"
+            [class.bg-gray-200]="currentStep() < step"
+          ></div>
+        }
+      </div>
+
+      <!-- Step 1: Rating -->
+      @if (currentStep() === 1) {
+        <div class="flex flex-col gap-4">
+          <p class="text-sm font-medium text-navy">How would you rate your experience?</p>
+          <div class="flex justify-center gap-2">
+            @for (star of [1,2,3,4,5]; track star) {
+              <button
+                type="button"
+                (click)="setRating(star)"
+                (mouseenter)="hoveredStar.set(star)"
+                (mouseleave)="hoveredStar.set(0)"
+                class="cursor-pointer border-none bg-transparent p-1 transition-transform hover:scale-110 outline-none"
+                [attr.aria-label]="star + ' star'"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                  [attr.fill]="star <= (hoveredStar() || rating()) ? '#F59E0B' : 'none'"
+                  [attr.stroke]="star <= (hoveredStar() || rating()) ? '#F59E0B' : '#D1D5DB'"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                >
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Step 2: Did pipelines work? -->
+      @if (currentStep() === 2) {
+        <div class="flex flex-col gap-4">
+          <p class="text-sm font-medium text-navy">Did the generated pipelines work?</p>
+          <div class="grid grid-cols-3 gap-3">
+            <button
+              type="button"
+              (click)="setPipelinesWorked('yes')"
+              class="flex flex-col items-center gap-2 rounded-lg border p-4 text-center transition-all cursor-pointer outline-none"
+              [class.border-success]="pipelinesWorked() === 'yes'"
+              [class.bg-success/5]="pipelinesWorked() === 'yes'"
+              [class.border-border]="pipelinesWorked() !== 'yes'"
+              [class.hover:border-success/50]="pipelinesWorked() !== 'yes'"
+            >
+              <span class="text-2xl">&#10003;</span>
+              <span class="text-xs font-medium text-navy">Yes</span>
+            </button>
+            <button
+              type="button"
+              (click)="setPipelinesWorked('partial')"
+              class="flex flex-col items-center gap-2 rounded-lg border p-4 text-center transition-all cursor-pointer outline-none"
+              [class.border-warning]="pipelinesWorked() === 'partial'"
+              [class.bg-warning/5]="pipelinesWorked() === 'partial'"
+              [class.border-border]="pipelinesWorked() !== 'partial'"
+              [class.hover:border-warning/50]="pipelinesWorked() !== 'partial'"
+            >
+              <span class="text-2xl">&#9888;</span>
+              <span class="text-xs font-medium text-navy">Adjustments</span>
+            </button>
+            <button
+              type="button"
+              (click)="setPipelinesWorked('no')"
+              class="flex flex-col items-center gap-2 rounded-lg border p-4 text-center transition-all cursor-pointer outline-none"
+              [class.border-red-500]="pipelinesWorked() === 'no'"
+              [class.bg-red-50]="pipelinesWorked() === 'no'"
+              [class.border-border]="pipelinesWorked() !== 'no'"
+              [class.hover:border-red-300]="pipelinesWorked() !== 'no'"
+            >
+              <span class="text-2xl">&#10007;</span>
+              <span class="text-xs font-medium text-navy">No</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Step 3: What went wrong? -->
+      @if (currentStep() === 3) {
+        <div class="flex flex-col gap-4">
+          <p class="text-sm font-medium text-navy">What went wrong?</p>
+          <textarea
+            [value]="whatWentWrong()"
+            (input)="whatWentWrong.set($any($event.target).value)"
+            placeholder="Tell us what didn't work as expected..."
+            rows="4"
+            class="w-full resize-none rounded-lg border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+          ></textarea>
+          <div class="flex justify-end">
+            <button
+              type="button"
+              (click)="nextStep()"
+              class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 outline-none"
+            >Continue</button>
+          </div>
+        </div>
+      }
+
+      <!-- Step 4: Feature request -->
+      @if (currentStep() === 4) {
+        <div class="flex flex-col gap-4">
+          <p class="text-sm font-medium text-navy">What should we add next?</p>
+          <p class="text-xs text-gray-500">Optional — skip if nothing comes to mind</p>
+          <textarea
+            [value]="featureRequest()"
+            (input)="featureRequest.set($any($event.target).value)"
+            placeholder="e.g. Support for Bitbucket Pipelines..."
+            rows="3"
+            class="w-full resize-none rounded-lg border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+          ></textarea>
+          <div class="flex justify-end">
+            <button
+              type="button"
+              (click)="nextStep()"
+              class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 outline-none"
+            >Continue</button>
+          </div>
+        </div>
+      }
+
+      <!-- Step 5: Public testimonial + submit -->
+      @if (currentStep() === 5) {
+        <div class="flex flex-col gap-5">
+          <!-- Public toggle -->
+          <label class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 cursor-pointer">
+            <div>
+              <p class="text-sm font-medium text-navy">Make my feedback public</p>
+              <p class="mt-0.5 text-xs text-gray-500">Your feedback may appear on our website</p>
+            </div>
+            <input
+              type="checkbox"
+              [checked]="isPublic()"
+              (change)="isPublic.set($any($event.target).checked)"
+              class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+            />
+          </label>
+
+          <!-- Name + company (shown if public) -->
+          @if (isPublic()) {
+            <div class="flex flex-col gap-3">
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-navy">Display name</label>
+                <input
+                  type="text"
+                  [value]="displayName()"
+                  (input)="displayName.set($any($event.target).value)"
+                  placeholder="e.g. Ahmed M."
+                  class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                />
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-xs font-medium text-navy">Company</label>
+                <input
+                  type="text"
+                  [value]="company()"
+                  (input)="company.set($any($event.target).value)"
+                  placeholder="e.g. Acme Corp"
+                  class="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                />
+              </div>
+            </div>
+          }
+
+          <!-- Submit -->
+          <button
+            type="button"
+            [disabled]="feedbackService.isSubmitting()"
+            (click)="onSubmit()"
+            class="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed outline-none"
+          >
+            @if (feedbackService.isSubmitting()) {
+              Submitting...
+            } @else {
+              Submit Feedback
+            }
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<!-- Backdrop -->
+@if (feedbackService.isOpen()) {
+  <div
+    class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+    (click)="feedbackService.close()"
+    aria-hidden="true"
+  ></div>
+}

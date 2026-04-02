@@ -166,6 +166,18 @@
     subtitle="These npm scripts run during each pipeline's build step"
   >
     @if (state.enabledMarkets().length > 0 && matrixColumns().length > 0) {
+      <!-- Contextual help for first-timers -->
+      <div class="mb-4 flex gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        <p class="text-xs leading-relaxed text-navy/60">
+          Each cell maps to an <code class="rounded bg-navy/5 px-1 font-mono text-navy/70">npm run</code> script in your package.json.
+          For example, <code class="rounded bg-navy/5 px-1 font-mono text-navy/70">build:ksa:qa</code> runs during the KSA QA build pipeline.
+        </p>
+      </div>
       <div class="scrollable-table overflow-x-auto">
         <table class="w-full border-collapse text-sm">
           <thead>
@@ -214,43 +226,277 @@
     }
   </pf-card>
 
-  <!-- ── Section 3: Environment File Replacement ───────────────────────────── -->
+  <!-- ── Section 3: Token Replacement ────────────────────────────────────── -->
   <div class="rounded border border-border bg-card shadow-sm">
 
-    <!-- Custom header: title + subtitle on left, toggle on right -->
+    <!-- Header: title + toggle -->
     <div class="flex items-center justify-between border-b border-border px-6 py-4">
       <div>
-        <h3 class="text-sm font-semibold text-navy">Environment File Replacement</h3>
-        <p class="mt-1 text-sm text-navy/50">Configure token replacement for environment files</p>
+        <h3 class="text-sm font-semibold text-navy">Replace environment tokens during build?</h3>
+        <p class="mt-1 text-sm text-navy/50">Enable if you use token placeholders like <code class="rounded bg-gray-100 px-1 text-xs">&#35;&#123;VAR&#125;&#35;</code> in environment files</p>
       </div>
       <pf-toggle-inline
         [checked]="state.tokenReplacement().enabled"
-        ariaLabel="Toggle environment file replacement"
+        ariaLabel="Toggle token replacement"
         (toggled)="onTokenEnabledToggle($event)"
       />
     </div>
 
-    <!-- Expandable fields — animated via .expandable / .is-open in SCSS -->
-    <div class="expandable" [class.is-open]="state.tokenReplacement().enabled">
-      <div class="overflow-hidden">
-        <div class="flex flex-col gap-6 p-6">
-          <pf-input
-            [control]="envFilePathControl"
-            label="Environment File Path"
-            placeholder="e.g. src/environments/environment.ksaqa.ts"
-            helperText="Relative path from project root"
-          />
-          <pf-input
-            [control]="secretVarNamesControl"
-            label="Secret Variable Names"
-            placeholder="e.g. ENCRYPTION_IV, ENCRYPTION_KEY"
-            helperText="Comma separated list of pipeline secret variables"
-            badge="secret"
-          />
+    @if (state.tokenReplacement().enabled) {
+      <div class="flex flex-col gap-6 p-6">
+
+        <!-- File pattern -->
+        <pf-input
+          [control]="filePatternControl"
+          label="File pattern to search"
+          placeholder="e.g. src/environments/**.ts"
+          helperText="Glob pattern relative to the project root — all matching files will have tokens replaced"
+        />
+
+        <!-- Token format -->
+        <div class="flex flex-col gap-2">
+          <p class="text-sm font-medium text-text-dark">Token format</p>
+          <div class="flex flex-col gap-2">
+            @for (fmt of tokenFormatOptions; track fmt.value) {
+              <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3 hover:border-primary/30 transition-colors"
+                [class.border-primary]="state.tokenReplacement().tokenFormat === fmt.value"
+                [class.bg-primary/5]="state.tokenReplacement().tokenFormat === fmt.value"
+              >
+                <input
+                  type="radio"
+                  name="tokenFormat"
+                  [value]="fmt.value"
+                  [checked]="state.tokenReplacement().tokenFormat === fmt.value"
+                  (change)="onTokenFormatChange(fmt.value)"
+                  class="text-primary focus:ring-primary/50"
+                />
+                <div>
+                  <code class="text-xs font-mono text-navy">{{ fmt.label }}</code>
+                  <span class="ml-2 text-xs text-gray-400">{{ fmt.description }}</span>
+                </div>
+              </label>
+            }
+          </div>
         </div>
+
+        <!-- Token mappings table -->
+        <div class="flex flex-col gap-3">
+          <p class="text-sm font-medium text-text-dark">Token mappings</p>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="text-left">
+                  <th class="pb-2 pr-4 text-xs font-medium text-gray-400">Token name (in file)</th>
+                  <th class="pb-2 pr-2 text-xs font-medium text-gray-400">Pipeline variable name</th>
+                  <th class="pb-2 w-8"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+                @for (mapping of state.tokenReplacement().tokenMappings ?? []; track $index) {
+                  <tr class="group">
+                    <td class="py-2 pr-4">
+                      <input
+                        type="text"
+                        [value]="mapping.tokenName"
+                        (input)="onTokenMappingChange($index, 'tokenName', $event)"
+                        placeholder="e.g. API_URL"
+                        class="w-full rounded border border-border bg-card px-3 py-1.5 font-mono text-xs text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                      />
+                    </td>
+                    <td class="py-2 pr-2">
+                      <input
+                        type="text"
+                        [value]="mapping.variableName"
+                        (input)="onTokenMappingChange($index, 'variableName', $event)"
+                        placeholder="e.g. API_URL"
+                        class="w-full rounded border border-border bg-card px-3 py-1.5 font-mono text-xs text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                      />
+                    </td>
+                    <td class="py-2">
+                      @if ((state.tokenReplacement().tokenMappings ?? []).length > 1) {
+                        <button
+                          type="button"
+                          (click)="removeTokenMapping($index)"
+                          class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1"
+                          aria-label="Remove token mapping"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <button
+            type="button"
+            (click)="addTokenMapping()"
+            class="flex w-fit items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add token
+          </button>
+        </div>
+
       </div>
+    }
+
+  </div>
+
+  <!-- ── Quality Gates (optional) ──────────────────────────────────────────── -->
+  <div class="rounded border border-border bg-card shadow-sm">
+    <div class="flex items-center gap-4 p-5">
+
+      <!-- Shield icon -->
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      </div>
+
+      <!-- Title + description -->
+      <div class="flex-1">
+        <h3 class="text-sm font-semibold text-navy">Add quality checks to pipeline?</h3>
+        <p class="mt-0.5 text-sm text-navy/50">
+          Fail fast in 30 seconds, not 15 minutes
+        </p>
+      </div>
+
+      <pf-toggle-inline
+        [checked]="state.qualityGates().enabled"
+        ariaLabel="Toggle quality gates"
+        (toggled)="onQualityGatesToggle($event)"
+      />
     </div>
 
+    <!-- Expandable quality gates checklist -->
+    @if (state.qualityGates().enabled) {
+      <div class="border-t border-border px-5 pb-5 pt-4">
+        <p class="mb-3 text-xs font-medium uppercase tracking-wider text-gray-400">
+          Order: TypeScript → Lint → Tests → Format
+        </p>
+
+        <div class="flex flex-col gap-3">
+
+          <!-- Type check (language-agnostic) -->
+          <div class="rounded-lg border border-border bg-surface p-4">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [checked]="state.qualityGates().typescript.enabled"
+                  (change)="onQualityGateToggle('typescript', $any($event.target).checked)"
+                  class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+                />
+                <div>
+                  <p class="text-sm font-medium text-navy">Type check</p>
+                  <p class="text-xs text-gray-500">Verify types compile without errors</p>
+                </div>
+              </label>
+            </div>
+            @if (state.qualityGates().typescript.enabled) {
+              <input
+                type="text"
+                [value]="state.qualityGates().typescript.command"
+                (input)="onQualityGateCommandChange('typescript', $event)"
+                placeholder="e.g. npx tsc --noEmit / mypy . / go vet ./..."
+                class="mt-3 w-full rounded border border-border bg-card px-3 py-1.5 font-mono text-xs text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              />
+            }
+          </div>
+
+          <!-- Lint (language-agnostic) -->
+          <div class="rounded-lg border border-border bg-surface p-4">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [checked]="state.qualityGates().lint.enabled"
+                  (change)="onQualityGateToggle('lint', $any($event.target).checked)"
+                  class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+                />
+                <div>
+                  <p class="text-sm font-medium text-navy">Lint</p>
+                  <p class="text-xs text-gray-500">Catch code quality issues</p>
+                </div>
+              </label>
+            </div>
+            @if (state.qualityGates().lint.enabled) {
+              <input
+                type="text"
+                [value]="state.qualityGates().lint.command"
+                (input)="onQualityGateCommandChange('lint', $event)"
+                placeholder="e.g. npm run lint / flake8 . / golangci-lint run"
+                class="mt-3 w-full rounded border border-border bg-card px-3 py-1.5 font-mono text-xs text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              />
+            }
+          </div>
+
+          <!-- Unit tests (language-agnostic) -->
+          <div class="rounded-lg border border-border bg-surface p-4">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [checked]="state.qualityGates().tests.enabled"
+                  (change)="onQualityGateToggle('tests', $any($event.target).checked)"
+                  class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+                />
+                <div>
+                  <p class="text-sm font-medium text-navy">Unit tests</p>
+                  <p class="text-xs text-gray-500">Run tests in CI mode</p>
+                </div>
+              </label>
+            </div>
+            @if (state.qualityGates().tests.enabled) {
+              <input
+                type="text"
+                [value]="state.qualityGates().tests.command"
+                (input)="onQualityGateCommandChange('tests', $event)"
+                placeholder="e.g. npm run test:ci / pytest / go test ./..."
+                class="mt-3 w-full rounded border border-border bg-card px-3 py-1.5 font-mono text-xs text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              />
+            }
+          </div>
+
+          <!-- Format check (language-agnostic) -->
+          <div class="rounded-lg border border-border bg-surface p-4">
+            <div class="flex items-center justify-between">
+              <label class="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [checked]="state.qualityGates().format.enabled"
+                  (change)="onQualityGateToggle('format', $any($event.target).checked)"
+                  class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+                />
+                <div>
+                  <p class="text-sm font-medium text-navy">Format check</p>
+                  <p class="text-xs text-gray-500">Enforce consistent code formatting</p>
+                </div>
+              </label>
+            </div>
+            @if (state.qualityGates().format.enabled) {
+              <input
+                type="text"
+                [value]="state.qualityGates().format.command"
+                (input)="onQualityGateCommandChange('format', $event)"
+                placeholder="e.g. npm run check-format / black --check ."
+                class="mt-3 w-full rounded border border-border bg-card px-3 py-1.5 font-mono text-xs text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              />
+            }
+          </div>
+
+        </div>
+      </div>
+    }
   </div>
 
   <!-- ── Bottom bar: Back + Next ────────────────────────────────────────────── -->

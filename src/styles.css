@@ -64,6 +64,23 @@ body {
   background-size: 24px 24px;
 }
 
+/* Page entrance animations — smooth route transitions */
+pf-auth-login-page,
+pf-auth-signup-page,
+pf-history-page,
+pf-landing-page {
+  animation: pageEnter 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Wizard step entrance — targets component selectors directly */
 pf-step-project-info,
 pf-step-markets,

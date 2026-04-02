@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Check, LucideAngularModule, Zap } from 'lucide-angular';
 
 import { ButtonComponent, InputComponent } from '../../../shared/components';
@@ -18,6 +18,7 @@ import { AuthService } from '../services/auth.service';
 export class AuthLoginPage {
   protected readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly toastService = inject(ToastService);
 
   protected readonly zapIcon = Zap;
@@ -45,7 +46,10 @@ export class AuthLoginPage {
       const { email, password } = this.form.value;
       await this.authService.login(email!, password!);
       if (!this.authService.error()) {
-        this.router.navigate(['/generator']);
+        const raw = this.route.snapshot.queryParams['returnUrl'] || '/generator';
+        // Prevent open redirect: only allow relative paths starting with /
+        const returnUrl = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/generator';
+        this.router.navigateByUrl(returnUrl);
       } else {
         this.toastService.show(this.authService.error()!, 'error');
       }
@@ -57,6 +61,6 @@ export class AuthLoginPage {
   }
 
   protected onGoogleSignIn(): void {
-    // TODO: implement Google OAuth
+    this.authService.signInWithGoogle();
   }
 }

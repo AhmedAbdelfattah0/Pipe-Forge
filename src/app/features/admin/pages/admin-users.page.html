@@ -1,0 +1,192 @@
+<div class="space-y-5">
+  <div>
+    <h1 class="text-2xl font-bold text-text-dark">Users</h1>
+    <p class="mt-1 text-sm text-text-dark/60">
+      {{ adminService.userTotal() }} total users
+    </p>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex flex-wrap gap-3">
+    <div class="relative flex-1 min-w-48">
+      <lucide-icon
+        [img]="searchIcon"
+        [size]="16"
+        class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dark/40"
+      />
+      <input
+        type="text"
+        [formControl]="searchControl"
+        placeholder="Search by email or name..."
+        class="w-full rounded-lg border border-border bg-card py-2 pl-9 pr-3 text-sm text-text-dark placeholder:text-text-dark/40 focus:border-primary focus:outline-none"
+      />
+    </div>
+
+    <select
+      [formControl]="planFilterControl"
+      class="rounded-lg border border-border bg-card px-3 py-2 text-sm text-text-dark focus:border-primary focus:outline-none"
+    >
+      <option value="">All plans</option>
+      @for (plan of plans; track plan) {
+        <option [value]="plan">{{ plan }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto rounded-xl border border-border bg-card">
+    @if (adminService.isLoading()) {
+      <div class="flex items-center justify-center py-12">
+        <div class="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+      </div>
+    } @else if (adminService.users().length === 0) {
+      <div class="py-12 text-center text-sm text-text-dark/50">No users found.</div>
+    } @else {
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-border bg-surface">
+            <th class="px-4 py-3 text-left font-medium text-text-dark/60">Email</th>
+            <th class="px-4 py-3 text-left font-medium text-text-dark/60">Plan</th>
+            <th class="px-4 py-3 text-left font-medium text-text-dark/60">Usage</th>
+            <th class="px-4 py-3 text-left font-medium text-text-dark/60">Billing Start</th>
+            <th class="px-4 py-3 text-left font-medium text-text-dark/60">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of adminService.users(); track user.userId) {
+            <tr class="border-b border-border last:border-0 hover:bg-surface/50">
+              <td class="px-4 py-3">
+                <div class="font-medium text-text-dark">{{ user.email }}</div>
+                @if (user.displayName) {
+                  <div class="text-xs text-text-dark/50">{{ user.displayName }}</div>
+                }
+              </td>
+              <td class="px-4 py-3">
+                <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                      [class.bg-primary/10]="user.plan === 'pro'"
+                      [class.text-primary]="user.plan === 'pro'"
+                      [class.bg-surface]="user.plan !== 'pro'"
+                      [class.text-text-dark]="user.plan !== 'pro'"
+                >
+                  {{ user.plan }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-text-dark/70">
+                {{ user.mfeUsedThisMonth }} /
+                {{ user.mfeMonthlyLimit === -1 ? '∞' : user.mfeMonthlyLimit }}
+              </td>
+              <td class="px-4 py-3 text-text-dark/70 text-xs">
+                {{ user.billingCycleStart | slice:0:10 }}
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <!-- Change plan dropdown -->
+                  <div class="relative">
+                    <button
+                      type="button"
+                      class="rounded border border-border bg-card px-2.5 py-1 text-xs font-medium text-text-dark hover:bg-surface"
+                      (click)="toggleChangePlan(user.userId)"
+                    >
+                      Change Plan
+                    </button>
+                    @if (activeChangePlanUserId() === user.userId) {
+                      <div class="absolute left-0 top-full z-10 mt-1 w-36 rounded-lg border border-border bg-card shadow-md">
+                        @for (plan of plans; track plan) {
+                          <button
+                            type="button"
+                            class="w-full px-3 py-2 text-left text-xs text-text-dark hover:bg-surface"
+                            [class.font-semibold]="plan === user.plan"
+                            (click)="changePlan(user, plan)"
+                          >
+                            {{ plan }}
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Compensate button -->
+                  <button
+                    type="button"
+                    class="rounded border border-border bg-card px-2.5 py-1 text-xs font-medium text-text-dark hover:bg-surface"
+                    (click)="toggleCompensate(user.userId)"
+                  >
+                    Compensate
+                  </button>
+                </div>
+
+                <!-- Compensation inline form -->
+                @if (activeCompensateUserId() === user.userId) {
+                  <div class="mt-2 rounded-lg border border-border bg-surface p-3 space-y-2">
+                    <select
+                      [formControl]="compensateTypeControl"
+                      class="w-full rounded border border-border bg-card px-2 py-1.5 text-xs focus:outline-none"
+                    >
+                      <option value="free_month">Free Month</option>
+                      <option value="plan_upgrade">Plan Upgrade</option>
+                    </select>
+                    <input
+                      type="text"
+                      [formControl]="compensateValueControl"
+                      placeholder="e.g. 30days or pro:30days"
+                      class="w-full rounded border border-border bg-card px-2 py-1.5 text-xs focus:outline-none"
+                    />
+                    <textarea
+                      [formControl]="compensateReasonControl"
+                      placeholder="Reason (internal note)"
+                      rows="2"
+                      class="w-full rounded border border-border bg-card px-2 py-1.5 text-xs focus:outline-none resize-none"
+                    ></textarea>
+                    <div class="flex gap-2">
+                      <button
+                        type="button"
+                        class="rounded bg-primary px-3 py-1 text-xs font-medium text-white"
+                        (click)="submitCompensation(user)"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        type="button"
+                        class="rounded border border-border px-3 py-1 text-xs font-medium text-text-dark"
+                        (click)="toggleCompensate(user.userId)"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Pagination -->
+  @if (totalPages > 1) {
+    <div class="flex items-center justify-between">
+      <span class="text-sm text-text-dark/60">
+        Page {{ currentPage() }} of {{ totalPages }}
+      </span>
+      <div class="flex gap-2">
+        <button
+          type="button"
+          [disabled]="currentPage() === 1"
+          class="rounded border border-border px-3 py-1.5 text-sm disabled:opacity-40"
+          (click)="goToPage(currentPage() - 1)"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          [disabled]="currentPage() === totalPages"
+          class="rounded border border-border px-3 py-1.5 text-sm disabled:opacity-40"
+          (click)="goToPage(currentPage() + 1)"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  }
+</div>

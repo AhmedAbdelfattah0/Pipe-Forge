@@ -1,5 +1,105 @@
 <div class="flex flex-col gap-6">
 
+  <!-- ── Section 0: CI/CD Platform ──────────────────────────────────────── -->
+  <pf-card
+    title="CI/CD Platform"
+    subtitle="Select your CI/CD platform to generate the right pipeline format"
+  >
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+      <!-- Azure DevOps -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.platform() === 'azure-devops'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.platform() === 'azure-devops'"
+        [class.border-primary]="state.platform() === 'azure-devops'"
+        [class.bg-primary/5]="state.platform() === 'azure-devops'"
+        [class.shadow-md]="state.platform() === 'azure-devops'"
+        [class.border]="state.platform() !== 'azure-devops'"
+        [class.border-border]="state.platform() !== 'azure-devops'"
+        [class.bg-card]="state.platform() !== 'azure-devops'"
+        [class.hover:border-primary/50]="state.platform() !== 'azure-devops'"
+        [class.hover:shadow-sm]="state.platform() !== 'azure-devops'"
+        [class.hover:-translate-y-0.5]="state.platform() !== 'azure-devops'"
+        (click)="selectPlatform('azure-devops')"
+      >
+        @if (state.platform() === 'azure-devops') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        }
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.platform() === 'azure-devops'"
+          [class.text-white]="state.platform() === 'azure-devops'"
+          [class.bg-gray-100]="state.platform() !== 'azure-devops'"
+          [class.text-gray-500]="state.platform() !== 'azure-devops'"
+        >
+          <!-- Pipeline icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+          </svg>
+        </div>
+        <h3
+          class="mt-4 text-sm font-semibold"
+          [class.text-primary]="state.platform() === 'azure-devops'"
+          [class.text-navy]="state.platform() !== 'azure-devops'"
+        >Azure DevOps</h3>
+        <p class="mt-2 text-xs text-gray-500">Classic + YAML pipelines</p>
+      </button>
+
+      <!-- GitHub Actions -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.platform() === 'github-actions'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.platform() === 'github-actions'"
+        [class.border-primary]="state.platform() === 'github-actions'"
+        [class.bg-primary/5]="state.platform() === 'github-actions'"
+        [class.shadow-md]="state.platform() === 'github-actions'"
+        [class.border]="state.platform() !== 'github-actions'"
+        [class.border-border]="state.platform() !== 'github-actions'"
+        [class.bg-card]="state.platform() !== 'github-actions'"
+        [class.hover:border-primary/50]="state.platform() !== 'github-actions'"
+        [class.hover:shadow-sm]="state.platform() !== 'github-actions'"
+        [class.hover:-translate-y-0.5]="state.platform() !== 'github-actions'"
+        (click)="selectPlatform('github-actions')"
+      >
+        @if (state.platform() === 'github-actions') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        }
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.platform() === 'github-actions'"
+          [class.text-white]="state.platform() === 'github-actions'"
+          [class.bg-gray-100]="state.platform() !== 'github-actions'"
+          [class.text-gray-500]="state.platform() !== 'github-actions'"
+        >
+          <!-- GitHub-style workflow icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="18" cy="18" r="3" />
+            <circle cx="6" cy="6" r="3" />
+            <path d="M13 6h3a2 2 0 0 1 2 2v7" />
+            <path d="M6 9v12" />
+          </svg>
+        </div>
+        <h3
+          class="mt-4 text-sm font-semibold"
+          [class.text-primary]="state.platform() === 'github-actions'"
+          [class.text-navy]="state.platform() !== 'github-actions'"
+        >GitHub Actions</h3>
+        <p class="mt-2 text-xs text-gray-500">Workflow files for GitHub repos</p>
+      </button>
+    </div>
+  </pf-card>
+
   <!-- ── Section 1: Project Details ───────────────────────────────────────── -->
   <pf-card
     title="Project Details"
@@ -8,16 +108,16 @@
     <div class="flex flex-col gap-6">
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <pf-input
-          [control]="form.controls.mfeName"
-          label="MFE Name"
-          placeholder="e.g. shoppingbag"
+          [control]="form.controls.projectName"
+          label="Project Name"
+          placeholder="e.g. my-app"
           helperText="Lowercase, no spaces. Used in pipeline file names."
         />
         <pf-input
           [control]="form.controls.repositoryName"
           label="Repository Name"
           placeholder="e.g. Webapp-ShoppingBagV2"
-          helperText="Found in Azure DevOps → Repos"
+          [helperText]="state.platform() === 'github-actions' ? 'Your GitHub repository name' : 'Found in Azure DevOps → Repos'"
         />
       </div>
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -118,30 +218,200 @@
     </div>
   </pf-card>
 
-  <!-- ── Section 3: Azure DevOps Configuration ────────────────────────────── -->
-  <pf-card
-    title="Azure DevOps Configuration"
-    subtitle="Found at dev.azure.com/{org}/{project}"
-  >
-    <div class="flex flex-col gap-6">
-      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+  <!-- ── Section 3a: Azure DevOps Configuration ───────────────────────────── -->
+  @if (state.platform() === 'azure-devops') {
+    <pf-card
+      title="Azure DevOps Configuration"
+      subtitle="Found at dev.azure.com/{org}/{project}"
+    >
+      <div class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <pf-input
+            [control]="form.controls.adoOrganization"
+            label="Organization"
+            placeholder="e.g. mycompany"
+          />
+          <pf-input
+            [control]="form.controls.adoProjectName"
+            label="Project Name"
+            placeholder="e.g. MyProject"
+          />
+        </div>
         <pf-input
-          [control]="form.controls.adoOrganization"
-          label="ADO Organization"
-          placeholder="e.g. mycompany"
-        />
-        <pf-input
-          [control]="form.controls.adoProjectName"
-          label="ADO Project Name"
-          placeholder="e.g. MyProject"
+          [control]="form.controls.serviceConnectionId"
+          label="Service Connection ID"
+          placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          helperText="Project Settings → Service connections → select → copy ID from URL"
         />
       </div>
-      <pf-input
-        [control]="form.controls.serviceConnectionId"
-        label="Service Connection ID"
-        placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-        helperText="Project Settings → Service connections → select → copy ID from URL"
-      />
+    </pf-card>
+  }
+
+  @if (state.platform() === 'github-actions') {
+    <!-- ── Section 3b: GitHub Configuration ────────────────────────────────── -->
+    <pf-card
+      title="GitHub Configuration"
+      subtitle="Your GitHub repository details"
+    >
+      <div class="flex flex-col gap-6">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <pf-input
+            [control]="form.controls.githubOwner"
+            label="GitHub Owner"
+            placeholder="e.g. mycompany or username"
+            helperText="Your GitHub username or organization name"
+          />
+          <pf-input
+            [control]="form.controls.githubRepo"
+            label="Repository Name"
+            placeholder="e.g. Webapp-ShoppingBagV2"
+          />
+        </div>
+      </div>
+    </pf-card>
+
+    <!-- ── Workflow Triggers ────────────────────────────────────────────────── -->
+    <pf-card
+      title="Workflow Triggers"
+      subtitle="Configure when your GitHub Actions workflows run"
+    >
+      <div class="flex flex-col gap-3">
+        <!-- Push trigger -->
+        <label class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 cursor-pointer hover:border-primary/30 transition-colors">
+          <div>
+            <p class="text-sm font-medium text-navy">Push to branch</p>
+            <p class="mt-0.5 text-xs text-gray-500">Trigger on push to the configured branch</p>
+          </div>
+          <input
+            type="checkbox"
+            [checked]="state.triggers().push"
+            (change)="onTriggerToggle('push', $event)"
+            class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+          />
+        </label>
+
+        <!-- Pull Request trigger -->
+        <label class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 cursor-pointer hover:border-primary/30 transition-colors">
+          <div>
+            <p class="text-sm font-medium text-navy">Pull Request</p>
+            <p class="mt-0.5 text-xs text-gray-500">Trigger on pull requests targeting the branch</p>
+          </div>
+          <input
+            type="checkbox"
+            [checked]="state.triggers().pullRequest"
+            (change)="onTriggerToggle('pullRequest', $event)"
+            class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+          />
+        </label>
+
+        <!-- Manual trigger -->
+        <label class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 cursor-pointer hover:border-primary/30 transition-colors">
+          <div>
+            <p class="text-sm font-medium text-navy">Manual trigger</p>
+            <p class="mt-0.5 text-xs text-gray-500">Allow manual workflow dispatch from GitHub UI</p>
+          </div>
+          <input
+            type="checkbox"
+            [checked]="state.triggers().manual"
+            (change)="onTriggerToggle('manual', $event)"
+            class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+          />
+        </label>
+
+        <!-- Schedule trigger -->
+        <label class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 cursor-pointer hover:border-primary/30 transition-colors">
+          <div>
+            <p class="text-sm font-medium text-navy">Scheduled</p>
+            <p class="mt-0.5 text-xs text-gray-500">Run on a cron schedule (UTC timezone)</p>
+          </div>
+          <input
+            type="checkbox"
+            [checked]="state.triggers().schedule"
+            (change)="onTriggerToggle('schedule', $event)"
+            class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/50"
+          />
+        </label>
+
+        <!-- Cron expression input (shown when schedule is on) -->
+        @if (state.triggers().schedule) {
+          <div class="ml-4 mt-1">
+            <pf-input
+              [control]="form.controls.cronExpression"
+              label="Cron Expression"
+              placeholder="0 2 * * 1"
+              helperText="UTC timezone. Example: '0 2 * * 1' = every Monday at 2am"
+            />
+            <a
+              href="https://crontab.guru"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+            >
+              Crontab Guru
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
+          </div>
+        }
+      </div>
+    </pf-card>
+  }
+
+  <!-- ── Section: Wizard Configuration ────────────────────────────────────── -->
+  <pf-card
+    title="Wizard Configuration"
+    subtitle="Enable the options that apply to your project — unused steps will be skipped"
+  >
+    <div class="flex flex-col gap-3">
+
+      <!-- Toggle A: Multi-market -->
+      <div class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 hover:border-primary/30 transition-colors">
+        <div class="flex-1 min-w-0 pr-4">
+          <p class="text-sm font-medium text-navy">Multi-market project?</p>
+          <p class="mt-0.5 text-xs text-gray-500">
+            Enable if your project deploys to multiple markets (e.g. KSA, Bahrain, UAE)
+          </p>
+        </div>
+        <pf-toggle-inline
+          [checked]="state.isMultiMarket()"
+          ariaLabel="Toggle multi-market project"
+          (toggled)="onMultiMarketToggle($event)"
+        />
+      </div>
+
+      <!-- Toggle B: Multi-language build -->
+      <div class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 hover:border-primary/30 transition-colors">
+        <div class="flex-1 min-w-0 pr-4">
+          <p class="text-sm font-medium text-navy">Multi-language build?</p>
+          <p class="mt-0.5 text-xs text-gray-500">
+            Enable if you have separate builds per language (e.g. AR, EN)
+          </p>
+        </div>
+        <pf-toggle-inline
+          [checked]="state.isMultiLanguageBuild()"
+          ariaLabel="Toggle multi-language build"
+          (toggled)="onMultiLanguageBuildToggle($event)"
+        />
+      </div>
+
+      <!-- Toggle C: Quality checks -->
+      <div class="flex items-center justify-between rounded-lg border border-border bg-surface p-4 hover:border-primary/30 transition-colors">
+        <div class="flex-1 min-w-0 pr-4">
+          <p class="text-sm font-medium text-navy">Add quality checks?</p>
+          <p class="mt-0.5 text-xs text-gray-500">
+            Enable if your project runs checks such as linting or tests before building
+          </p>
+        </div>
+        <pf-toggle-inline
+          [checked]="state.hasQualityChecks()"
+          ariaLabel="Toggle quality checks"
+          (toggled)="onQualityChecksToggle($event)"
+        />
+      </div>
+
     </div>
   </pf-card>
 

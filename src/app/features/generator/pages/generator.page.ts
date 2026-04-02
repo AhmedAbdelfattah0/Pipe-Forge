@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { GeneratorStateService } from '../services/generator-state.service';
 import { StepperComponent } from '../../../shared/components/stepper/stepper.component';
 import { StepConfig } from '../../../shared/models/stepper.model';
@@ -7,6 +7,15 @@ import { StepMarketsComponent } from '../components/step-markets/step-markets.co
 import { StepLanguagesComponent } from '../components/step-languages/step-languages.component';
 import { StepDeployTargetComponent } from '../components/step-deploy-target/step-deploy-target.component';
 import { StepReviewComponent } from '../components/step-review/step-review.component';
+
+/** All five step configs with static labels. */
+const ALL_STEPS: StepConfig[] = [
+  { number: 1, label: 'Project Info' },
+  { number: 2, label: 'Markets & Environments' },
+  { number: 3, label: 'Languages & Scripts' },
+  { number: 4, label: 'Deploy Target' },
+  { number: 5, label: 'Review & Generate' },
+];
 
 @Component({
   standalone: true,
@@ -18,11 +27,35 @@ import { StepReviewComponent } from '../components/step-review/step-review.compo
 export class GeneratorPage {
   protected readonly state = inject(GeneratorStateService);
 
-  protected readonly steps: StepConfig[] = [
-    { number: 1, label: 'Project Info' },
-    { number: 2, label: 'Markets & Environments' },
-    { number: 3, label: 'Languages & Scripts' },
-    { number: 4, label: 'Deploy Target' },
-    { number: 5, label: 'Review & Generate' },
-  ];
+  /**
+   * Computed step config array for the stepper.
+   * Steps 2 and 3 are marked as skipped when their respective toggles are OFF.
+   */
+  protected readonly steps = computed<StepConfig[]>(() => {
+    const active = this.state.activeSteps();
+    return ALL_STEPS.map(s => ({
+      ...s,
+      skipped: !active.includes(s.number),
+    }));
+  });
+
+  /** Message to show when the user clicks a skipped step. */
+  protected readonly skippedStepMessage = computed<string | null>(() => {
+    const step = this.state.currentStep();
+    const active = this.state.activeSteps();
+    if (!active.includes(step)) {
+      return 'Enable this option in Step 1 to configure it.';
+    }
+    return null;
+  });
+
+  protected onStepClick(stepNumber: number): void {
+    const active = this.state.activeSteps();
+    if (!active.includes(stepNumber)) {
+      // Skipped — redirect back to Step 1 with a notification
+      this.state.goToStep(1);
+      return;
+    }
+    this.state.goToStep(stepNumber);
+  }
 }

@@ -20,7 +20,7 @@ export interface HistoryProjectApi {
 /** Frontend-friendly camelCase model */
 export interface HistoryProject {
   id: string;
-  mfeName: string;
+  projectName: string;
   repositoryName: string;
   deployTarget: DeployTarget;
   markets: string[];
@@ -35,7 +35,7 @@ export interface HistoryProject {
 export function mapApiToHistoryProject(api: HistoryProjectApi): HistoryProject {
   return {
     id: api.id,
-    mfeName: api.mfe_name,
+    projectName: api.mfe_name,
     repositoryName: api.repository_name,
     deployTarget: api.deploy_target,
     markets: api.markets,

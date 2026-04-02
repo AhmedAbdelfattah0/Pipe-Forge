@@ -1,0 +1,94 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-text-dark">Generations</h1>
+    <p class="mt-1 text-sm text-text-dark/60">Pipeline generation analytics.</p>
+  </div>
+
+  @if (adminService.isLoading()) {
+    <div class="flex items-center justify-center py-16">
+      <div class="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+    </div>
+  } @else if (adminService.generations()) {
+    <!-- Top stat -->
+    <div class="inline-flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-4">
+      <lucide-icon [img]="gitBranchIcon" [size]="20" class="text-primary" />
+      <div>
+        <p class="text-xs font-medium text-text-dark/60">Generations this month</p>
+        <p class="text-2xl font-bold text-text-dark">{{ adminService.generations()!.totalThisMonth }}</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <!-- By Platform -->
+      <div class="rounded-xl border border-border bg-card p-5">
+        <h2 class="mb-4 text-sm font-semibold text-text-dark">By Platform</h2>
+        <div class="space-y-3">
+          @for (entry of platformEntries(); track entry[0]) {
+            <div>
+              <div class="mb-1 flex items-center justify-between text-xs text-text-dark/70">
+                <span>{{ entry[0] }}</span>
+                <span class="font-medium">{{ entry[1] }}</span>
+              </div>
+              <div class="h-2.5 w-full rounded-full bg-surface">
+                <div
+                  class="h-2.5 rounded-full bg-primary transition-all"
+                  [style.width]="barWidth(entry[1], maxPlatformCount())"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- By Deploy Target -->
+      <div class="rounded-xl border border-border bg-card p-5">
+        <h2 class="mb-4 text-sm font-semibold text-text-dark">By Deploy Target</h2>
+        <div class="space-y-3">
+          @for (entry of targetEntries(); track entry[0]) {
+            <div>
+              <div class="mb-1 flex items-center justify-between text-xs text-text-dark/70">
+                <span>{{ entry[0] }}</span>
+                <span class="font-medium">{{ entry[1] }}</span>
+              </div>
+              <div class="h-2.5 w-full rounded-full bg-surface">
+                <div
+                  class="h-2.5 rounded-full bg-navy transition-all"
+                  [style.width]="barWidth(entry[1], maxTargetCount())"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent generations table -->
+    <div>
+      <h2 class="mb-3 text-base font-semibold text-text-dark">Recent Generations</h2>
+      <div class="rounded-xl border border-border bg-card overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border bg-surface">
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Project</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Deploy Target</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Markets</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (gen of adminService.generations()!.recentGenerations; track gen.id) {
+              <tr class="border-b border-border last:border-0">
+                <td class="px-4 py-3 font-medium text-text-dark">{{ gen.mfeName }}</td>
+                <td class="px-4 py-3 text-text-dark/70">{{ gen.deployTarget }}</td>
+                <td class="px-4 py-3 text-text-dark/70 text-xs">
+                  {{ gen.markets.join(', ') || '—' }}
+                </td>
+                <td class="px-4 py-3 text-text-dark/60 text-xs">{{ gen.createdAt | slice:0:10 }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

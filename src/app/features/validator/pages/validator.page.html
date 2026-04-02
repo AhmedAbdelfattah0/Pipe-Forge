@@ -1,0 +1,179 @@
+<div class="flex flex-col h-full p-6 gap-6">
+
+  <!-- ── Page Header ───────────────────────────────────────────────────────── -->
+  <div>
+    <div class="flex items-center gap-3">
+      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+        <lucide-icon [img]="shieldCheckIcon" [size]="20" class="text-primary" />
+      </div>
+      <h1 class="font-display text-2xl font-bold tracking-tight text-navy">Pipeline Validator</h1>
+    </div>
+    <p class="mt-2 text-sm text-navy/50">
+      Upload a pipeline file to get a health report before running it.
+      Think of it as ESLint for your CI/CD configuration.
+    </p>
+  </div>
+
+  @if (!validator.result() && !validator.isAnalysing()) {
+
+    <!-- ── Upload Area ──────────────────────────────────────────────────────── -->
+    <div
+      class="flex flex-col items-center justify-center rounded-xl border-2 border-dashed transition-colors duration-200 p-16 cursor-pointer"
+      [class.border-primary]="isDragOver()"
+      [class.bg-primary/5]="isDragOver()"
+      [class.border-border]="!isDragOver()"
+      [class.bg-surface]="!isDragOver()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()"
+      role="button"
+      tabindex="0"
+      aria-label="Upload pipeline file"
+      (keydown.enter)="fileInput.click()"
+      (keydown.space)="fileInput.click()"
+    >
+      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+        <lucide-icon [img]="uploadIcon" [size]="28" class="text-primary" />
+      </div>
+      <p class="font-display text-lg font-semibold text-navy">
+        Drop your pipeline file here
+      </p>
+      <p class="mt-1 text-sm text-navy/50">
+        or click to browse — .yml, .yaml, .json &middot; max 100 KB
+      </p>
+      <input
+        #fileInput
+        type="file"
+        accept=".yml,.yaml,.json"
+        class="hidden"
+        aria-hidden="true"
+        (change)="onFileInputChange($event)"
+      />
+    </div>
+
+    <!-- Error banner (shown when validator is idle but an error occurred) -->
+    @if (validator.error()) {
+      <div role="alert" class="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+        <lucide-icon [img]="alertCircleIcon" [size]="18" class="shrink-0 text-red-600" />
+        <p class="text-sm text-red-700">{{ validator.error() }}</p>
+      </div>
+    }
+
+  } @else if (validator.isAnalysing()) {
+
+    <!-- ── Loading State ────────────────────────────────────────────────────── -->
+    <div class="flex flex-col items-center justify-center rounded-xl border border-border bg-card py-20 gap-4">
+      <div class="h-10 w-10 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+      <p class="text-sm text-navy/60">Analysing {{ validator.filename() }}...</p>
+    </div>
+
+  } @else if (validator.result(); as result) {
+
+    <!-- ── Results Panel ─────────────────────────────────────────────────────── -->
+    <div class="flex flex-col gap-4">
+
+      <!-- Results header row -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <!-- Health score badge -->
+          <div
+            class="flex items-center justify-center rounded-xl px-4 py-2 font-display text-2xl font-bold tabular-nums"
+            [class.bg-green-100]="scoreVariant() === 'good'"
+            [class.text-green-700]="scoreVariant() === 'good'"
+            [class.bg-yellow-100]="scoreVariant() === 'warn'"
+            [class.text-yellow-700]="scoreVariant() === 'warn'"
+            [class.bg-red-100]="scoreVariant() === 'bad'"
+            [class.text-red-700]="scoreVariant() === 'bad'"
+          >
+            {{ result.healthScore }} / 100
+          </div>
+          <div>
+            <p class="font-display text-lg font-semibold text-navy">{{ validator.filename() }}</p>
+            <p class="text-xs text-navy/50">Platform detected: {{ platformLabel(result.platform) }}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          @if (hasAutoFixable()) {
+            <pf-button variant="primary" size="sm" [loading]="validator.isDownloading()" (clicked)="onDownloadFixed()">
+              <lucide-icon [img]="downloadIcon" [size]="14" />
+              Download Fixed Version
+            </pf-button>
+          }
+          <pf-button variant="ghost" size="sm" (clicked)="onReset()">
+            <lucide-icon [img]="xIcon" [size]="14" />
+            Analyse Another
+          </pf-button>
+        </div>
+      </div>
+
+      <!-- Issue groups -->
+      @for (severity of ['critical', 'warning', 'info']; track severity) {
+        @if ($any(issuesBySeverity())?.[severity]?.length) {
+          <div class="rounded-lg border overflow-hidden"
+            [class.border-red-200]="severity === 'critical'"
+            [class.border-yellow-200]="severity === 'warning'"
+            [class.border-blue-200]="severity === 'info'"
+          >
+            <!-- Group header -->
+            <div class="flex items-center gap-2 px-4 py-2.5"
+              [class.bg-red-50]="severity === 'critical'"
+              [class.bg-yellow-50]="severity === 'warning'"
+              [class.bg-blue-50]="severity === 'info'"
+            >
+              @if (severity === 'critical') {
+                <lucide-icon [img]="alertCircleIcon" [size]="16" class="text-red-600" />
+                <span class="text-sm font-semibold text-red-700">Critical — must fix ({{ $any(issuesBySeverity())?.[severity]?.length }})</span>
+              } @else if (severity === 'warning') {
+                <lucide-icon [img]="alertTriangleIcon" [size]="16" class="text-yellow-600" />
+                <span class="text-sm font-semibold text-yellow-700">Warning — should fix ({{ $any(issuesBySeverity())?.[severity]?.length }})</span>
+              } @else {
+                <lucide-icon [img]="infoIcon" [size]="16" class="text-blue-600" />
+                <span class="text-sm font-semibold text-blue-700">Info — optional ({{ $any(issuesBySeverity())?.[severity]?.length }})</span>
+              }
+            </div>
+
+            <!-- Issues list -->
+            <div class="divide-y divide-border">
+              @for (issue of $any(issuesBySeverity())?.[severity]; track issue.code) {
+                <div class="px-4 py-3 bg-card">
+                  <div class="flex items-start justify-between gap-4">
+                    <div class="min-w-0 flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="font-mono text-xs text-navy/40 shrink-0">{{ issue.code }}</span>
+                        @if (issue.line) {
+                          <span class="text-xs text-navy/40">line {{ issue.line }}</span>
+                        }
+                        @if (issue.autoFixable) {
+                          <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-medium text-green-700">
+                            Auto-fixable
+                          </span>
+                        }
+                      </div>
+                      <p class="mt-0.5 text-sm font-medium text-text-dark">{{ issue.description }}</p>
+                      <p class="mt-0.5 text-xs text-navy/50">{{ issue.suggestion }}</p>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Passing checks (collapsed summary) -->
+      @if (!result.issues.length) {
+        <div class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-4">
+          <lucide-icon [img]="checkCircleIcon" [size]="20" class="shrink-0 text-green-600" />
+          <div>
+            <p class="text-sm font-semibold text-green-700">All checks passed</p>
+            <p class="text-xs text-green-600">No issues were found in this pipeline file.</p>
+          </div>
+        </div>
+      }
+
+    </div>
+
+  }
+
+</div>

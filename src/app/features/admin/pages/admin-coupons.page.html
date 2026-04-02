@@ -1,0 +1,213 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-text-dark">Coupons</h1>
+    <p class="mt-1 text-sm text-text-dark/60">Manage discount codes for your pricing page.</p>
+  </div>
+
+  <!-- Stripe coming soon notice -->
+  <div class="rounded-xl border border-amber-300 bg-amber-50 p-4">
+    <div class="flex items-start gap-3">
+      <div class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400 text-white text-xs font-bold">!</div>
+      <div>
+        <p class="text-sm font-semibold text-amber-800">Stripe integration coming soon</p>
+        <p class="mt-0.5 text-sm text-amber-700">
+          Coupon creation requires Stripe integration, which is coming soon.
+          The form below is a preview — submitting it will not create a working coupon
+          until Stripe is connected.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coupon creation form — disabled -->
+  <div class="rounded-xl border border-border bg-card p-5 opacity-60">
+    <h2 class="mb-4 text-base font-semibold text-text-dark">Create Coupon</h2>
+
+    <form [formGroup]="couponForm" (ngSubmit)="submitCoupon()" class="space-y-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Code</label>
+          <input
+            type="text"
+            formControlName="code"
+            placeholder="e.g. LAUNCH20"
+            class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none uppercase"
+          />
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Type</label>
+          <div class="flex rounded-lg border border-border overflow-hidden">
+            <button
+              type="button"
+              class="flex-1 py-2 text-sm font-medium transition-colors"
+              [class.bg-primary]="couponForm.get('type')?.value === 'percent'"
+              [class.text-white]="couponForm.get('type')?.value === 'percent'"
+              [class.bg-surface]="couponForm.get('type')?.value !== 'percent'"
+              [class.text-text-dark]="couponForm.get('type')?.value !== 'percent'"
+              (click)="couponForm.get('type')?.setValue('percent')"
+            >
+              Percent (%)
+            </button>
+            <button
+              type="button"
+              class="flex-1 py-2 text-sm font-medium transition-colors"
+              [class.bg-primary]="couponForm.get('type')?.value === 'fixed'"
+              [class.text-white]="couponForm.get('type')?.value === 'fixed'"
+              [class.bg-surface]="couponForm.get('type')?.value !== 'fixed'"
+              [class.text-text-dark]="couponForm.get('type')?.value !== 'fixed'"
+              (click)="couponForm.get('type')?.setValue('fixed')"
+            >
+              Fixed ($)
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Value</label>
+          <input
+            type="number"
+            min="1"
+            formControlName="value"
+            placeholder="e.g. 20"
+            class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Applies To</label>
+          <select
+            formControlName="appliesTo"
+            class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none"
+          >
+            <option value="all">All plans</option>
+            <option value="pro">Pro</option>
+            <option value="team">Team</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Billing Cycle</label>
+          <select
+            formControlName="billingCycle"
+            class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none"
+          >
+            <option value="both">Both</option>
+            <option value="monthly">Monthly only</option>
+            <option value="annual">Annual only</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Max Uses (optional)</label>
+          <input
+            type="number"
+            min="1"
+            formControlName="maxUses"
+            placeholder="Leave blank for unlimited"
+            class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-text-dark">Expires At (optional)</label>
+          <input
+            type="date"
+            formControlName="expiresAt"
+            class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-text-dark">Description (optional)</label>
+        <textarea
+          formControlName="description"
+          rows="2"
+          placeholder="Internal note about this coupon..."
+          class="w-full resize-none rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none"
+        ></textarea>
+      </div>
+
+      <button
+        type="submit"
+        disabled
+        class="rounded-lg bg-surface border border-border px-5 py-2.5 text-sm font-medium text-text-dark/50 cursor-not-allowed"
+      >
+        Create Coupon (Coming Soon)
+      </button>
+    </form>
+  </div>
+
+  <!-- Coupons table -->
+  <div>
+    <h2 class="mb-3 text-base font-semibold text-text-dark">Active Coupons</h2>
+    <div class="rounded-xl border border-border bg-card overflow-x-auto">
+      @if (adminService.coupons().length === 0) {
+        <div class="py-8 text-center text-sm text-text-dark/50">No coupons yet.</div>
+      } @else {
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border bg-surface">
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Code</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Type</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Value</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Uses</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Expires</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Status</th>
+              <th class="px-4 py-3 text-left font-medium text-text-dark/60">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (coupon of adminService.coupons(); track coupon.id) {
+              <tr class="border-b border-border last:border-0">
+                <td class="px-4 py-3 font-mono font-medium text-text-dark">{{ coupon.code }}</td>
+                <td class="px-4 py-3 text-text-dark/70 capitalize">{{ coupon.type }}</td>
+                <td class="px-4 py-3 text-text-dark">
+                  {{ coupon.type === 'percent' ? coupon.value + '%' : '$' + coupon.value }}
+                </td>
+                <td class="px-4 py-3 text-text-dark/70">
+                  {{ coupon.usesCount }} / {{ coupon.maxUses ?? '∞' }}
+                </td>
+                <td class="px-4 py-3 text-text-dark/70 text-xs">
+                  {{ coupon.expiresAt ? (coupon.expiresAt | slice:0:10) : '—' }}
+                </td>
+                <td class="px-4 py-3">
+                  <span class="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                        [class.bg-success/10]="coupon.isActive"
+                        [class.text-success]="coupon.isActive"
+                        [class.bg-surface]="!coupon.isActive"
+                        [class.text-text-dark]="!coupon.isActive"
+                  >
+                    {{ coupon.isActive ? 'Active' : 'Paused' }}
+                  </span>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="rounded p-1 text-text-dark/40 hover:text-text-dark"
+                      title="Copy coupon link"
+                      (click)="copyLink(coupon.code)"
+                    >
+                      <lucide-icon [img]="copyIcon" [size]="14" />
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded p-1 text-text-dark/40 hover:text-text-dark"
+                      [title]="coupon.isActive ? 'Pause' : 'Resume'"
+                      (click)="toggleCoupon(coupon.id, !coupon.isActive)"
+                    >
+                      <lucide-icon [img]="coupon.isActive ? pauseIcon : playIcon" [size]="14" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+</div>

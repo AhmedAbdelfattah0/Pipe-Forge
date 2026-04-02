@@ -24,7 +24,7 @@ export class ButtonComponent {
 
   protected get classes(): string {
     const base =
-      'cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded font-medium transition-all outline-none focus-visible:ring-2 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50';
+      'cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded font-medium transition-all duration-150 outline-none hover:-translate-y-px active:translate-y-0 focus-visible:ring-2 focus-visible:ring-offset-1 disabled:pointer-events-none disabled:opacity-50 disabled:hover:translate-y-0';
 
     const variantMap: Record<string, string> = {
       primary:

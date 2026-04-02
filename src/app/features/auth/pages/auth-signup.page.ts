@@ -58,6 +58,6 @@ export class AuthSignupPage {
   }
 
   protected onGoogleSignIn(): void {
-    // TODO: implement Google OAuth
+    this.authService.signInWithGoogle();
   }
 }

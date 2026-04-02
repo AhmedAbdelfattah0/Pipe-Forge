@@ -5,7 +5,12 @@
     title="Deploy Target"
     subtitle="Select where your application will be deployed"
   >
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="flex flex-col gap-6">
+
+    <!-- Azure group -->
+    <div>
+      <p class="mb-3 text-xs font-medium uppercase tracking-wider text-gray-400">Azure (ADO + GitHub Actions)</p>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
       <!-- Storage Account -->
       <button
@@ -21,6 +26,7 @@
         [class.bg-card]="state.deployTarget() !== 'storage-account'"
         [class.hover:border-primary/50]="state.deployTarget() !== 'storage-account'"
         [class.hover:shadow-sm]="state.deployTarget() !== 'storage-account'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'storage-account'"
         (click)="selectTarget('storage-account')"
       >
         @if (state.deployTarget() === 'storage-account') {
@@ -66,6 +72,7 @@
         [class.bg-card]="state.deployTarget() !== 'static-web-app'"
         [class.hover:border-primary/50]="state.deployTarget() !== 'static-web-app'"
         [class.hover:shadow-sm]="state.deployTarget() !== 'static-web-app'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'static-web-app'"
         (click)="selectTarget('static-web-app')"
       >
         @if (state.deployTarget() === 'static-web-app') {
@@ -111,6 +118,7 @@
         [class.bg-card]="state.deployTarget() !== 'app-service'"
         [class.hover:border-primary/50]="state.deployTarget() !== 'app-service'"
         [class.hover:shadow-sm]="state.deployTarget() !== 'app-service'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'app-service'"
         (click)="selectTarget('app-service')"
       >
         @if (state.deployTarget() === 'app-service') {
@@ -142,6 +150,238 @@
         >Azure App Service</h3>
         <p class="mt-2 text-xs text-gray-500">Full server-side hosting</p>
       </button>
+
+      </div>
+    </div>
+    <!-- end Azure group -->
+
+    <!-- Modern Hosting group (GitHub Actions only) -->
+    <div>
+      <p class="mb-3 text-xs font-medium uppercase tracking-wider text-gray-400">Modern Hosting (GitHub Actions only)</p>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+      <!-- Vercel -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.deployTarget() === 'vercel'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.deployTarget() === 'vercel'"
+        [class.border-primary]="state.deployTarget() === 'vercel'"
+        [class.bg-primary/5]="state.deployTarget() === 'vercel'"
+        [class.shadow-md]="state.deployTarget() === 'vercel'"
+        [class.border]="state.deployTarget() !== 'vercel'"
+        [class.border-border]="state.deployTarget() !== 'vercel'"
+        [class.bg-card]="state.deployTarget() !== 'vercel'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'vercel'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'vercel'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'vercel'"
+        (click)="selectTarget('vercel')"
+      >
+        @if (state.deployTarget() === 'vercel') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+          </div>
+        }
+        <div class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'vercel'" [class.text-white]="state.deployTarget() === 'vercel'"
+          [class.bg-gray-100]="state.deployTarget() !== 'vercel'" [class.text-gray-500]="state.deployTarget() !== 'vercel'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2L2 22h20L12 2z"/></svg>
+        </div>
+        <h3 class="mt-4 text-sm font-semibold" [class.text-primary]="state.deployTarget() === 'vercel'" [class.text-navy]="state.deployTarget() !== 'vercel'">Vercel</h3>
+        <p class="mt-2 text-xs text-gray-500">Zero-config frontend deployments</p>
+      </button>
+
+      <!-- Netlify -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.deployTarget() === 'netlify'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.deployTarget() === 'netlify'"
+        [class.border-primary]="state.deployTarget() === 'netlify'"
+        [class.bg-primary/5]="state.deployTarget() === 'netlify'"
+        [class.shadow-md]="state.deployTarget() === 'netlify'"
+        [class.border]="state.deployTarget() !== 'netlify'"
+        [class.border-border]="state.deployTarget() !== 'netlify'"
+        [class.bg-card]="state.deployTarget() !== 'netlify'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'netlify'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'netlify'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'netlify'"
+        (click)="selectTarget('netlify')"
+      >
+        @if (state.deployTarget() === 'netlify') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+          </div>
+        }
+        <div class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'netlify'" [class.text-white]="state.deployTarget() === 'netlify'"
+          [class.bg-gray-100]="state.deployTarget() !== 'netlify'" [class.text-gray-500]="state.deployTarget() !== 'netlify'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h16M12 4l8 8-8 8"/>
+          </svg>
+        </div>
+        <h3 class="mt-4 text-sm font-semibold" [class.text-primary]="state.deployTarget() === 'netlify'" [class.text-navy]="state.deployTarget() !== 'netlify'">Netlify</h3>
+        <p class="mt-2 text-xs text-gray-500">Continuous deployment with CDN</p>
+      </button>
+
+      <!-- Firebase Hosting -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.deployTarget() === 'firebase'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.deployTarget() === 'firebase'"
+        [class.border-primary]="state.deployTarget() === 'firebase'"
+        [class.bg-primary/5]="state.deployTarget() === 'firebase'"
+        [class.shadow-md]="state.deployTarget() === 'firebase'"
+        [class.border]="state.deployTarget() !== 'firebase'"
+        [class.border-border]="state.deployTarget() !== 'firebase'"
+        [class.bg-card]="state.deployTarget() !== 'firebase'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'firebase'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'firebase'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'firebase'"
+        (click)="selectTarget('firebase')"
+      >
+        @if (state.deployTarget() === 'firebase') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+          </div>
+        }
+        <div class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'firebase'" [class.text-white]="state.deployTarget() === 'firebase'"
+          [class.bg-gray-100]="state.deployTarget() !== 'firebase'" [class.text-gray-500]="state.deployTarget() !== 'firebase'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2L2 19h20L12 2z"/>
+            <path d="M12 2v17"/>
+          </svg>
+        </div>
+        <h3 class="mt-4 text-sm font-semibold" [class.text-primary]="state.deployTarget() === 'firebase'" [class.text-navy]="state.deployTarget() !== 'firebase'">Firebase Hosting</h3>
+        <p class="mt-2 text-xs text-gray-500">Fast and secure web hosting by Google</p>
+      </button>
+
+      <!-- GitHub Pages -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.deployTarget() === 'github-pages'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.deployTarget() === 'github-pages'"
+        [class.border-primary]="state.deployTarget() === 'github-pages'"
+        [class.bg-primary/5]="state.deployTarget() === 'github-pages'"
+        [class.shadow-md]="state.deployTarget() === 'github-pages'"
+        [class.border]="state.deployTarget() !== 'github-pages'"
+        [class.border-border]="state.deployTarget() !== 'github-pages'"
+        [class.bg-card]="state.deployTarget() !== 'github-pages'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'github-pages'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'github-pages'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'github-pages'"
+        (click)="selectTarget('github-pages')"
+      >
+        @if (state.deployTarget() === 'github-pages') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+          </div>
+        }
+        <div class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'github-pages'" [class.text-white]="state.deployTarget() === 'github-pages'"
+          [class.bg-gray-100]="state.deployTarget() !== 'github-pages'" [class.text-gray-500]="state.deployTarget() !== 'github-pages'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </div>
+        <h3 class="mt-4 text-sm font-semibold" [class.text-primary]="state.deployTarget() === 'github-pages'" [class.text-navy]="state.deployTarget() !== 'github-pages'">GitHub Pages</h3>
+        <p class="mt-2 text-xs text-gray-500">Free static hosting from GitHub repositories</p>
+      </button>
+
+      <!-- Cloudflare Pages -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.deployTarget() === 'cloudflare-pages'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.deployTarget() === 'cloudflare-pages'"
+        [class.border-primary]="state.deployTarget() === 'cloudflare-pages'"
+        [class.bg-primary/5]="state.deployTarget() === 'cloudflare-pages'"
+        [class.shadow-md]="state.deployTarget() === 'cloudflare-pages'"
+        [class.border]="state.deployTarget() !== 'cloudflare-pages'"
+        [class.border-border]="state.deployTarget() !== 'cloudflare-pages'"
+        [class.bg-card]="state.deployTarget() !== 'cloudflare-pages'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'cloudflare-pages'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'cloudflare-pages'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'cloudflare-pages'"
+        (click)="selectTarget('cloudflare-pages')"
+      >
+        @if (state.deployTarget() === 'cloudflare-pages') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+          </div>
+        }
+        <div class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'cloudflare-pages'" [class.text-white]="state.deployTarget() === 'cloudflare-pages'"
+          [class.bg-gray-100]="state.deployTarget() !== 'cloudflare-pages'" [class.text-gray-500]="state.deployTarget() !== 'cloudflare-pages'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+        </div>
+        <h3 class="mt-4 text-sm font-semibold" [class.text-primary]="state.deployTarget() === 'cloudflare-pages'" [class.text-navy]="state.deployTarget() !== 'cloudflare-pages'">Cloudflare Pages</h3>
+        <p class="mt-2 text-xs text-gray-500">Edge-deployed static sites via Cloudflare CDN</p>
+      </button>
+
+      </div>
+    </div>
+    <!-- end Modern Hosting group -->
+
+    <!-- Traditional group -->
+    <div>
+      <p class="mb-3 text-xs font-medium uppercase tracking-wider text-gray-400">Traditional</p>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+      <!-- cPanel / FTP -->
+      <button
+        type="button"
+        [attr.aria-pressed]="state.deployTarget() === 'ftp-cpanel'"
+        class="relative flex cursor-pointer flex-col items-center rounded-lg p-6 text-center transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 outline-none"
+        [class.border-2]="state.deployTarget() === 'ftp-cpanel'"
+        [class.border-primary]="state.deployTarget() === 'ftp-cpanel'"
+        [class.bg-primary/5]="state.deployTarget() === 'ftp-cpanel'"
+        [class.shadow-md]="state.deployTarget() === 'ftp-cpanel'"
+        [class.border]="state.deployTarget() !== 'ftp-cpanel'"
+        [class.border-border]="state.deployTarget() !== 'ftp-cpanel'"
+        [class.bg-card]="state.deployTarget() !== 'ftp-cpanel'"
+        [class.hover:border-primary/50]="state.deployTarget() !== 'ftp-cpanel'"
+        [class.hover:shadow-sm]="state.deployTarget() !== 'ftp-cpanel'"
+        [class.hover:-translate-y-0.5]="state.deployTarget() !== 'ftp-cpanel'"
+        (click)="selectTarget('ftp-cpanel')"
+      >
+        @if (state.deployTarget() === 'ftp-cpanel') {
+          <div class="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+            <svg class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        }
+        <div
+          class="flex h-14 w-14 items-center justify-center rounded-full transition-colors"
+          [class.bg-primary]="state.deployTarget() === 'ftp-cpanel'"
+          [class.text-white]="state.deployTarget() === 'ftp-cpanel'"
+          [class.bg-gray-100]="state.deployTarget() !== 'ftp-cpanel'"
+          [class.text-gray-500]="state.deployTarget() !== 'ftp-cpanel'"
+        >
+          <!-- Upload icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+        <h3
+          class="mt-4 text-sm font-semibold"
+          [class.text-primary]="state.deployTarget() === 'ftp-cpanel'"
+          [class.text-navy]="state.deployTarget() !== 'ftp-cpanel'"
+        >cPanel / FTP</h3>
+        <p class="mt-2 text-xs text-gray-500">Deploy to shared hosting (SiteGround, Hostinger, GoDaddy...)</p>
+      </button>
+
+      </div>
+    </div>
+    <!-- end Traditional group -->
 
     </div>
   </pf-card>
@@ -185,102 +425,214 @@
           </div>
         }
       </pf-card>
+
+      <!-- Preserve Files Toggle -->
+      <div class="mt-6 rounded border border-border bg-card shadow-sm">
+        <div class="flex items-center gap-4 p-5">
+
+          <!-- Shield icon -->
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+
+          <div class="flex-1">
+            <h3 class="text-sm font-semibold text-navy">Preserve files during deployment?</h3>
+            <p class="mt-0.5 text-sm text-navy/50">
+              Protects files like .well-known/ that get wiped when $web is cleared
+            </p>
+          </div>
+
+          <pf-toggle-inline
+            [checked]="state.protectedPaths().length > 0"
+            ariaLabel="Toggle protected files preservation"
+            (toggled)="onProtectedPathsToggle($event)"
+          />
+        </div>
+
+        <!-- Expandable protected paths textarea -->
+        <div class="expandable" [class.is-open]="state.protectedPaths().length > 0">
+          <div class="overflow-hidden">
+            <div class="border-t border-border px-5 pb-5 pt-4">
+              <div class="flex flex-col gap-3">
+                <label for="protected-paths" class="text-sm font-medium text-text-dark">
+                  Protected paths (one per line)
+                </label>
+                <textarea
+                  id="protected-paths"
+                  rows="4"
+                  [value]="protectedPathsText()"
+                  (input)="onProtectedPathsChange($event)"
+                  placeholder=".well-known/apple-developer-merchantid-domain-association"
+                  class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 resize-y"
+                ></textarea>
+                <div class="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                  </svg>
+                  <div class="text-xs text-navy/80">
+                    <p>Stored in a separate container <span class="font-mono font-medium">{{ state.protectedPathsContainer() }}</span>, restored after every deploy.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   }
 
   <!-- Static Web App Configuration -->
   @if (state.deployTarget() === 'static-web-app') {
     <div class="animate-fade-in flex flex-col gap-6">
-      <pf-card
-        title="Static Web App Configuration"
-        subtitle="Found in Azure Portal → Static Web Apps → Manage deployment token"
-      >
-        @if (marketEnvCombinations().length > 0) {
-          <div class="flex flex-col gap-4">
-            @for (combo of marketEnvCombinations(); track combo.key) {
-              <div class="rounded-lg border border-border bg-surface p-4">
-                <div class="flex flex-col gap-2">
-                  <div class="flex items-center gap-2">
+
+      @if (state.platform() === 'github-actions') {
+
+        <!-- GitHub Actions: secret name inputs -->
+        <pf-card
+          title="Static Web App — GitHub Secret Names"
+          subtitle="Enter the GitHub secret name that holds each SWA deployment token"
+        >
+          @if (marketEnvCombinations().length > 0) {
+            <div class="flex flex-col gap-4">
+              @for (combo of marketEnvCombinations(); track combo.key) {
+                <div class="rounded-lg border border-border bg-surface p-4">
+                  <div class="flex flex-col gap-2">
                     <label
-                      [for]="'swa-' + combo.key"
+                      [for]="'swa-secret-' + combo.key"
                       class="text-sm font-medium text-navy"
                     >{{ combo.label }}</label>
-                    <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-warning">
-                      Secret
-                    </span>
+                    <input
+                      [id]="'swa-secret-' + combo.key"
+                      type="text"
+                      [value]="githubSwaSecretValue(combo.key)"
+                      (input)="onGithubSwaSecretChange(combo.key, $event)"
+                      placeholder="e.g. SWA_TOKEN_KSA_QA"
+                      class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                    />
+                    <p class="text-xs text-gray-500">GitHub secret name containing your SWA deployment token</p>
                   </div>
+                </div>
+              }
+            </div>
+            <div class="mt-4 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+              <p class="text-sm text-navy/80">
+                Add these secrets to your GitHub repository under
+                <span class="font-medium">Settings → Secrets and variables → Actions</span>
+              </p>
+            </div>
+          } @else {
+            <div class="rounded-lg border border-dashed border-border p-8 text-center">
+              <p class="text-sm text-gray-500">
+                Configure markets and environments in the previous steps to see deployment options.
+              </p>
+            </div>
+          }
+        </pf-card>
+
+      } @else {
+
+        <!-- Azure DevOps: deployment token password inputs -->
+        <pf-card
+          title="Static Web App Configuration"
+          subtitle="Found in Azure Portal → Static Web Apps → Manage deployment token"
+        >
+          @if (marketEnvCombinations().length > 0) {
+            <div class="flex flex-col gap-4">
+              @for (combo of marketEnvCombinations(); track combo.key) {
+                <div class="rounded-lg border border-border bg-surface p-4">
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                      <label
+                        [for]="'swa-' + combo.key"
+                        class="text-sm font-medium text-navy"
+                      >{{ combo.label }}</label>
+                      <span class="inline-flex items-center rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-warning">
+                        Secret
+                      </span>
+                    </div>
+                    <input
+                      [id]="'swa-' + combo.key"
+                      type="password"
+                      [value]="configValue(combo.key)"
+                      (input)="onConfigChange(combo.key, $event)"
+                      placeholder="Enter SWA deployment token"
+                      class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+                    />
+                    <p class="text-xs text-gray-500">SWA deployment token</p>
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="rounded-lg border border-dashed border-border p-8 text-center">
+              <p class="text-sm text-gray-500">
+                Configure markets and environments in the previous steps to see deployment options.
+              </p>
+            </div>
+          }
+        </pf-card>
+
+        <!-- Trigger Pipeline Section (Azure DevOps only) -->
+        <div class="rounded border border-border bg-card shadow-sm">
+          <div class="flex items-center gap-4 p-5">
+
+            <!-- Zap icon -->
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            </div>
+
+            <!-- Title + description -->
+            <div class="flex-1">
+              <h3 class="text-sm font-semibold text-navy">Trigger another pipeline after deploy?</h3>
+              <p class="mt-0.5 text-sm text-navy/50">
+                Useful for cache invalidation or post-deployment tasks
+              </p>
+            </div>
+
+            <pf-toggle-inline
+              [checked]="state.triggerPipelineAfterDeploy()"
+              ariaLabel="Toggle trigger pipeline after deploy"
+              (toggled)="onTriggerToggle($event)"
+            />
+          </div>
+
+          <!-- Expandable pipeline ID input -->
+          <div class="expandable" [class.is-open]="state.triggerPipelineAfterDeploy()">
+            <div class="overflow-hidden">
+              <div class="border-t border-border px-5 pb-5 pt-4">
+                <div class="flex flex-col gap-2">
+                  <label for="trigger-pipeline-id" class="text-sm font-medium text-text-dark">
+                    Pipeline Definition ID
+                  </label>
                   <input
-                    [id]="'swa-' + combo.key"
-                    type="password"
-                    [value]="configValue(combo.key)"
-                    (input)="onConfigChange(combo.key, $event)"
-                    placeholder="Enter SWA deployment token"
+                    id="trigger-pipeline-id"
+                    type="text"
+                    [value]="state.triggerPipelineId()"
+                    (input)="onTriggerPipelineIdChange($event)"
+                    placeholder="e.g. 227"
                     class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
                   />
-                  <p class="text-xs text-gray-500">SWA deployment token</p>
+                  <p class="text-xs text-gray-500">
+                    The Azure DevOps build definition ID to trigger after deployment
+                  </p>
                 </div>
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="rounded-lg border border-dashed border-border p-8 text-center">
-            <p class="text-sm text-gray-500">
-              Configure markets and environments in the previous steps to see deployment options.
-            </p>
-          </div>
-        }
-      </pf-card>
-
-      <!-- Trigger Pipeline Section -->
-      <div class="rounded border border-border bg-card shadow-sm">
-        <div class="flex items-center gap-4 p-5">
-
-          <!-- Zap icon -->
-          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-            </svg>
-          </div>
-
-          <!-- Title + description -->
-          <div class="flex-1">
-            <h3 class="text-sm font-semibold text-navy">Trigger another pipeline after deploy?</h3>
-            <p class="mt-0.5 text-sm text-navy/50">
-              Useful for cache invalidation or post-deployment tasks
-            </p>
-          </div>
-
-          <pf-toggle-inline
-            [checked]="state.triggerPipelineAfterDeploy()"
-            ariaLabel="Toggle trigger pipeline after deploy"
-            (toggled)="onTriggerToggle($event)"
-          />
-        </div>
-
-        <!-- Expandable pipeline ID input -->
-        <div class="expandable" [class.is-open]="state.triggerPipelineAfterDeploy()">
-          <div class="overflow-hidden">
-            <div class="border-t border-border px-5 pb-5 pt-4">
-              <div class="flex flex-col gap-2">
-                <label for="trigger-pipeline-id" class="text-sm font-medium text-text-dark">
-                  Pipeline Definition ID
-                </label>
-                <input
-                  id="trigger-pipeline-id"
-                  type="text"
-                  [value]="state.triggerPipelineId()"
-                  (input)="onTriggerPipelineIdChange($event)"
-                  placeholder="e.g. 227"
-                  class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
-                />
-                <p class="text-xs text-gray-500">
-                  The Azure DevOps build definition ID to trigger after deployment
-                </p>
               </div>
             </div>
           </div>
         </div>
-      </div>
+
+      }
     </div>
   }
 
@@ -320,6 +672,221 @@
             </p>
           </div>
         }
+      </pf-card>
+    </div>
+  }
+
+  <!-- cPanel / FTP Configuration -->
+  @if (state.deployTarget() === 'ftp-cpanel') {
+    <div class="animate-fade-in flex flex-col gap-6">
+      <pf-card
+        title="FTP Deployment Configuration"
+        subtitle="Configure the remote path on your hosting server"
+      >
+        <div class="flex flex-col gap-4">
+          <!-- Remote Path input -->
+          <div class="rounded-lg border border-border bg-surface p-4">
+            <div class="flex flex-col gap-2">
+              <label
+                for="ftp-remote-path"
+                class="text-sm font-medium text-navy"
+              >Remote Path</label>
+              <input
+                id="ftp-remote-path"
+                type="text"
+                [value]="state.ftpRemotePath()"
+                (input)="onFtpRemotePathChange($event)"
+                placeholder="/public_html/"
+                class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+              />
+              <p class="text-xs text-gray-500">Server directory where files will be uploaded (e.g. /public_html/my-app/)</p>
+            </div>
+          </div>
+
+          <!-- Info: credentials stored as GitHub Secrets -->
+          <div class="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
+            <p class="text-sm text-navy/80">
+              FTP credentials are stored as GitHub Secrets — never in PipeForge.
+              Add them under <span class="font-medium">Settings → Secrets and variables → Actions</span>
+            </p>
+          </div>
+
+          <!-- Required GitHub Secrets badges -->
+          <div>
+            <p class="mb-2 text-xs font-medium text-gray-500 uppercase tracking-wide">Required GitHub Secrets</p>
+            <div class="flex flex-wrap gap-2">
+              <pf-badge variant="secret" text="FTP_SERVER" />
+              <pf-badge variant="secret" text="FTP_USERNAME" />
+              <pf-badge variant="secret" text="FTP_PASSWORD" />
+            </div>
+          </div>
+        </div>
+      </pf-card>
+
+      <!-- Platform auto-set notice -->
+      @if (state.platform() === 'github-actions') {
+        <div class="flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-success" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+          <p class="text-sm text-navy/80">
+            Platform automatically set to <span class="font-medium">GitHub Actions</span> — cPanel/FTP deployment uses the FTP-Deploy-Action.
+          </p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ── ADO + Modern Hosting Warning ──────────────────────────────────────── -->
+  @if (state.platform() === 'azure-devops' && isModernHostingTarget()) {
+    <div class="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5 text-amber-600" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+      <div>
+        <p class="text-sm font-medium text-amber-800">GitHub Actions required for this deploy target</p>
+        <p class="mt-1 text-xs text-amber-700">
+          Vercel, Netlify, Firebase, GitHub Pages, and Cloudflare Pages only support GitHub Actions workflows.
+          Switch your platform to GitHub Actions to generate pipelines for this target.
+        </p>
+        <button
+          type="button"
+          class="mt-2 text-xs font-medium text-primary hover:underline"
+          (click)="state.setPlatform('github-actions')"
+        >
+          Switch to GitHub Actions
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- ── Modern Hosting Configuration ──────────────────────────────────────── -->
+
+  <!-- Vercel Configuration -->
+  @if (state.deployTarget() === 'vercel') {
+    <div class="animate-fade-in">
+      <pf-card title="Vercel Configuration" subtitle="Find these values in your Vercel project and account settings">
+        <div class="flex flex-col gap-4">
+          <p class="text-xs text-gray-500">
+            Add <code class="rounded bg-gray-100 px-1 text-xs">VERCEL_TOKEN</code>, <code class="rounded bg-gray-100 px-1 text-xs">VERCEL_ORG_ID</code>, and <code class="rounded bg-gray-100 px-1 text-xs">VERCEL_PROJECT_ID</code> as GitHub repository secrets.
+            See the generated <strong>SECRETS_GUIDE.md</strong> for details.
+          </p>
+        </div>
+      </pf-card>
+    </div>
+  }
+
+  <!-- Netlify Configuration -->
+  @if (state.deployTarget() === 'netlify') {
+    <div class="animate-fade-in">
+      <pf-card title="Netlify Configuration" subtitle="Find these values in your Netlify account settings">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <label for="netlify-site-id" class="text-sm font-medium text-text-dark">Netlify Site ID</label>
+            <input
+              id="netlify-site-id"
+              type="text"
+              [value]="state.modernHosting().netlifySiteId ?? ''"
+              (input)="onModernHostingChange('netlifySiteId', $event)"
+              placeholder="e.g. a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+              class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+            />
+            <p class="text-xs text-gray-500">Found in Site settings → General → Site ID in app.netlify.com</p>
+          </div>
+          <p class="text-xs text-gray-500">
+            Add <code class="rounded bg-gray-100 px-1 text-xs">NETLIFY_AUTH_TOKEN</code> and <code class="rounded bg-gray-100 px-1 text-xs">NETLIFY_SITE_ID</code> as GitHub repository secrets.
+          </p>
+        </div>
+      </pf-card>
+    </div>
+  }
+
+  <!-- Firebase Configuration -->
+  @if (state.deployTarget() === 'firebase') {
+    <div class="animate-fade-in">
+      <pf-card title="Firebase Configuration" subtitle="Find these values in your Firebase project settings">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <label for="firebase-project-id" class="text-sm font-medium text-text-dark">Firebase Project ID</label>
+            <input
+              id="firebase-project-id"
+              type="text"
+              [value]="state.modernHosting().firebaseProjectId ?? ''"
+              (input)="onModernHostingChange('firebaseProjectId', $event)"
+              placeholder="e.g. my-firebase-project"
+              class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+            />
+            <p class="text-xs text-gray-500">Found in Firebase Console → Project Settings → General</p>
+          </div>
+          <p class="text-xs text-gray-500">
+            Add <code class="rounded bg-gray-100 px-1 text-xs">FIREBASE_SERVICE_ACCOUNT</code> (service account JSON) as a GitHub repository secret.
+          </p>
+        </div>
+      </pf-card>
+    </div>
+  }
+
+  <!-- GitHub Pages Configuration -->
+  @if (state.deployTarget() === 'github-pages') {
+    <div class="animate-fade-in">
+      <pf-card title="GitHub Pages Configuration" subtitle="Configure your GitHub Pages publish branch">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <label for="gh-pages-branch" class="text-sm font-medium text-text-dark">Publish branch</label>
+            <input
+              id="gh-pages-branch"
+              type="text"
+              [value]="state.modernHosting().ghPagesBranch ?? 'gh-pages'"
+              (input)="onModernHostingChange('ghPagesBranch', $event)"
+              placeholder="gh-pages"
+              class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+            />
+            <p class="text-xs text-gray-500">The branch that GitHub Pages will serve. Default: <code class="rounded bg-gray-100 px-1">gh-pages</code></p>
+          </div>
+          <div class="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 mt-0.5 text-blue-600" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            <p class="text-xs text-blue-700">
+              No secrets required — <code class="rounded bg-blue-100 px-1">GITHUB_TOKEN</code> is automatically provided by GitHub Actions.
+              Enable GitHub Pages in your repo: Settings → Pages → Deploy from a branch.
+            </p>
+          </div>
+        </div>
+      </pf-card>
+    </div>
+  }
+
+  <!-- Cloudflare Pages Configuration -->
+  @if (state.deployTarget() === 'cloudflare-pages') {
+    <div class="animate-fade-in">
+      <pf-card title="Cloudflare Pages Configuration" subtitle="Find these values in your Cloudflare dashboard">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <label for="cf-pages-project" class="text-sm font-medium text-text-dark">Pages Project Name</label>
+            <input
+              id="cf-pages-project"
+              type="text"
+              [value]="state.modernHosting().cloudflarePagesProject ?? ''"
+              (input)="onModernHostingChange('cloudflarePagesProject', $event)"
+              placeholder="e.g. my-site"
+              class="w-full rounded border border-border bg-card px-3 py-2 text-sm text-text-dark placeholder:text-gray-400 outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20"
+            />
+            <p class="text-xs text-gray-500">The Cloudflare Pages project name (must be created in Cloudflare dashboard first)</p>
+          </div>
+          <p class="text-xs text-gray-500">
+            Add <code class="rounded bg-gray-100 px-1 text-xs">CLOUDFLARE_API_TOKEN</code> and <code class="rounded bg-gray-100 px-1 text-xs">CLOUDFLARE_ACCOUNT_ID</code> as GitHub repository secrets.
+          </p>
+        </div>
       </pf-card>
     </div>
   }

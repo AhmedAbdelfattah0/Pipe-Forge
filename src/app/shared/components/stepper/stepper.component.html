@@ -40,12 +40,17 @@
     <div class="flex flex-col items-center">
       <div
         class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-colors"
-        [class.bg-primary]="isCompleted(step.number) || isActive(step.number)"
-        [class.text-white]="isCompleted(step.number) || isActive(step.number)"
-        [class.bg-gray-200]="!isCompleted(step.number) && !isActive(step.number)"
-        [class.text-gray-500]="!isCompleted(step.number) && !isActive(step.number)"
+        [class.bg-primary]="!step.skipped && (isCompleted(step.number) || isActive(step.number))"
+        [class.text-white]="!step.skipped && (isCompleted(step.number) || isActive(step.number))"
+        [class.bg-gray-100]="step.skipped"
+        [class.text-gray-300]="step.skipped"
+        [class.border]="step.skipped"
+        [class.border-dashed]="step.skipped"
+        [class.border-gray-300]="step.skipped"
+        [class.bg-gray-200]="!step.skipped && !isCompleted(step.number) && !isActive(step.number)"
+        [class.text-gray-500]="!step.skipped && !isCompleted(step.number) && !isActive(step.number)"
       >
-        @if (isCompleted(step.number)) {
+        @if (!step.skipped && isCompleted(step.number)) {
           <!-- Checkmark SVG -->
           <svg
             viewBox="0 0 24 24"
@@ -64,11 +69,16 @@
       </div>
 
       <span
-        class="mt-2 text-center text-xs font-medium transition-colors"
-        [class.text-navy]="isCompleted(step.number) || isActive(step.number)"
-        [class.text-gray-400]="!isCompleted(step.number) && !isActive(step.number)"
+        class="mt-2 max-w-[72px] text-center text-xs font-medium transition-colors leading-tight"
+        [class.text-navy]="!step.skipped && (isCompleted(step.number) || isActive(step.number))"
+        [class.text-gray-400]="!step.skipped && !isCompleted(step.number) && !isActive(step.number)"
+        [class.text-gray-300]="step.skipped"
       >
-        {{ step.label }}
+        @if (step.skipped) {
+          {{ step.label }}<br/><span class="italic">(skipped)</span>
+        } @else {
+          {{ step.label }}
+        }
       </span>
     </div>
 

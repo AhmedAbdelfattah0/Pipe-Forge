@@ -18,15 +18,45 @@
       >
         <lucide-icon [img]="item.icon" [size]="20" class="shrink-0" />
         {{ item.label }}
+        @if (item.adminOnly && pendingFeedback > 0) {
+          <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+            {{ pendingFeedback > 99 ? '99+' : pendingFeedback }}
+          </span>
+        }
       </a>
     }
   </nav>
 
-  <!-- Logout -->
+  <!-- User info + Logout -->
   <div class="border-t border-white/10 p-3">
+    @if (profileService.profile(); as p) {
+      <a
+        routerLink="/profile"
+        class="flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-white/10"
+        (click)="linkClicked.emit()"
+      >
+        @if (p.avatar_url) {
+          <img
+            [src]="p.avatar_url"
+            alt="Avatar"
+            class="h-8 w-8 shrink-0 rounded-full object-cover ring-2 ring-white/20"
+          />
+        } @else {
+          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/30 text-xs font-bold text-white">
+            {{ profileService.getInitials() }}
+          </div>
+        }
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-medium text-white">
+            {{ p.full_name || p.display_name || p.email.split('@')[0] }}
+          </p>
+          <p class="truncate text-xs text-white/50">{{ p.email }}</p>
+        </div>
+      </a>
+    }
     <button
       type="button"
-      class="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+      class="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
       (click)="logoutClicked.emit()"
     >
       <lucide-icon [img]="logOutIcon" [size]="20" class="shrink-0" />

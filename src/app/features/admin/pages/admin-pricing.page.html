@@ -1,0 +1,188 @@
+<div class="space-y-6">
+  <div>
+    <h1 class="text-2xl font-bold text-text-dark">Pricing</h1>
+    <p class="mt-1 text-sm text-text-dark/60">
+      Edit plan prices and features. Changes take effect immediately on the pricing page.
+    </p>
+  </div>
+
+  @if (plansService.isLoading()) {
+    <div class="flex items-center justify-center py-16">
+      <div class="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+      @for (plan of plansService.plans(); track plan.id) {
+        <div class="rounded-xl border border-border bg-card p-5 space-y-4">
+          <!-- Plan header -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base font-semibold text-text-dark">{{ plan.displayName }}</span>
+              <span class="rounded-full bg-surface px-2 py-0.5 text-[10px] font-medium text-text-dark/50">
+                {{ plan.slug }}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              <!-- Active toggle -->
+              <label class="flex items-center gap-1.5 text-xs text-text-dark/60 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [checked]="getEdit(plan.id, 'isActive', plan.isActive) === 'true' || (getEdit(plan.id, 'isActive', plan.isActive) === '' && plan.isActive)"
+                  (change)="setEdit(plan.id, 'isActive', $any($event.target).checked ? 'true' : 'false')"
+                  class="rounded"
+                />
+                Active
+              </label>
+              <button
+                type="button"
+                class="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+                [disabled]="savingPlanId() === plan.id"
+                (click)="savePlan(plan)"
+              >
+                <lucide-icon [img]="saveIcon" [size]="13" />
+                @if (savingPlanId() === plan.id) { Saving... } @else { Save }
+              </button>
+            </div>
+          </div>
+
+          <!-- Editable fields -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="mb-1 block text-xs font-medium text-text-dark/60">Display Name</label>
+              <input
+                type="text"
+                [value]="getEdit(plan.id, 'displayName', plan.displayName)"
+                (input)="setEdit(plan.id, 'displayName', $any($event.target).value)"
+                class="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-xs font-medium text-text-dark/60">Badge Text</label>
+              <input
+                type="text"
+                [value]="getEdit(plan.id, 'badgeText', plan.badgeText)"
+                (input)="setEdit(plan.id, 'badgeText', $any($event.target).value)"
+                placeholder="e.g. Most Popular"
+                class="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-xs font-medium text-text-dark/60">Monthly Price ($)</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                [value]="getEdit(plan.id, 'priceMonthly', plan.priceMonthly)"
+                (input)="setEdit(plan.id, 'priceMonthly', $any($event.target).value)"
+                class="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-xs font-medium text-text-dark/60">Annual Price ($)</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                [value]="getEdit(plan.id, 'priceAnnual', plan.priceAnnual)"
+                (input)="setEdit(plan.id, 'priceAnnual', $any($event.target).value)"
+                class="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-xs font-medium text-text-dark/60">CTA Button Text</label>
+              <input
+                type="text"
+                [value]="getEdit(plan.id, 'ctaText', plan.ctaText)"
+                (input)="setEdit(plan.id, 'ctaText', $any($event.target).value)"
+                class="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+
+            <!-- Highlighted toggle -->
+            <div class="flex items-center gap-2 pt-4">
+              <input
+                type="checkbox"
+                [id]="'highlight-' + plan.id"
+                [checked]="getEdit(plan.id, 'isHighlighted', plan.isHighlighted) === 'true' || (getEdit(plan.id, 'isHighlighted', plan.isHighlighted) === '' && plan.isHighlighted)"
+                (change)="setEdit(plan.id, 'isHighlighted', $any($event.target).checked ? 'true' : 'false')"
+                class="rounded"
+              />
+              <label [for]="'highlight-' + plan.id" class="text-xs text-text-dark/70 cursor-pointer">
+                Show "Most Popular" highlight
+              </label>
+            </div>
+          </div>
+
+          <!-- Stripe Price IDs — read-only, coming soon -->
+          <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 space-y-2">
+            <p class="text-xs font-medium text-amber-700">Stripe integration coming soon</p>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="mb-0.5 block text-[10px] text-text-dark/50">Monthly Price ID</label>
+                <input
+                  type="text"
+                  [value]="plan.stripePriceIdMonthly ?? ''"
+                  readonly
+                  placeholder="price_..."
+                  class="w-full rounded border border-border bg-surface/50 px-2 py-1 text-xs text-text-dark/40 cursor-not-allowed"
+                />
+              </div>
+              <div>
+                <label class="mb-0.5 block text-[10px] text-text-dark/50">Annual Price ID</label>
+                <input
+                  type="text"
+                  [value]="plan.stripePriceIdAnnual ?? ''"
+                  readonly
+                  placeholder="price_..."
+                  class="w-full rounded border border-border bg-surface/50 px-2 py-1 text-xs text-text-dark/40 cursor-not-allowed"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Features -->
+          <div>
+            <p class="mb-2 text-xs font-semibold text-text-dark/60 uppercase tracking-wide">Features</p>
+            <ul class="space-y-1">
+              @for (feature of plan.features; track feature.id) {
+                <li class="flex items-center justify-between gap-2">
+                  <span class="text-sm text-text-dark">{{ feature.featureText }}</span>
+                  <button
+                    type="button"
+                    class="shrink-0 rounded p-0.5 text-text-dark/30 hover:text-red-500"
+                    (click)="removeFeature(plan.id, feature)"
+                  >
+                    <lucide-icon [img]="trashIcon" [size]="13" />
+                  </button>
+                </li>
+              }
+            </ul>
+
+            <!-- Add feature -->
+            <div class="mt-2 flex gap-2">
+              <input
+                type="text"
+                [value]="getNewFeatureText(plan.id)"
+                (input)="setNewFeatureText(plan.id, $any($event.target).value)"
+                placeholder="New feature text..."
+                class="flex-1 rounded-lg border border-border bg-surface px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+              />
+              <button
+                type="button"
+                class="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text-dark hover:bg-surface"
+                (click)="addFeature(plan)"
+              >
+                <lucide-icon [img]="plusIcon" [size]="13" />
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

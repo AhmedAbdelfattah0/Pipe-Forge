@@ -37,7 +37,8 @@ export class AuthService {
       password,
     });
     if (error) {
-      this._error.set(error.message);
+      // Generic message to prevent email enumeration attacks
+      this._error.set('Invalid email or password.');
     }
     this._loading.set(false);
   }
@@ -50,7 +51,8 @@ export class AuthService {
       password,
     });
     if (error) {
-      this._error.set(error.message);
+      // Generic message to prevent email enumeration attacks
+      this._error.set('Unable to create account. Please try again or use a different email.');
     }
     this._loading.set(false);
   }
@@ -59,6 +61,19 @@ export class AuthService {
     this._loading.set(true);
     this._error.set(null);
     const { error } = await this.supabase.client.auth.signOut();
+    if (error) {
+      this._error.set(error.message);
+    }
+    this._loading.set(false);
+  }
+
+  async signInWithGoogle(): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+    const { error } = await this.supabase.client.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + '/generator' },
+    });
     if (error) {
       this._error.set(error.message);
     }

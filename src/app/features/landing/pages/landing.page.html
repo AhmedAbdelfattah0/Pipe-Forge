@@ -107,15 +107,16 @@
           </span>
 
           <h1 class="stagger-2 mt-6 font-display text-display-hero font-bold text-navy">
-            64 pipelines.<br class="hidden sm:block">
-            5 minutes.<br class="hidden sm:block">
-            Zero guesswork.
+            Generate production-ready<br class="hidden sm:block">
+            CI/CD pipelines<br class="hidden sm:block">
+            in minutes.
           </h1>
 
           <p class="stagger-3 mt-6 max-w-xl text-lg leading-relaxed text-navy/60">
-            Stop manually creating Azure DevOps pipelines.
-            Answer a few questions about your project —
-            get production-ready CI/CD pipelines instantly.
+            Answer a few questions about your project.
+            PipeForge generates all your Azure DevOps or GitHub Actions
+            pipeline files — ready to import and run.
+            No DevOps expertise required.
           </p>
 
           <div class="stagger-4 mt-10 flex flex-wrap items-center gap-4">
@@ -126,13 +127,13 @@
           </div>
 
           <p class="mt-8 text-sm text-navy/35">
-            5 questions &middot; 64 pipeline files &middot; One ZIP download
+            Azure DevOps or GitHub Actions &middot; 4 deploy targets &middot; One ZIP download
           </p>
         </div>
 
         <!-- Right: Product preview — the product IS the visual -->
         <div class="stagger-5 lg:col-span-2">
-          <div class="overflow-hidden rounded-lg bg-navy shadow-2xl">
+          <div class="overflow-hidden rounded-lg bg-navy shadow-2xl transition-shadow duration-300 hover:shadow-navy/30">
             <!-- File tabs -->
             <div class="flex items-center gap-1 border-b border-white/10 px-4 py-2">
               <span class="rounded bg-white/10 px-2.5 py-1 font-mono text-xs text-white/70">build-ksa-qa.yml</span>
@@ -164,7 +165,7 @@
 
   <!-- ===== HOW IT WORKS — Oversized numbers, left-aligned ===== -->
   <section id="how-it-works" class="bg-surface bg-dot-pattern py-24">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="scroll-reveal mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <p class="text-sm font-medium uppercase tracking-widest text-primary">How it works</p>
       <h2 class="mt-3 font-display text-display font-bold text-navy">
         Three steps to production-ready pipelines
@@ -172,7 +173,7 @@
 
       <div class="mt-16 flex flex-col gap-12 lg:gap-16">
         @for (step of howItWorksSteps; track step.title; let i = $index) {
-          <div class="grid items-start gap-4 sm:grid-cols-12 sm:gap-6">
+          <div class="scroll-reveal-child grid items-start gap-4 sm:grid-cols-12 sm:gap-6">
             <div class="sm:col-span-2">
               <span class="font-display text-5xl font-bold text-navy/10 lg:text-7xl">0{{ i + 1 }}</span>
             </div>
@@ -193,19 +194,19 @@
 
   <!-- ===== FEATURES — Spotlight + compact supporting ===== -->
   <section id="features" class="bg-card py-24">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="scroll-reveal mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <p class="text-sm font-medium uppercase tracking-widest text-primary">Capabilities</p>
       <h2 class="mt-3 font-display text-display font-bold text-navy">
         Everything you need
       </h2>
       <p class="mt-4 max-w-2xl text-lg text-navy/60">
-        Powerful features for enterprise-grade pipeline generation
+        Everything you need to generate, manage, and ship CI/CD pipelines
       </p>
 
       <!-- Spotlight: first 2 features — larger treatment -->
       <div class="mt-16 grid gap-6 lg:grid-cols-2">
         @for (feature of features.slice(0, 2); track feature.title) {
-          <div class="flex gap-5 rounded-lg border border-border bg-surface/50 p-6 transition-colors hover:border-primary/30">
+          <div class="scroll-reveal-child flex gap-5 rounded-lg border border-border bg-surface/50 p-6 transition-all duration-200 hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-sm">
             <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
               <lucide-icon [img]="feature.icon" [size]="24" class="text-primary" />
             </div>
@@ -217,10 +218,10 @@
         }
       </div>
 
-      <!-- Supporting: remaining 4 features — compact, no cards -->
-      <div class="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+      <!-- Supporting: remaining features — compact grid -->
+      <div class="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         @for (feature of features.slice(2); track feature.title) {
-          <div>
+          <div class="scroll-reveal-child">
             <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <lucide-icon [img]="feature.icon" [size]="20" class="text-primary" />
             </div>
@@ -232,9 +233,53 @@
     </div>
   </section>
 
+  <!-- ===== TESTIMONIALS — Social proof ===== -->
+  <section class="bg-card py-24">
+    <div class="scroll-reveal mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <p class="text-sm font-medium uppercase tracking-widest text-primary">Testimonials</p>
+        <h2 class="mt-3 font-display text-display font-bold text-navy">
+          Loved by developers
+        </h2>
+        <p class="mt-4 text-lg text-navy/60">
+          See what teams are saying about PipeForge
+        </p>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+        @for (testimonial of testimonials; track testimonial.name) {
+          <div class="flex flex-col rounded-xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md">
+            <!-- Stars -->
+            <div class="flex gap-1">
+              @for (star of [1,2,3,4,5]; track star) {
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                  [attr.fill]="star <= testimonial.rating ? '#F59E0B' : 'none'"
+                  [attr.stroke]="star <= testimonial.rating ? '#F59E0B' : '#D1D5DB'"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              }
+            </div>
+            <!-- Quote -->
+            <p class="mt-4 flex-1 text-sm leading-relaxed text-navy/80">
+              "{{ testimonial.text }}"
+            </p>
+            <!-- Author -->
+            <div class="mt-5 border-t border-border pt-4">
+              <p class="text-sm font-semibold text-navy">{{ testimonial.name }}</p>
+              <p class="mt-0.5 text-xs text-gray-500">{{ testimonial.company }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
   <!-- ===== PRICING — Dark highlighted plan for visual hierarchy ===== -->
   <section id="pricing" class="bg-surface bg-dot-pattern py-24">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="scroll-reveal mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center">
         <p class="text-sm font-medium uppercase tracking-widest text-primary">Pricing</p>
         <h2 class="mt-3 font-display text-display font-bold text-navy">
@@ -243,87 +288,156 @@
         <p class="mt-4 text-lg text-navy/60">
           Choose the plan that works for you
         </p>
+
+        <!-- Monthly / Annual toggle -->
+        <div class="mt-8 inline-flex items-center rounded-full bg-card border border-border px-1.5 py-1.5 gap-1">
+          <button
+            type="button"
+            (click)="isAnnual.set(false)"
+            [class]="!isAnnual()
+              ? 'rounded-full bg-navy px-5 py-1.5 text-sm font-medium text-white transition-colors'
+              : 'rounded-full px-5 py-1.5 text-sm font-medium text-navy/60 transition-colors hover:text-navy'"
+          >Monthly</button>
+          <button
+            type="button"
+            (click)="isAnnual.set(true)"
+            [class]="isAnnual()
+              ? 'rounded-full bg-navy px-5 py-1.5 text-sm font-medium text-white transition-colors'
+              : 'rounded-full px-5 py-1.5 text-sm font-medium text-navy/60 transition-colors hover:text-navy'"
+          >Annual &mdash; Save 20%</button>
+        </div>
       </div>
 
-      <div class="mx-auto mt-16 grid max-w-sm items-start gap-6 sm:max-w-none sm:grid-cols-2 lg:grid-cols-3">
-        @for (plan of pricingPlans; track plan.name) {
-          <div
-            [class]="plan.highlighted
-              ? 'relative flex flex-col rounded-lg bg-navy p-8 shadow-xl'
-              : 'flex flex-col rounded-lg border border-border bg-card p-8'"
-          >
-            @if (plan.highlighted) {
-              <span class="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-white">
-                Most Popular
-              </span>
-            }
-
-            <h3
-              class="font-display text-lg font-semibold"
-              [class.text-white]="plan.highlighted"
-              [class.text-navy]="!plan.highlighted"
-            >{{ plan.name }}</h3>
-
-            <div class="mt-4 flex items-baseline gap-1">
-              <span
-                class="font-display text-4xl font-bold tracking-tight"
-                [class.text-white]="plan.highlighted"
-                [class.text-navy]="!plan.highlighted"
-              >{{ plan.price }}</span>
-              <span
-                [class.text-white/50]="plan.highlighted"
-                [class.text-navy/40]="!plan.highlighted"
-              >{{ plan.period }}</span>
-            </div>
-
-            <p
-              class="mt-2 text-sm"
-              [class.text-white/60]="plan.highlighted"
-              [class.text-navy/50]="!plan.highlighted"
-            >{{ plan.subtitle }}</p>
-
-            <ul class="mt-8 flex flex-1 flex-col gap-3">
-              @for (feature of plan.features; track feature) {
-                <li class="flex items-center gap-3">
-                  <lucide-icon
-                    [img]="checkIcon"
-                    [size]="16"
-                    class="shrink-0"
-                    [class.text-primary]="plan.highlighted"
-                    [class.text-success]="!plan.highlighted"
-                  />
-                  <span
-                    class="text-sm"
-                    [class.text-white/80]="plan.highlighted"
-                    [class.text-navy/70]="!plan.highlighted"
-                  >{{ feature }}</span>
-                </li>
-              }
-            </ul>
-
-            <div class="mt-8">
-              <a routerLink="/auth/signup">
-                @if (plan.highlighted) {
-                  <pf-button variant="primary" [fullWidth]="true">{{ plan.cta }}</pf-button>
-                } @else {
-                  <pf-button variant="ghost" [fullWidth]="true">{{ plan.cta }}</pf-button>
+      @if (plansService.isLoading()) {
+        <!-- Loading skeleton -->
+        <div class="mx-auto mt-16 grid max-w-sm items-start gap-6 sm:max-w-none sm:grid-cols-2 lg:grid-cols-4">
+          @for (n of [1,2,3,4]; track n) {
+            <div class="flex flex-col rounded-lg border border-border bg-card p-8 animate-pulse">
+              <div class="h-5 w-20 rounded bg-gray-200"></div>
+              <div class="mt-4 h-10 w-24 rounded bg-gray-200"></div>
+              <div class="mt-6 flex flex-col gap-3">
+                @for (m of [1,2,3,4]; track m) {
+                  <div class="h-4 w-full rounded bg-gray-200"></div>
                 }
-              </a>
+              </div>
             </div>
-          </div>
+          }
+        </div>
+      } @else {
+        <div class="mx-auto mt-16 grid max-w-sm items-start gap-6 sm:max-w-none sm:grid-cols-2 lg:grid-cols-4">
+          @for (plan of plansService.plans(); track plan.slug) {
+            <div
+              [class]="plan.isHighlighted
+                ? 'scroll-reveal-child relative flex flex-col rounded-lg bg-navy p-8 shadow-xl transition-all duration-200 hover:-translate-y-1'
+                : 'scroll-reveal-child flex flex-col rounded-lg border border-border bg-card p-8 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md'"
+            >
+              @if (plan.badgeText) {
+                <span class="absolute -top-3 left-6 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-white">
+                  {{ plan.badgeText }}
+                </span>
+              }
+
+              <h3
+                class="font-display text-lg font-semibold"
+                [class.text-white]="plan.isHighlighted"
+                [class.text-navy]="!plan.isHighlighted"
+              >{{ plan.displayName }}</h3>
+
+              <div class="mt-4 flex items-baseline gap-1">
+                <span
+                  class="font-display text-4xl font-bold tracking-tight"
+                  [class.text-white]="plan.isHighlighted"
+                  [class.text-navy]="!plan.isHighlighted"
+                >${{ isAnnual() ? plan.annualMonthlyEquivalent : plan.priceMonthly }}</span>
+                <span
+                  [class.text-white/50]="plan.isHighlighted"
+                  [class.text-navy/40]="!plan.isHighlighted"
+                >/month</span>
+                @if (isAnnual() && plan.priceMonthly > 0) {
+                  <span
+                    class="ml-1 text-sm line-through"
+                    [class.text-white/30]="plan.isHighlighted"
+                    [class.text-navy/30]="!plan.isHighlighted"
+                  >${{ plan.priceMonthly }}</span>
+                }
+              </div>
+              @if (isAnnual() && plan.priceAnnual > 0) {
+                <p
+                  class="mt-0.5 text-xs"
+                  [class.text-white/40]="plan.isHighlighted"
+                  [class.text-navy/40]="!plan.isHighlighted"
+                >Billed as ${{ plan.priceAnnual }}/year</p>
+              }
+
+              @if (plan.description) {
+                <p
+                  class="mt-2 text-sm"
+                  [class.text-white/60]="plan.isHighlighted"
+                  [class.text-navy/50]="!plan.isHighlighted"
+                >{{ plan.description }}</p>
+              }
+
+              <ul class="mt-8 flex flex-1 flex-col gap-3">
+                @for (feature of plan.features; track feature.id) {
+                  <li class="flex items-center gap-3">
+                    <lucide-icon
+                      [img]="checkIcon"
+                      [size]="16"
+                      class="shrink-0"
+                      [class.text-primary]="plan.isHighlighted"
+                      [class.text-success]="!plan.isHighlighted"
+                    />
+                    <span
+                      class="text-sm"
+                      [class.text-white/80]="plan.isHighlighted"
+                      [class.text-navy/70]="!plan.isHighlighted"
+                    >{{ feature.featureText }}</span>
+                  </li>
+                }
+              </ul>
+
+              <div class="mt-8">
+                @if (plan.ctaUrl) {
+                  <a [href]="plan.ctaUrl">
+                    @if (plan.isHighlighted) {
+                      <pf-button variant="primary" [fullWidth]="true">{{ plan.ctaText }}</pf-button>
+                    } @else {
+                      <pf-button variant="ghost" [fullWidth]="true">{{ plan.ctaText }}</pf-button>
+                    }
+                  </a>
+                } @else {
+                  <a routerLink="/auth/signup">
+                    @if (plan.isHighlighted) {
+                      <pf-button variant="primary" [fullWidth]="true">{{ plan.ctaText }}</pf-button>
+                    } @else {
+                      <pf-button variant="ghost" [fullWidth]="true">{{ plan.ctaText }}</pf-button>
+                    }
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Annual billing note -->
+        @if (isAnnual()) {
+          <p class="mt-8 text-center text-sm text-navy/50">
+            Annual plans are billed once per year.
+            You save the equivalent of two months compared to monthly billing.
+          </p>
         }
-      </div>
+      }
     </div>
   </section>
 
   <!-- ===== CTA — Clean, high-contrast ===== -->
   <section class="bg-navy py-20">
-    <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+    <div class="scroll-reveal mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
       <h2 class="font-display text-display font-bold text-white">
         Ready to stop manually creating pipelines?
       </h2>
       <p class="mt-4 text-lg text-white/60">
-        Join frontend engineers who ship faster with PipeForge
+        Join developers who ship faster with PipeForge
       </p>
       <div class="mt-10">
         <a
@@ -361,7 +475,7 @@
 
     <!-- Row 2 -->
     <p class="mt-6 text-center text-sm text-gray-400">
-      &copy; 2026 PipeForge. Generate Azure DevOps pipelines in minutes, not days.
+      &copy; 2026 PipeForge. CI/CD pipelines for every developer.
     </p>
   </div>
 </footer>

@@ -19,6 +19,7 @@ export class BadgeComponent {
       storage: 'bg-blue-100 text-blue-700',
       swa: 'bg-green-100 text-green-700',
       'app-service': 'bg-purple-100 text-purple-700',
+      'ftp-cpanel': 'bg-amber-100 text-amber-700',
       optional: 'bg-gray-100 text-gray-500',
       secret: 'bg-orange-100 text-warning',
       qa: 'bg-sky-100 text-sky-700',

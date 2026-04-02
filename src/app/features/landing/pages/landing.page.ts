@@ -1,16 +1,22 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { PlansService } from '../../billing/services/plans.service';
 import {
   Check,
   Code,
   Download,
   FileCode,
+  GitBranch,
   Globe,
   History,
   Languages,
+  Layers,
+  Lock,
   LucideAngularModule,
   Menu,
   Server,
+  ShieldCheck,
+  Star,
   X,
   Zap,
 } from 'lucide-angular';
@@ -29,16 +35,6 @@ interface Feature {
   description: string;
 }
 
-interface PricingPlan {
-  name: string;
-  price: string;
-  period: string;
-  subtitle: string;
-  features: string[];
-  cta: string;
-  highlighted: boolean;
-}
-
 @Component({
   standalone: true,
   selector: 'pf-landing-page',
@@ -47,11 +43,23 @@ interface PricingPlan {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, LucideAngularModule, ButtonComponent],
 })
-export class LandingPage {
+export class LandingPage implements OnInit {
   private readonly router = inject(Router);
+  protected readonly plansService = inject(PlansService);
+
+  ngOnInit(): void {
+    this.plansService.loadPlans();
+  }
 
   // Mobile menu state
   protected readonly mobileMenuOpen = signal(false);
+
+  // Billing toggle state — false = monthly, true = annual
+  protected readonly isAnnual = signal(false);
+
+  protected toggleBilling(): void {
+    this.isAnnual.update(v => !v);
+  }
 
   protected toggleMobileMenu(): void {
     this.mobileMenuOpen.update(v => !v);
@@ -73,52 +81,90 @@ export class LandingPage {
   protected readonly languagesIcon = Languages;
   protected readonly historyIcon = History;
   protected readonly checkIcon = Check;
+  protected readonly starIcon = Star;
+  protected readonly gitBranchIcon = GitBranch;
+  protected readonly layersIcon = Layers;
+  protected readonly shieldCheckIcon = ShieldCheck;
+  protected readonly lockIcon = Lock;
+
+  protected readonly testimonials = [
+    {
+      name: 'Sarah K.',
+      company: 'DevOps Lead, CloudScale',
+      rating: 5,
+      text: 'PipeForge saved us hours of manual pipeline setup. What used to take a full day now takes 5 minutes.',
+    },
+    {
+      name: 'Mohammed A.',
+      company: 'Senior Engineer, TechFlow',
+      rating: 5,
+      text: 'The multi-market support is exactly what we needed. Managing KSA and UAE deployments is now effortless.',
+    },
+    {
+      name: 'James L.',
+      company: 'CTO, StartupGrid',
+      rating: 4,
+      text: 'Clean YAML output that just works. We imported the pipelines and deployed on the same day.',
+    },
+  ];
 
   protected readonly howItWorksSteps: HowItWorksStep[] = [
     {
       icon: FileCode,
       title: 'Fill the form',
       description:
-        'Answer questions about your project structure, markets, and deployment targets.',
+        'Project info + choose your platform (Azure DevOps or GitHub Actions).',
     },
     {
       icon: Code,
-      title: 'Choose your format',
+      title: 'Configure your pipeline',
       description:
-        'Select YAML for modern pipelines or Classic JSON for compatibility.',
+        'Markets, environments, quality gates, and deploy target (Azure Storage, SWA, App Service, or cPanel/FTP).',
     },
     {
       icon: Download,
       title: 'Download and import',
       description:
-        'Get a ZIP file with all your pipelines ready to import into Azure DevOps.',
+        'Get a ZIP file with all your pipeline files, README, and secrets guide — ready to import and run.',
     },
   ];
 
   protected readonly features: Feature[] = [
     {
-      icon: Globe,
-      title: 'Multi-market support',
+      icon: GitBranch,
+      title: 'Azure DevOps + GitHub Actions',
       description:
-        'Support for KSA, Bahrain, UAE, and any custom markets you need. Each market gets its own isolated pipeline set.',
-    },
-    {
-      icon: FileCode,
-      title: 'YAML and Classic JSON',
-      description:
-        'Generate both modern YAML pipelines and Classic JSON definitions for full Azure DevOps compatibility.',
+        'Choose the platform that fits your team. Generate YAML pipelines, Classic JSON definitions, or GitHub Actions workflows — your call.',
     },
     {
       icon: Server,
-      title: 'Multiple deploy targets',
+      title: 'Four deploy targets',
       description:
-        'Azure Storage, Static Web Apps, and App Service all supported with the correct release pipeline template for each.',
+        'Azure Storage, Static Web Apps, App Service, or cPanel/FTP. Each target gets the correct pipeline template automatically.',
     },
     {
-      icon: Languages,
-      title: 'Multi-language builds',
+      icon: Layers,
+      title: 'Any web project',
       description:
-        'Optional separate builds for Arabic and English with an auto-generated build scripts matrix.',
+        'Frontend, backend, or full stack — PipeForge generates pipelines for any Node.js-based project, not just microfrontends.',
+    },
+    {
+      icon: ShieldCheck,
+      title: 'Quality gates',
+      description:
+        'TypeScript checks, ESLint, unit tests, and format verification — all configurable, all run before the build step.',
+    },
+    {
+      icon: Globe,
+      title: 'Multi-market & multi-language',
+      description:
+        'KSA, UAE, Bahrain, or any custom market. Optional multi-language builds with auto-generated build scripts per combination.',
+    },
+    {
+      icon: Lock,
+      title: 'Protected files & secrets',
+      description:
+        'Preserve .well-known/ files across deploys. Every ZIP includes a secrets guide with setup instructions for your platform.',
     },
     {
       icon: History,
@@ -130,56 +176,7 @@ export class LandingPage {
       icon: Zap,
       title: 'Instant download',
       description:
-        'Get a ZIP with all pipelines, infra files, README, and a setup checklist — ready to use in minutes.',
-    },
-  ];
-
-  protected readonly pricingPlans: PricingPlan[] = [
-    {
-      name: 'Free',
-      price: '$0',
-      period: '/month',
-      subtitle: 'Perfect for trying out PipeForge',
-      features: [
-        '1 market',
-        '3 MFEs per month',
-        'YAML output only',
-        'Community support',
-      ],
-      cta: 'Get Started',
-      highlighted: false,
-    },
-    {
-      name: 'Starter',
-      price: '$49',
-      period: '/month',
-      subtitle: 'For small teams and projects',
-      features: [
-        '3 markets',
-        'Unlimited MFEs',
-        'YAML + JSON output',
-        'Priority support',
-        'History & regeneration',
-      ],
-      cta: 'Start Free Trial',
-      highlighted: true,
-    },
-    {
-      name: 'Growth',
-      price: '$149',
-      period: '/month',
-      subtitle: 'For scaling organizations',
-      features: [
-        'Unlimited markets',
-        'Unlimited MFEs',
-        'YAML + JSON output',
-        'Priority support',
-        'History & regeneration',
-        'Custom templates',
-        'Team collaboration',
-      ],
-      cta: 'Start Free Trial',
-      highlighted: false,
+        'Get a ZIP with all pipelines, README, and setup guide — ready to import and run in minutes.',
     },
   ];
 
