@@ -10,13 +10,14 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BackendGeneratorStateService } from '../../services/backend-generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
+import { InputComponent } from '../../../../shared/components/input/input.component';
 
 @Component({
   standalone: true,
   selector: 'pf-step-backend-build-config',
   templateUrl: './step-backend-build-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ButtonComponent, CardComponent],
+  imports: [ReactiveFormsModule, InputComponent, ButtonComponent, CardComponent],
 })
 export class StepBackendBuildConfigComponent implements OnInit {
   protected readonly state = inject(BackendGeneratorStateService);

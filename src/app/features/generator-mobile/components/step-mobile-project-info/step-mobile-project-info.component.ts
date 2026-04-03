@@ -6,6 +6,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MobileGeneratorStateService } from '../../services/mobile-generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
+import { InputComponent } from '../../../../shared/components/input/input.component';
 import type { MobileCICDPlatform } from '../../models/mobile-generator.model';
 
 @Component({
@@ -13,7 +14,7 @@ import type { MobileCICDPlatform } from '../../models/mobile-generator.model';
   selector: 'pf-step-mobile-project-info',
   templateUrl: './step-mobile-project-info.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ButtonComponent, CardComponent],
+  imports: [ReactiveFormsModule, InputComponent, ButtonComponent, CardComponent],
 })
 export class StepMobileProjectInfoComponent implements OnInit {
   protected readonly state = inject(MobileGeneratorStateService);

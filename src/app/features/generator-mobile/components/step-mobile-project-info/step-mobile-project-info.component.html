@@ -1,7 +1,7 @@
 <pf-card title="Step 1 — Project Info">
   <form [formGroup]="form" class="space-y-4">
-    ="form.controls.projectName" />
-    ="form.controls.repositoryName" />
+    <pf-input [control]="form.controls.projectName" label="Project Name" placeholder="my-mobile-app" />
+    <pf-input [control]="form.controls.repositoryName" label="Repository Name" placeholder="my-repo" />
 
     <div>
       <p class="mb-2 text-sm font-medium text-text-dark">CI Platform</p>

@@ -24,8 +24,8 @@
       <div class="rounded-lg border border-border bg-surface p-4">
         <p class="mb-3 text-sm font-semibold text-text-dark">QA Environment</p>
         <div class="space-y-3">
-          ="form.controls.qaBranch" placeholder="develop" />
-          ="form.controls.qaAppServiceName" placeholder="my-api-qa" />
+          <pf-input [control]="form.controls.qaBranch" label="QA Branch" placeholder="develop" />
+          <pf-input [control]="form.controls.qaAppServiceName" label="App Service Name" placeholder="my-api-qa" />
         </div>
       </div>
     }
@@ -34,8 +34,8 @@
       <div class="rounded-lg border border-border bg-surface p-4">
         <p class="mb-3 text-sm font-semibold text-text-dark">Production Environment</p>
         <div class="space-y-3">
-          ="form.controls.prodBranch" placeholder="main" />
-          ="form.controls.prodAppServiceName" placeholder="my-api-prod" />
+          <pf-input [control]="form.controls.prodBranch" label="Prod Branch" placeholder="main" />
+          <pf-input [control]="form.controls.prodAppServiceName" label="App Service Name" placeholder="my-api-prod" />
         </div>
       </div>
     }

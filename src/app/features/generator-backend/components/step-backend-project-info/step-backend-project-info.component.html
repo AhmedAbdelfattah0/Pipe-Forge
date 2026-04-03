@@ -1,11 +1,9 @@
 <pf-card title="Step 1 — Project Info">
   <form [formGroup]="form" class="space-y-4">
 
-    ="form.controls.projectName"
-    />
+    <pf-input [control]="form.controls.projectName" label="Project Name" placeholder="my-api" />
 
-    ="form.controls.repositoryName"
-    />
+    <pf-input [control]="form.controls.repositoryName" label="Repository Name" placeholder="my-repo" />
 
     <!-- CI Platform selector -->
     <div>
@@ -33,12 +31,9 @@
     </div>
 
     @if (state.isAdoPlatform()) {
-      ="form.controls.adoOrg"
-      />
-      ="form.controls.adoProject"
-      />
-      ="form.controls.serviceConnectionId"
-      />
+      <pf-input [control]="form.controls.adoOrg" label="ADO Organization" placeholder="my-org" />
+      <pf-input [control]="form.controls.adoProject" label="ADO Project" placeholder="my-project" />
+      <pf-input [control]="form.controls.serviceConnectionId" label="Service Connection" placeholder="azure-service-connection" />
     }
 
   </form>

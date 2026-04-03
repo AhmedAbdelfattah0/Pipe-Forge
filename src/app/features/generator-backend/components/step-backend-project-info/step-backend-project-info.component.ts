@@ -10,6 +10,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { BackendGeneratorStateService } from '../../services/backend-generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
+import { InputComponent } from '../../../../shared/components/input/input.component';
 import type { BackendCICDPlatform } from '../../models/backend-generator.model';
 
 @Component({
@@ -17,7 +18,7 @@ import type { BackendCICDPlatform } from '../../models/backend-generator.model';
   selector: 'pf-step-backend-project-info',
   templateUrl: './step-backend-project-info.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ButtonComponent, CardComponent],
+  imports: [ReactiveFormsModule, InputComponent, ButtonComponent, CardComponent],
 })
 export class StepBackendProjectInfoComponent implements OnInit {
   protected readonly state = inject(BackendGeneratorStateService);

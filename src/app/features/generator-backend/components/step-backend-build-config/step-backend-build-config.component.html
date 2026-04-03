@@ -1,9 +1,7 @@
 <pf-card title="Step 3 — Build Configuration">
   <form [formGroup]="form" class="space-y-4">
 
-    ="form.controls.installCommand"
-      placeholder="npm ci"
-    />
+    <pf-input [control]="form.controls.installCommand" label="Install Command" placeholder="npm ci" />
 
     <!-- Run tests toggle -->
     <div class="flex items-center justify-between rounded-lg border border-border bg-surface p-3">
@@ -24,9 +22,7 @@
     </div>
 
     @if (state.buildConfig().runTests) {
-      ="form.controls.testCommand"
-        placeholder="npm test"
-      />
+      <pf-input [control]="form.controls.testCommand" label="Test Command" placeholder="npm test" />
     }
 
     <!-- Build step toggle -->
@@ -48,9 +44,7 @@
     </div>
 
     @if (state.buildConfig().hasBuildStep) {
-      ="form.controls.buildCommand"
-        placeholder="npm run build"
-      />
+      <pf-input [control]="form.controls.buildCommand" label="Build Command" placeholder="npm run build" />
     }
 
   </form>
