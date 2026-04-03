@@ -47,9 +47,33 @@ export class ProfileService {
     }
   }
 
+  private compressImage(file: File): Promise<Blob> {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const MAX = 512;
+        let { width, height } = img;
+        if (width > height) {
+          if (width > MAX) { height = Math.round(height * MAX / width); width = MAX; }
+        } else {
+          if (height > MAX) { width = Math.round(width * MAX / height); height = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => resolve(blob!), 'image/jpeg', 0.8);
+      };
+      img.src = url;
+    });
+  }
+
   async uploadAvatar(file: File): Promise<string | null> {
+    const compressed = await this.compressImage(file);
     const formData = new FormData();
-    formData.append('avatar', file);
+    formData.append('avatar', compressed, 'avatar.jpg');
     try {
       const res = await firstValueFrom(
         this.http.post<{ profile: UserProfile; avatarUrl: string }>(
