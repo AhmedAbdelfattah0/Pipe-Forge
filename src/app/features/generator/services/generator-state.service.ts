@@ -25,6 +25,14 @@ import { ProfileService } from '../../profile/services/profile.service';
 export class GeneratorStateService {
   private readonly profileService = inject(ProfileService);
 
+  // ── Edit mode ─────────────────────────────────────────────────────────────
+  /** ID of the history project currently being edited. null = create mode. */
+  private readonly _editingId = signal<string | null>(null);
+  readonly editingId = this._editingId.asReadonly();
+
+  setEditingId(id: string): void { this._editingId.set(id); }
+  clearEditingId(): void { this._editingId.set(null); }
+
   // ── Adaptive wizard toggles (Step 1) ─────────────────────────────────────
   private readonly _isMultiMarket = signal<boolean>(false);
   private readonly _isMultiLanguageBuild = signal<boolean>(false);
@@ -540,6 +548,7 @@ export class GeneratorStateService {
 
   // ── Reset ─────────────────────────────────────────────────────────────────
   reset(): void {
+    this._editingId.set(null);
     this._isMultiMarket.set(false);
     this._isMultiLanguageBuild.set(false);
     this._hasQualityChecks.set(false);

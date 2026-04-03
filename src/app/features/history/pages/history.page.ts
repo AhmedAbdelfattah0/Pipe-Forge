@@ -10,7 +10,6 @@ import { FeatureGateComponent } from '../../../shared/components/feature-gate/fe
 import { DiagnoseService } from '../../diagnose/services/diagnose.service';
 import { DiagnosisPanelComponent } from '../../diagnose/components/diagnosis-panel/diagnosis-panel.component';
 import { PlanGateService } from '../../billing/services/plan-gate.service';
-import { GeneratorStateService } from '../../generator/services/generator-state.service';
 
 @Component({
   standalone: true,
@@ -25,7 +24,6 @@ export class HistoryPage implements OnInit {
   protected readonly diagnose = inject(DiagnoseService);
   protected readonly planGate = inject(PlanGateService);
   private readonly router = inject(Router);
-  private readonly generatorState = inject(GeneratorStateService);
 
   protected readonly skeletonItems = [1, 2, 3, 4];
 
@@ -102,11 +100,12 @@ export class HistoryPage implements OnInit {
   }
 
   /**
-   * Loads the saved config snapshot into the generator wizard and navigates to Step 1.
-   * The user can then modify any field and regenerate.
+   * Navigates to the generator wizard in edit mode.
+   * The ?edit= query param carries the project ID; the generator page reads it
+   * on init, fetches the config from the API, and loads it into the wizard.
+   * This means refresh also restores edit state.
    */
   protected onEdit(project: HistoryProject): void {
-    this.generatorState.loadFromConfig(project.configSnapshot);
-    this.router.navigate(['/generator/frontend']);
+    this.router.navigate(['/generator/frontend'], { queryParams: { edit: project.id } });
   }
 }

@@ -1,5 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { GeneratorConfig } from '../models/generator.model';
@@ -11,6 +12,7 @@ type GenerationStatus = 'idle' | 'generating' | 'success' | 'error';
 @Injectable({ providedIn: 'root' })
 export class PipelineGeneratorService {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly state = inject(GeneratorStateService);
   private readonly toastService = inject(ToastService);
 
@@ -29,23 +31,47 @@ export class PipelineGeneratorService {
 
     try {
       const config = this.buildConfig();
-      const endpoint = config.platform === 'github-actions'
-        ? `${environment.apiUrl}/pipelines/generate/github-actions`
-        : `${environment.apiUrl}/pipelines/generate`;
+      const editingId = this.state.editingId();
 
-      const blob = await firstValueFrom(
-        this.http.post(endpoint, config, {
-          responseType: 'blob',
-        }),
-      );
+      let blob: Blob;
+
+      if (editingId) {
+        // Edit mode: PUT updates the existing history record and re-generates.
+        blob = await firstValueFrom(
+          this.http.put(`${environment.apiUrl}/history/${editingId}`, config, {
+            responseType: 'blob',
+          }),
+        );
+      } else {
+        // Create mode: POST generates and saves a new history record.
+        const endpoint = config.platform === 'github-actions'
+          ? `${environment.apiUrl}/pipelines/generate/github-actions`
+          : `${environment.apiUrl}/pipelines/generate`;
+
+        blob = await firstValueFrom(
+          this.http.post(endpoint, config, {
+            responseType: 'blob',
+          }),
+        );
+      }
 
       this.triggerDownload(blob, `${config.projectName || 'pipelines'}-pipelines.zip`);
       this._generationStatus.set('success');
-      this.toastService.show('Pipelines generated successfully! Download started.', 'success');
 
-      setTimeout(() => {
-        this._generationStatus.set('idle');
-      }, 3000);
+      if (editingId) {
+        this.state.clearEditingId();
+        this.toastService.show('Project updated successfully! Download started.', 'success');
+        // Navigate back to clean URL (no ?edit= query param).
+        setTimeout(() => {
+          this.router.navigate(['/generator/frontend']);
+          this._generationStatus.set('idle');
+        }, 2000);
+      } else {
+        this.toastService.show('Pipelines generated successfully! Download started.', 'success');
+        setTimeout(() => {
+          this._generationStatus.set('idle');
+        }, 3000);
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Generation failed';
       this._error.set(message);

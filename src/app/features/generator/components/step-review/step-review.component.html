@@ -454,13 +454,21 @@
     >
       @if (generator.isGenerating()) {
         <pf-spinner size="sm" />
-        Generating...
+        @if (state.editingId()) {
+          Updating...
+        } @else {
+          Generating...
+        }
       } @else {
         <!-- Zap icon -->
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        Generate &amp; Download ZIP
+        @if (state.editingId()) {
+          Update &amp; Download ZIP
+        } @else {
+          Generate &amp; Download ZIP
+        }
       }
     </pf-button>
   </div>

@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GeneratorStateService } from '../services/generator-state.service';
+import { HistoryService } from '../../history/services/history.service';
 import { StepperComponent } from '../../../shared/components/stepper/stepper.component';
 import { StepConfig } from '../../../shared/models/stepper.model';
 import { StepProjectInfoComponent } from '../components/step-project-info/step-project-info.component';
@@ -24,8 +26,11 @@ const ALL_STEPS: StepConfig[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [StepperComponent, StepProjectInfoComponent, StepMarketsComponent, StepLanguagesComponent, StepDeployTargetComponent, StepReviewComponent],
 })
-export class GeneratorPage {
+export class GeneratorPage implements OnInit {
   protected readonly state = inject(GeneratorStateService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly historyService = inject(HistoryService);
 
   /**
    * Computed step config array for the stepper.
@@ -48,6 +53,27 @@ export class GeneratorPage {
     }
     return null;
   });
+
+  async ngOnInit(): Promise<void> {
+    const editId = this.route.snapshot.queryParamMap.get('edit');
+
+    if (editId) {
+      // Edit mode: fetch the project from the API and load its config into the wizard.
+      const project = await this.historyService.getProject(editId);
+
+      if (!project) {
+        // Project not found or fetch failed — clear the query param and start fresh.
+        this.router.navigate(['/generator/frontend'], { replaceUrl: true });
+        return;
+      }
+
+      this.state.loadFromConfig(project.configSnapshot);
+      this.state.setEditingId(editId);
+    } else if (this.state.editingId()) {
+      // No ?edit= param but a stale editingId was left in memory — clear it.
+      this.state.clearEditingId();
+    }
+  }
 
   protected onStepClick(stepNumber: number): void {
     const active = this.state.activeSteps();
