@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SupabaseService } from '../../../../core/services/supabase.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   standalone: true,
@@ -9,14 +9,16 @@ import { SupabaseService } from '../../../../core/services/supabase.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthCallbackComponent implements OnInit {
-  private readonly supabase = inject(SupabaseService);
+  // Inject AuthService to ensure it is initialized (its constructor registers
+  // the onAuthStateChange listener that processes the OAuth token from the URL).
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
   ngOnInit(): void {
-    this.supabase.client.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        this.router.navigate(['/generator']);
-      }
-    });
+    // AuthService constructor already handles onAuthStateChange.
+    // Wait for the session to be applied, then navigate.
+    setTimeout(() => {
+      this.router.navigate(['/generator']);
+    }, 2000);
   }
 }
