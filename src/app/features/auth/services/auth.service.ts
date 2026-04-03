@@ -3,11 +3,13 @@ import { Router } from '@angular/router';
 import { Session, User } from '@supabase/supabase-js';
 import { SupabaseService } from '../../../core/services/supabase.service';
 import { AuthUser } from '../models/auth.model';
+import { AdminService } from '../../admin/services/admin.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);
+  private readonly adminService = inject(AdminService);
 
   private readonly _isLoggedIn = signal<boolean>(false);
   private readonly _currentUser = signal<AuthUser | null>(null);
@@ -26,7 +28,10 @@ export class AuthService {
     });
 
     // Keep signals in sync with Supabase auth state changes
-    this.supabase.client.auth.onAuthStateChange((_event, session) => {
+    this.supabase.client.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        this.adminService.resetAdminState();
+      }
       this.applySession(session);
     });
   }
@@ -66,6 +71,7 @@ export class AuthService {
     if (error) {
       this._error.set(error.message);
     }
+    this.adminService.resetAdminState();
     this._isLoggedIn.set(false);
     this._currentUser.set(null);
     this._loading.set(false);

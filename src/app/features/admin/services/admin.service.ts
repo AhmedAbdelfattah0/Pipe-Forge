@@ -119,6 +119,13 @@ export class AdminService {
   readonly healthStatus = this._healthStatus.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
 
+  // ── Admin state reset (called on logout / SIGNED_OUT) ────────────────────────
+
+  resetAdminState(): void {
+    this._isAdmin.set(false);
+    this._adminChecked = false;
+  }
+
   // ── Admin check (used by guard) ───────────────────────────────────────────────
 
   async checkAdminAccess(): Promise<boolean> {
