@@ -14,9 +14,9 @@
 
   @if (state.distributionConfig().distribution === 'app-center') {
     <form [formGroup]="appCenterForm" class="space-y-3">
-      ="appCenterForm.controls.appCenterAndroidApp" placeholder="my-org/my-android-app" />
-      ="appCenterForm.controls.appCenterIosApp" placeholder="my-org/my-ios-app" />
-      ="appCenterForm.controls.appCenterDistributionGroup" placeholder="Public" />
+      <pf-input [control]="appCenterForm.controls.appCenterAndroidApp" label="Android App" placeholder="my-org/my-android-app" />
+      <pf-input [control]="appCenterForm.controls.appCenterIosApp" label="iOS App" placeholder="my-org/my-ios-app" />
+      <pf-input [control]="appCenterForm.controls.appCenterDistributionGroup" label="Distribution Group" placeholder="Public" />
     </form>
   }
 

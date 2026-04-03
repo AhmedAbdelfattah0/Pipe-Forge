@@ -39,8 +39,7 @@
         <p class="mb-4 text-sm font-medium text-text-dark">Get notified when it launches</p>
         <div class="flex gap-2">
           <div class="flex-1">
-            ="emailControl"
-            />
+            <pf-input [control]="emailControl" type="email" placeholder="you@company.com" />
           </div>
           <pf-button variant="primary" (click)="notify()">Notify Me</pf-button>
         </div>

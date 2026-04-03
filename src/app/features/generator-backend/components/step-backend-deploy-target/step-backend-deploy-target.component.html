@@ -21,8 +21,8 @@
   <!-- App Service config -->
   @if (state.deployTarget().type === 'app-service') {
     <form [formGroup]="appServiceForm" class="space-y-4">
-      ="appServiceForm.controls.appServiceName" placeholder="my-backend-api" />
-      ="appServiceForm.controls.resourceGroup" placeholder="rg-my-app" />
+      <pf-input [control]="appServiceForm.controls.appServiceName" label="App Service Name" placeholder="my-backend-api" />
+      <pf-input [control]="appServiceForm.controls.resourceGroup" label="Resource Group" placeholder="rg-my-app" />
       <div>
         <p class="mb-2 text-sm font-medium text-text-dark">Deployment Slot</p>
         <div class="flex gap-3">
@@ -45,8 +45,8 @@
   <!-- Docker + ACR config -->
   @if (state.deployTarget().type === 'docker-acr') {
     <form [formGroup]="dockerForm" class="space-y-4">
-      ="dockerForm.controls.acrName" placeholder="myregistry" />
-      ="dockerForm.controls.imageName" placeholder="my-backend-api" />
+      <pf-input [control]="dockerForm.controls.acrName" label="ACR Name" placeholder="myregistry" />
+      <pf-input [control]="dockerForm.controls.imageName" label="Image Name" placeholder="my-backend-api" />
       <div>
         <p class="mb-2 text-sm font-medium text-text-dark">Tag Strategy</p>
         <div class="flex gap-2">
@@ -69,9 +69,9 @@
   <!-- Kubernetes config -->
   @if (state.deployTarget().type === 'kubernetes') {
     <form [formGroup]="k8sForm" class="space-y-4">
-      ="k8sForm.controls.clusterName" placeholder="my-aks-cluster" />
-      ="k8sForm.controls.namespace" placeholder="default" />
-      ="k8sForm.controls.manifestPath" placeholder="k8s/" />
+      <pf-input [control]="k8sForm.controls.clusterName" label="Cluster Name" placeholder="my-aks-cluster" />
+      <pf-input [control]="k8sForm.controls.namespace" label="Namespace" placeholder="default" />
+      <pf-input [control]="k8sForm.controls.manifestPath" label="Manifest Path" placeholder="k8s/" />
     </form>
   }
 
