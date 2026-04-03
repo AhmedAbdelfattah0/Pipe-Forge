@@ -10,7 +10,6 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BackendGeneratorStateService } from '../../services/backend-generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
-import { InputComponent } from '../../../../shared/components/input/input.component';
 import type { BackendDeployTargetType } from '../../models/backend-generator.model';
 
 @Component({
@@ -18,7 +17,7 @@ import type { BackendDeployTargetType } from '../../models/backend-generator.mod
   selector: 'pf-step-backend-deploy-target',
   templateUrl: './step-backend-deploy-target.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, InputComponent, ButtonComponent, CardComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, CardComponent],
 })
 export class StepBackendDeployTargetComponent implements OnInit {
   protected readonly state = inject(BackendGeneratorStateService);

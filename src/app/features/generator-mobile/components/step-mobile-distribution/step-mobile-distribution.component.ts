@@ -6,7 +6,6 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MobileGeneratorStateService } from '../../services/mobile-generator-state.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { CardComponent } from '../../../../shared/components/card/card.component';
-import { InputComponent } from '../../../../shared/components/input/input.component';
 import type { MobileDistribution } from '../../models/mobile-generator.model';
 
 @Component({
@@ -14,7 +13,7 @@ import type { MobileDistribution } from '../../models/mobile-generator.model';
   selector: 'pf-step-mobile-distribution',
   templateUrl: './step-mobile-distribution.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, InputComponent, ButtonComponent, CardComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, CardComponent],
 })
 export class StepMobileDistributionComponent implements OnInit {
   protected readonly state = inject(MobileGeneratorStateService);

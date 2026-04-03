@@ -301,7 +301,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
-                @for (mapping of state.tokenReplacement().tokenMappings ?? []; track $index) {
+                @for (mapping of state.tokenReplacement().tokenMappings; track $index) {
                   <tr class="group">
                     <td class="py-2 pr-4">
                       <input
@@ -322,7 +322,7 @@
                       />
                     </td>
                     <td class="py-2">
-                      @if ((state.tokenReplacement().tokenMappings ?? []).length > 1) {
+                      @if (state.tokenReplacement().tokenMappings.length > 1) {
                         <button
                           type="button"
                           (click)="removeTokenMapping($index)"

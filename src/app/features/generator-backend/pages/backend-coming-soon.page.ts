@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule, Lock, Cpu, Terminal, Layers, Zap } from 'lucide-angular';
-import { InputComponent } from '../../../shared/components/input/input.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
@@ -14,7 +13,7 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
   selector: 'pf-backend-coming-soon-page',
   templateUrl: './backend-coming-soon.page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LucideAngularModule, InputComponent, ButtonComponent, ReactiveFormsModule],
+  imports: [LucideAngularModule, ButtonComponent, ReactiveFormsModule],
 })
 export class BackendComingSoonPage {
   protected readonly lockIcon = Lock;
