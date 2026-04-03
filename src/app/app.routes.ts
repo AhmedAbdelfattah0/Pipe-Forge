@@ -64,6 +64,13 @@ export const routes: Routes = [
             m => m.AuthSignupPage,
           ),
       },
+      {
+        path: 'callback',
+        loadComponent: () =>
+          import('./features/auth/pages/auth-callback/auth-callback.component').then(
+            m => m.AuthCallbackComponent,
+          ),
+      },
       { path: '', redirectTo: 'login', pathMatch: 'full' },
     ],
   },
