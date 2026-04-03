@@ -8,19 +8,34 @@
   <!-- Navigation -->
   <nav aria-label="App navigation" class="flex-1 space-y-1 px-3 py-4">
     @for (item of navItems; track item.route) {
-      <a
-        [routerLink]="item.route"
-        [class]="isActive(item.route) ? activeItemClass : inactiveItemClass"
-        (click)="linkClicked.emit()"
-      >
-        <lucide-icon [img]="item.icon" [size]="20" class="shrink-0" />
-        {{ item.label }}
-        @if (item.adminOnly && pendingFeedback > 0) {
-          <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-            {{ pendingFeedback > 99 ? '99+' : pendingFeedback }}
+      @if (item.adminPreview && !adminService.isAdmin()) {
+        <!-- Locked item for non-admins -->
+        <div class="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/40">
+          <lucide-icon [img]="item.icon" [size]="20" class="shrink-0" />
+          {{ item.label }}
+          <span class="ml-auto flex items-center gap-1">
+            <lucide-icon [img]="lockIcon" [size]="12" class="text-white/40" />
+            <span class="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-medium text-white/40">SOON</span>
           </span>
-        }
-      </a>
+        </div>
+      } @else {
+        <a
+          [routerLink]="item.route"
+          [class]="isActive(item.route) ? activeItemClass : inactiveItemClass"
+          (click)="linkClicked.emit()"
+        >
+          <lucide-icon [img]="item.icon" [size]="20" class="shrink-0" />
+          {{ item.label }}
+          @if (item.adminOnly && pendingFeedback > 0) {
+            <span class="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+              {{ pendingFeedback > 99 ? '99+' : pendingFeedback }}
+            </span>
+          }
+          @if (item.adminPreview && adminService.isAdmin()) {
+            <span class="ml-auto rounded bg-blue-500/20 px-1.5 py-0.5 text-[9px] font-medium text-blue-300">ADMIN</span>
+          }
+        </a>
+      }
     }
   </nav>
 

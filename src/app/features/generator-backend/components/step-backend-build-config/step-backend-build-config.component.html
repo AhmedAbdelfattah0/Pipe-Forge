@@ -1,0 +1,62 @@
+<pf-card title="Step 3 — Build Configuration">
+  <form [formGroup]="form" class="space-y-4">
+
+    ="form.controls.installCommand"
+      placeholder="npm ci"
+    />
+
+    <!-- Run tests toggle -->
+    <div class="flex items-center justify-between rounded-lg border border-border bg-surface p-3">
+      <div>
+        <p class="text-sm font-medium text-text-dark">Run Tests</p>
+        <p class="text-xs text-text-dark/60">Execute test suite during build</p>
+      </div>
+      <label class="relative inline-flex cursor-pointer items-center">
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          [checked]="state.buildConfig().runTests"
+          (change)="toggleTests($event)"
+        />
+        <div class="peer h-5 w-9 rounded-full bg-border transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50"></div>
+        <div class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></div>
+      </label>
+    </div>
+
+    @if (state.buildConfig().runTests) {
+      ="form.controls.testCommand"
+        placeholder="npm test"
+      />
+    }
+
+    <!-- Build step toggle -->
+    <div class="flex items-center justify-between rounded-lg border border-border bg-surface p-3">
+      <div>
+        <p class="text-sm font-medium text-text-dark">Has Build Step</p>
+        <p class="text-xs text-text-dark/60">Run a separate build/compile step</p>
+      </div>
+      <label class="relative inline-flex cursor-pointer items-center">
+        <input
+          type="checkbox"
+          class="peer sr-only"
+          [checked]="state.buildConfig().hasBuildStep"
+          (change)="toggleBuildStep($event)"
+        />
+        <div class="peer h-5 w-9 rounded-full bg-border transition-colors peer-checked:bg-primary peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50"></div>
+        <div class="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-4"></div>
+      </label>
+    </div>
+
+    @if (state.buildConfig().hasBuildStep) {
+      ="form.controls.buildCommand"
+        placeholder="npm run build"
+      />
+    }
+
+  </form>
+
+  <div class="mt-6 flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="state.nextStep()">Next: Deploy Target</pf-button>
+  </div>
+</pf-card>

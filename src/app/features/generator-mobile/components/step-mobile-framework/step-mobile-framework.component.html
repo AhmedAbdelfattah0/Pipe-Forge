@@ -1,0 +1,17 @@
+<pf-card title="Step 2 — Framework">
+  <div class="space-y-3">
+    @for (fw of frameworks; track fw.id) {
+      <button type="button" (click)="selectFramework(fw.id)"
+        [class]="state.frameworkConfig().framework === fw.id
+          ? 'w-full rounded-lg border-2 border-primary bg-primary/10 px-4 py-3 text-left'
+          : 'w-full rounded-lg border-2 border-border bg-card px-4 py-3 text-left hover:border-primary/50'">
+        <p [class]="state.frameworkConfig().framework === fw.id ? 'text-sm font-semibold text-primary' : 'text-sm font-semibold text-text-dark'">{{ fw.label }}</p>
+        <p class="text-xs text-text-dark/60">{{ fw.desc }}</p>
+      </button>
+    }
+  </div>
+  <div class="mt-6 flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="state.nextStep()">Next: Platforms</pf-button>
+  </div>
+</pf-card>

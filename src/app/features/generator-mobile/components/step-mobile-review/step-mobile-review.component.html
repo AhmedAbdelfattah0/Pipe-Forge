@@ -1,0 +1,50 @@
+<pf-card title="Step 6 — Review &amp; Generate">
+
+  <div class="mb-6 rounded-lg border border-border bg-surface p-4">
+    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-text-dark/50">Summary</p>
+    <dl class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+      <dt class="font-medium text-text-dark">Project</dt>
+      <dd class="text-text-dark/70">{{ state.projectInfo().projectName }}</dd>
+      <dt class="font-medium text-text-dark">Platform</dt>
+      <dd class="text-text-dark/70">{{ state.projectInfo().ciPlatform === 'azure-devops' ? 'Azure DevOps' : 'GitHub Actions' }}</dd>
+      <dt class="font-medium text-text-dark">Framework</dt>
+      <dd class="text-text-dark/70">{{ state.frameworkConfig().framework }}</dd>
+      <dt class="font-medium text-text-dark">Targets</dt>
+      <dd class="text-text-dark/70">{{ state.platformConfig().targetPlatform }}</dd>
+      <dt class="font-medium text-text-dark">Build Type</dt>
+      <dd class="text-text-dark/70">{{ state.buildConfig().buildType }}</dd>
+      <dt class="font-medium text-text-dark">Distribution</dt>
+      <dd class="text-text-dark/70">{{ state.distributionConfig().distribution }}</dd>
+    </dl>
+  </div>
+
+  <p class="mb-2 text-sm font-semibold text-text-dark">Files to Generate</p>
+  <div class="mb-6 space-y-2">
+    @for (file of files; track file.fileName) {
+      <div class="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-2.5">
+        <div>
+          <p class="text-sm font-medium text-text-dark">{{ file.fileName }}</p>
+          <p class="text-xs text-text-dark/50">{{ file.platform }} — YAML Pipeline</p>
+        </div>
+        <button type="button" class="rounded px-3 py-1 text-xs font-medium text-primary hover:bg-primary/10" (click)="previewFile(file)">Preview</button>
+      </div>
+    }
+  </div>
+
+  <div class="flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="downloadAll()">Download All</pf-button>
+  </div>
+
+  @if (previewing()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" (click)="closePreview()">
+      <div class="relative max-h-[80vh] w-full max-w-3xl overflow-auto rounded-xl bg-navy p-6 text-white shadow-2xl" (click)="$event.stopPropagation()">
+        <div class="mb-3 flex items-center justify-between">
+          <p class="text-sm font-semibold">{{ previewing()!.fileName }}</p>
+          <button type="button" class="rounded px-2 py-1 text-xs text-white/60 hover:text-white" (click)="closePreview()">Close</button>
+        </div>
+        <pre class="overflow-auto whitespace-pre-wrap text-xs leading-relaxed text-white/90">{{ previewing()!.content }}</pre>
+      </div>
+    </div>
+  }
+</pf-card>

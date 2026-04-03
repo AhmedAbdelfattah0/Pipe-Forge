@@ -1,0 +1,49 @@
+<pf-card title="Step 5 — Environments">
+
+  <!-- Scope selector -->
+  <div class="mb-6">
+    <p class="mb-2 text-sm font-medium text-text-dark">Deploy to</p>
+    <div class="flex gap-2">
+      @for (scope of scopes; track scope.id) {
+        <button
+          type="button"
+          (click)="selectScope(scope.id)"
+          [class]="state.environments().scope === scope.id
+            ? 'flex-1 rounded-lg border-2 border-primary bg-primary/10 py-2 text-sm font-medium text-primary transition-colors'
+            : 'flex-1 rounded-lg border-2 border-border bg-card py-2 text-sm font-medium text-text-dark transition-colors hover:border-primary/50'"
+        >
+          {{ scope.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <form [formGroup]="form" class="space-y-4">
+
+    @if (state.environments().scope !== 'prod') {
+      <div class="rounded-lg border border-border bg-surface p-4">
+        <p class="mb-3 text-sm font-semibold text-text-dark">QA Environment</p>
+        <div class="space-y-3">
+          ="form.controls.qaBranch" placeholder="develop" />
+          ="form.controls.qaAppServiceName" placeholder="my-api-qa" />
+        </div>
+      </div>
+    }
+
+    @if (state.environments().scope !== 'qa') {
+      <div class="rounded-lg border border-border bg-surface p-4">
+        <p class="mb-3 text-sm font-semibold text-text-dark">Production Environment</p>
+        <div class="space-y-3">
+          ="form.controls.prodBranch" placeholder="main" />
+          ="form.controls.prodAppServiceName" placeholder="my-api-prod" />
+        </div>
+      </div>
+    }
+
+  </form>
+
+  <div class="mt-6 flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="state.nextStep()">Review & Generate</pf-button>
+  </div>
+</pf-card>

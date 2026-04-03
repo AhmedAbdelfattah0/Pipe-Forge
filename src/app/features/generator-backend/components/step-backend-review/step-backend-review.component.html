@@ -1,0 +1,91 @@
+<pf-card title="Step 6 — Review &amp; Generate">
+
+  <!-- Summary -->
+  <div class="mb-6 space-y-3">
+    <div class="rounded-lg border border-border bg-surface p-4">
+      <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-text-dark/50">Summary</p>
+      <dl class="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+        <dt class="font-medium text-text-dark">Project</dt>
+        <dd class="text-text-dark/70">{{ state.projectInfo().projectName }}</dd>
+
+        <dt class="font-medium text-text-dark">Platform</dt>
+        <dd class="text-text-dark/70">{{ state.projectInfo().ciPlatform === 'azure-devops' ? 'Azure DevOps' : 'GitHub Actions' }}</dd>
+
+        <dt class="font-medium text-text-dark">Language</dt>
+        <dd class="text-text-dark/70">{{ state.languageConfig().language }}</dd>
+
+        <dt class="font-medium text-text-dark">Deploy Target</dt>
+        <dd class="text-text-dark/70">{{ state.deployTarget().type }}</dd>
+
+        <dt class="font-medium text-text-dark">Environments</dt>
+        <dd class="text-text-dark/70">{{ state.environments().scope }}</dd>
+
+        <dt class="font-medium text-text-dark">Run Tests</dt>
+        <dd class="text-text-dark/70">{{ state.buildConfig().runTests ? 'Yes' : 'No' }}</dd>
+      </dl>
+    </div>
+
+    @if (state.canGenerateClassicJson()) {
+      <p class="rounded-lg bg-emerald-50 px-3 py-2 text-xs text-emerald-700">
+        Classic JSON will be generated alongside YAML (verified GUIDs for {{ state.languageConfig().language }}).
+      </p>
+    } @else {
+      <p class="rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-700">
+        YAML pipeline only — Classic JSON requires verified ADO task GUIDs for this language.
+      </p>
+    }
+  </div>
+
+  <!-- Generated files list -->
+  <div class="mb-6">
+    <p class="mb-2 text-sm font-semibold text-text-dark">Files to Generate</p>
+    <div class="space-y-2">
+      @for (file of files; track file.fileName) {
+        <div class="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-2.5">
+          <div>
+            <p class="text-sm font-medium text-text-dark">{{ file.fileName }}</p>
+            <p class="text-xs text-text-dark/50">{{ file.type === 'yaml' ? 'YAML Pipeline' : 'Classic JSON Pipeline' }}</p>
+          </div>
+          <button
+            type="button"
+            class="rounded px-3 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
+            (click)="previewFile(file)"
+          >
+            Preview
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="downloadAll()">Download All</pf-button>
+  </div>
+
+  <!-- Preview modal -->
+  @if (previewing()) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      (click)="closePreview()"
+    >
+      <div
+        class="relative max-h-[80vh] w-full max-w-3xl overflow-auto rounded-xl bg-navy p-6 text-white shadow-2xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="mb-3 flex items-center justify-between">
+          <p class="text-sm font-semibold">{{ previewing()!.fileName }}</p>
+          <button
+            type="button"
+            class="rounded px-2 py-1 text-xs text-white/60 hover:text-white"
+            (click)="closePreview()"
+          >
+            Close
+          </button>
+        </div>
+        <pre class="overflow-auto whitespace-pre-wrap text-xs leading-relaxed text-white/90">{{ previewing()!.content }}</pre>
+      </div>
+    </div>
+  }
+</pf-card>

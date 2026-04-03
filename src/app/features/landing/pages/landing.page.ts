@@ -134,49 +134,43 @@ export class LandingPage implements OnInit {
       icon: GitBranch,
       title: 'Azure DevOps + GitHub Actions',
       description:
-        'Choose the platform that fits your team. Generate YAML pipelines, Classic JSON definitions, or GitHub Actions workflows — your call.',
-    },
-    {
-      icon: Server,
-      title: 'Four deploy targets',
-      description:
-        'Azure Storage, Static Web Apps, App Service, or cPanel/FTP. Each target gets the correct pipeline template automatically.',
+        'Generate YAML pipelines, Classic JSON definitions, or GitHub Actions workflows. Any CI/CD platform, any project type.',
     },
     {
       icon: Layers,
-      title: 'Any web project',
+      title: 'Any framework, any language, any platform',
       description:
-        'Frontend, backend, or full stack — PipeForge generates pipelines for any Node.js-based project, not just microfrontends.',
-    },
-    {
-      icon: ShieldCheck,
-      title: 'Quality gates',
-      description:
-        'TypeScript checks, ESLint, unit tests, and format verification — all configurable, all run before the build step.',
+        'Frontend (Angular, React, Vue), Backend (Node.js, Java, Python, .NET, Go), or Mobile (React Native, Flutter, iOS, Android).',
     },
     {
       icon: Globe,
-      title: 'Multi-market & multi-language',
+      title: 'Multi-market + multi-environment',
       description:
-        'KSA, UAE, Bahrain, or any custom market. Optional multi-language builds with auto-generated build scripts per combination.',
+        'KSA, UAE, Bahrain, or any custom market. QA + Production environments with auto-generated build scripts per combination.',
     },
     {
-      icon: Lock,
-      title: 'Protected files & secrets',
+      icon: Server,
+      title: 'Any deploy target',
       description:
-        'Preserve .well-known/ files across deploys. Every ZIP includes a secrets guide with setup instructions for your platform.',
+        'Azure Storage, Static Web Apps, App Service, Docker + ACR, Kubernetes, Vercel, Netlify, Firebase, Cloudflare Pages, cPanel.',
     },
     {
-      icon: History,
-      title: 'Project history',
+      icon: ShieldCheck,
+      title: 'Token replacement for environments',
       description:
-        'Save and regenerate pipeline sets. Never start from scratch when adding a new market or environment.',
+        'Replace environment-specific values (API URLs, keys) automatically at deploy time. No hard-coded config per environment.',
     },
     {
       icon: Zap,
-      title: 'Instant download',
+      title: 'Pipeline Validator with AI health score',
       description:
-        'Get a ZIP with all pipelines, README, and setup guide — ready to import and run in minutes.',
+        'Upload any YAML or JSON pipeline. Get an instant health score, 11-rule validation, and auto-fix suggestions.',
+    },
+    {
+      icon: Star,
+      title: 'AI Error Diagnosis',
+      description:
+        'Paste a pipeline error and get a plain-English explanation with a step-by-step fix. Powered by Gemini.',
     },
   ];
 

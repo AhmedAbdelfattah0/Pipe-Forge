@@ -1,0 +1,21 @@
+<div class="flex h-full flex-col">
+  <div class="border-b border-border bg-card px-6 py-4">
+    <h1 class="text-lg font-bold text-text-dark">Mobile Pipeline Generator</h1>
+    <p class="text-sm text-text-dark/60">Generate CI/CD pipelines for mobile apps</p>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-6 overflow-auto p-6">
+    <pf-stepper [steps]="steps" [currentStep]="state.currentStep()" />
+
+    <div class="mx-auto w-full max-w-2xl">
+      @switch (state.currentStep()) {
+        @case (1) { <pf-step-mobile-project-info /> }
+        @case (2) { <pf-step-mobile-framework /> }
+        @case (3) { <pf-step-mobile-platforms /> }
+        @case (4) { <pf-step-mobile-build-type /> }
+        @case (5) { <pf-step-mobile-distribution /> }
+        @case (6) { <pf-step-mobile-review /> }
+      }
+    </div>
+  </div>
+</div>

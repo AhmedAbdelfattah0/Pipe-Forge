@@ -1,0 +1,177 @@
+<div class="flex h-full flex-col">
+
+  <!-- Page header -->
+  <div class="border-b border-border bg-card px-6 py-6">
+    <h1 class="text-xl font-bold text-text-dark">Pipeline Generator</h1>
+    <p class="mt-1 text-sm text-text-dark/60">Choose what type of pipeline you want to generate</p>
+  </div>
+
+  <!-- 3-card grid -->
+  <div class="flex flex-1 items-start justify-center p-6">
+    <div class="grid w-full max-w-4xl gap-6 md:grid-cols-3">
+
+      <!-- Card 1: Frontend (active for all) -->
+      <div class="flex flex-col rounded-xl border-2 border-border bg-card p-6 transition-all hover:border-primary/50 hover:shadow-md">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+          <lucide-icon [img]="globeIcon" [size]="24" class="text-primary" />
+        </div>
+        <div class="mt-4 flex-1">
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-bold text-text-dark">Frontend Pipeline</h2>
+            <span class="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">Available</span>
+          </div>
+          <p class="mt-2 text-sm text-text-dark/60">
+            Angular, React, Vue, static sites
+          </p>
+          <ul class="mt-3 space-y-1.5 text-xs text-text-dark/60">
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-primary"></span>
+              Multi-market, multi-language
+            </li>
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-primary"></span>
+              Azure DevOps + GitHub Actions
+            </li>
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-primary"></span>
+              Storage, SWA, Cloudflare Pages, cPanel
+            </li>
+          </ul>
+        </div>
+        <button
+          type="button"
+          (click)="goToFrontend()"
+          class="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+        >
+          Start Generating
+          <lucide-icon [img]="arrowRightIcon" [size]="16" />
+        </button>
+      </div>
+
+      <!-- Card 2: Backend -->
+      <div class="flex flex-col rounded-xl border-2 bg-card p-6 transition-all"
+        [class]="adminService.isAdmin()
+          ? 'border-border hover:border-primary/50 hover:shadow-md'
+          : 'border-border opacity-80'"
+      >
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl"
+          [class]="adminService.isAdmin() ? 'bg-primary/10' : 'bg-gray-100'">
+          <lucide-icon [img]="cpuIcon" [size]="24"
+            [class]="adminService.isAdmin() ? 'text-primary' : 'text-gray-400'" />
+        </div>
+        <div class="mt-4 flex-1">
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-bold text-text-dark">Backend Pipeline</h2>
+            @if (adminService.isAdmin()) {
+              <span class="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700">Admin Preview</span>
+            } @else {
+              <span class="flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+                <lucide-icon [img]="lockIcon" [size]="10" />
+                Coming Soon
+              </span>
+            }
+          </div>
+          <p class="mt-2 text-sm text-text-dark/60">
+            Node.js, Java, Python, .NET, Go and more
+          </p>
+          <ul class="mt-3 space-y-1.5 text-xs text-text-dark/60">
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+              App Service, Docker + ACR, Kubernetes
+            </li>
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+              Azure DevOps + GitHub Actions
+            </li>
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+              YAML + Classic JSON (Node.js, Java)
+            </li>
+          </ul>
+        </div>
+        @if (adminService.isAdmin()) {
+          <button
+            type="button"
+            (click)="goToBackend()"
+            class="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+          >
+            Go to Backend Generator
+            <lucide-icon [img]="arrowRightIcon" [size]="16" />
+          </button>
+        } @else {
+          <button
+            type="button"
+            (click)="goToBackend()"
+            class="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-200"
+          >
+            <lucide-icon [img]="lockIcon" [size]="14" />
+            Notify Me
+          </button>
+        }
+      </div>
+
+      <!-- Card 3: Mobile -->
+      <div class="flex flex-col rounded-xl border-2 bg-card p-6 transition-all"
+        [class]="adminService.isAdmin()
+          ? 'border-border hover:border-primary/50 hover:shadow-md'
+          : 'border-border opacity-80'"
+      >
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl"
+          [class]="adminService.isAdmin() ? 'bg-primary/10' : 'bg-gray-100'">
+          <lucide-icon [img]="smartphoneIcon" [size]="24"
+            [class]="adminService.isAdmin() ? 'text-primary' : 'text-gray-400'" />
+        </div>
+        <div class="mt-4 flex-1">
+          <div class="flex items-center gap-2">
+            <h2 class="text-lg font-bold text-text-dark">Mobile Pipeline</h2>
+            @if (adminService.isAdmin()) {
+              <span class="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700">Admin Preview</span>
+            } @else {
+              <span class="flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+                <lucide-icon [img]="lockIcon" [size]="10" />
+                Coming Soon
+              </span>
+            }
+          </div>
+          <p class="mt-2 text-sm text-text-dark/60">
+            React Native, Flutter, iOS, Android
+          </p>
+          <ul class="mt-3 space-y-1.5 text-xs text-text-dark/60">
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+              App Center, TestFlight, Play Store
+            </li>
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+              Azure DevOps + GitHub Actions
+            </li>
+            <li class="flex items-center gap-1.5">
+              <span class="h-1 w-1 rounded-full bg-gray-300"></span>
+              YAML pipelines only
+            </li>
+          </ul>
+        </div>
+        @if (adminService.isAdmin()) {
+          <button
+            type="button"
+            (click)="goToMobile()"
+            class="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary/90"
+          >
+            Go to Mobile Generator
+            <lucide-icon [img]="arrowRightIcon" [size]="16" />
+          </button>
+        } @else {
+          <button
+            type="button"
+            (click)="goToMobile()"
+            class="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-200"
+          >
+            <lucide-icon [img]="lockIcon" [size]="14" />
+            Notify Me
+          </button>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>

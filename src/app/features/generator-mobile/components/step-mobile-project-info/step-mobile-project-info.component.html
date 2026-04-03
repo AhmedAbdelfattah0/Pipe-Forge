@@ -1,0 +1,27 @@
+<pf-card title="Step 1 — Project Info">
+  <form [formGroup]="form" class="space-y-4">
+    ="form.controls.projectName" />
+    ="form.controls.repositoryName" />
+
+    <div>
+      <p class="mb-2 text-sm font-medium text-text-dark">CI Platform</p>
+      <div class="flex gap-3">
+        <button type="button" (click)="selectPlatform('azure-devops')"
+          [class]="state.projectInfo().ciPlatform === 'azure-devops'
+            ? 'flex-1 rounded-lg border-2 border-primary bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary'
+            : 'flex-1 rounded-lg border-2 border-border bg-card px-4 py-2.5 text-sm font-medium text-text-dark hover:border-primary/50'">
+          Azure DevOps
+        </button>
+        <button type="button" (click)="selectPlatform('github-actions')"
+          [class]="state.projectInfo().ciPlatform === 'github-actions'
+            ? 'flex-1 rounded-lg border-2 border-primary bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary'
+            : 'flex-1 rounded-lg border-2 border-border bg-card px-4 py-2.5 text-sm font-medium text-text-dark hover:border-primary/50'">
+          GitHub Actions
+        </button>
+      </div>
+    </div>
+  </form>
+  <div class="mt-6 flex justify-end">
+    <pf-button variant="primary" (click)="onNext()">Next: Framework</pf-button>
+  </div>
+</pf-card>

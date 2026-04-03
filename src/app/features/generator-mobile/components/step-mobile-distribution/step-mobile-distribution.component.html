@@ -1,0 +1,48 @@
+<pf-card title="Step 5 — Distribution">
+
+  <div class="mb-6 space-y-2">
+    @for (opt of distributionOptions; track opt.id) {
+      <button type="button" (click)="selectDistribution(opt.id)"
+        [class]="state.distributionConfig().distribution === opt.id
+          ? 'w-full rounded-lg border-2 border-primary bg-primary/10 px-4 py-3 text-left'
+          : 'w-full rounded-lg border-2 border-border bg-card px-4 py-3 text-left hover:border-primary/50'">
+        <p [class]="state.distributionConfig().distribution === opt.id ? 'text-sm font-semibold text-primary' : 'text-sm font-semibold text-text-dark'">{{ opt.label }}</p>
+        <p class="text-xs text-text-dark/60">{{ opt.desc }}</p>
+      </button>
+    }
+  </div>
+
+  @if (state.distributionConfig().distribution === 'app-center') {
+    <form [formGroup]="appCenterForm" class="space-y-3">
+      ="appCenterForm.controls.appCenterAndroidApp" placeholder="my-org/my-android-app" />
+      ="appCenterForm.controls.appCenterIosApp" placeholder="my-org/my-ios-app" />
+      ="appCenterForm.controls.appCenterDistributionGroup" placeholder="Public" />
+    </form>
+  }
+
+  @if (state.distributionConfig().distribution === 'testflight') {
+    <div class="rounded-lg border border-border bg-surface p-4">
+      <p class="mb-2 text-sm font-semibold text-text-dark">TestFlight Configuration</p>
+      <p class="text-xs text-text-dark/60">Set these as pipeline variables / secrets:</p>
+      <ul class="mt-2 list-inside list-disc space-y-1 text-xs text-text-dark/70">
+        <li>APPLE_ID — Your Apple ID email</li>
+        <li>APP_SPECIFIC_PASSWORD — App-specific password from appleid.apple.com</li>
+      </ul>
+    </div>
+  }
+
+  @if (state.distributionConfig().distribution === 'play-store') {
+    <div class="rounded-lg border border-border bg-surface p-4">
+      <p class="mb-2 text-sm font-semibold text-text-dark">Play Store Configuration</p>
+      <p class="text-xs text-text-dark/60">Set this as a pipeline variable / secret:</p>
+      <ul class="mt-2 list-inside list-disc space-y-1 text-xs text-text-dark/70">
+        <li>SERVICE_ACCOUNT_JSON — Google Play service account JSON (Base64)</li>
+      </ul>
+    </div>
+  }
+
+  <div class="mt-6 flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="state.nextStep()">Review &amp; Generate</pf-button>
+  </div>
+</pf-card>

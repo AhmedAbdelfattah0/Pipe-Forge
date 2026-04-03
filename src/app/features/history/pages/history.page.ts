@@ -94,7 +94,7 @@ export class HistoryPage implements OnInit {
   }
 
   protected goToGenerator(): void {
-    this.router.navigate(['/generator']);
+    this.router.navigate(['/generator/frontend']);
   }
 
   protected onDiagnose(project: HistoryProject): void {
@@ -107,6 +107,6 @@ export class HistoryPage implements OnInit {
    */
   protected onEdit(project: HistoryProject): void {
     this.generatorState.loadFromConfig(project.configSnapshot);
-    this.router.navigate(['/generator']);
+    this.router.navigate(['/generator/frontend']);
   }
 }

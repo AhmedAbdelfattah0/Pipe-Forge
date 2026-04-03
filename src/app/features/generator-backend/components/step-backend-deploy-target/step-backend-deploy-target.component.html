@@ -1,0 +1,82 @@
+<pf-card title="Step 4 — Deploy Target">
+
+  <!-- Target type selector -->
+  <div class="mb-6 space-y-2">
+    @for (target of deployTargetTypes; track target.id) {
+      <button
+        type="button"
+        (click)="selectTargetType(target.id)"
+        [class]="state.deployTarget().type === target.id
+          ? 'w-full rounded-lg border-2 border-primary bg-primary/10 px-4 py-3 text-left transition-colors'
+          : 'w-full rounded-lg border-2 border-border bg-card px-4 py-3 text-left transition-colors hover:border-primary/50'"
+      >
+        <p [class]="state.deployTarget().type === target.id ? 'text-sm font-semibold text-primary' : 'text-sm font-semibold text-text-dark'">
+          {{ target.label }}
+        </p>
+        <p class="text-xs text-text-dark/60">{{ target.desc }}</p>
+      </button>
+    }
+  </div>
+
+  <!-- App Service config -->
+  @if (state.deployTarget().type === 'app-service') {
+    <form [formGroup]="appServiceForm" class="space-y-4">
+      ="appServiceForm.controls.appServiceName" placeholder="my-backend-api" />
+      ="appServiceForm.controls.resourceGroup" placeholder="rg-my-app" />
+      <div>
+        <p class="mb-2 text-sm font-medium text-text-dark">Deployment Slot</p>
+        <div class="flex gap-3">
+          @for (slot of ['production', 'staging']; track slot) {
+            <button
+              type="button"
+              (click)="selectAppSlot(slot === 'production' ? 'production' : 'staging')"
+              [class]="state.deployTarget().appService.slot === slot
+                ? 'flex-1 rounded-lg border-2 border-primary bg-primary/10 py-2 text-sm font-medium text-primary'
+                : 'flex-1 rounded-lg border-2 border-border bg-card py-2 text-sm font-medium text-text-dark hover:border-primary/50'"
+            >
+              {{ slot  }}
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  }
+
+  <!-- Docker + ACR config -->
+  @if (state.deployTarget().type === 'docker-acr') {
+    <form [formGroup]="dockerForm" class="space-y-4">
+      ="dockerForm.controls.acrName" placeholder="myregistry" />
+      ="dockerForm.controls.imageName" placeholder="my-backend-api" />
+      <div>
+        <p class="mb-2 text-sm font-medium text-text-dark">Tag Strategy</p>
+        <div class="flex gap-2">
+          @for (strategy of ['BuildId', 'latest', 'semver']; track strategy) {
+            <button
+              type="button"
+              (click)="selectTagStrategy(strategy === 'BuildId' ? 'BuildId' : strategy === 'latest' ? 'latest' : 'semver')"
+              [class]="state.deployTarget().docker.tagStrategy === strategy
+                ? 'rounded-lg border-2 border-primary bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary'
+                : 'rounded-lg border-2 border-border bg-card px-3 py-1.5 text-xs font-medium text-text-dark hover:border-primary/50'"
+            >
+              {{ strategy }}
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  }
+
+  <!-- Kubernetes config -->
+  @if (state.deployTarget().type === 'kubernetes') {
+    <form [formGroup]="k8sForm" class="space-y-4">
+      ="k8sForm.controls.clusterName" placeholder="my-aks-cluster" />
+      ="k8sForm.controls.namespace" placeholder="default" />
+      ="k8sForm.controls.manifestPath" placeholder="k8s/" />
+    </form>
+  }
+
+  <div class="mt-6 flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="state.nextStep()">Next: Environments</pf-button>
+  </div>
+</pf-card>

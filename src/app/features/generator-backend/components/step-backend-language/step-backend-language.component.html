@@ -1,0 +1,70 @@
+<pf-card title="Step 2 — Language &amp; Runtime">
+
+  <!-- Language grid -->
+  <div class="mb-4">
+    <p class="mb-2 text-sm font-medium text-text-dark">Select Language</p>
+    <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      @for (lang of languages; track lang.id) {
+        <button
+          type="button"
+          (click)="selectLanguage(lang.id)"
+          [class]="state.languageConfig().language === lang.id
+            ? 'rounded-lg border-2 border-primary bg-primary/10 px-3 py-2 text-sm font-semibold text-primary transition-colors'
+            : 'rounded-lg border-2 border-border bg-card px-3 py-2 text-sm font-medium text-text-dark transition-colors hover:border-primary/50'"
+        >
+          {{ lang.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Version selector for selected language -->
+  <div class="mb-4">
+    <p class="mb-2 text-sm font-medium text-text-dark">Version</p>
+    <div class="flex flex-wrap gap-2">
+      @for (v of currentVersions(); track v) {
+        <button
+          type="button"
+          (click)="selectVersion(v)"
+          [class]="currentVersion() === v
+            ? 'rounded-lg border-2 border-primary bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary'
+            : 'rounded-lg border-2 border-border bg-card px-4 py-1.5 text-sm font-medium text-text-dark hover:border-primary/50'"
+        >
+          {{ v }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Java build tool (only shown for Java) -->
+  @if (state.languageConfig().language === 'java') {
+    <div class="mb-4">
+      <p class="mb-2 text-sm font-medium text-text-dark">Build Tool</p>
+      <div class="flex gap-3">
+        @for (tool of javaBuildTools; track tool.id) {
+          <button
+            type="button"
+            (click)="selectJavaBuildTool(tool.id)"
+            [class]="state.languageConfig().javaBuildTool === tool.id
+              ? 'rounded-lg border-2 border-primary bg-primary/10 px-5 py-2 text-sm font-medium text-primary'
+              : 'rounded-lg border-2 border-border bg-card px-5 py-2 text-sm font-medium text-text-dark hover:border-primary/50'"
+          >
+            {{ tool.label }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (!state.canGenerateClassicJson()) {
+    <p class="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+      Classic JSON output is available for Node.js and Java only (verified GUIDs).
+      This language will generate YAML pipelines.
+    </p>
+  }
+
+  <div class="mt-6 flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="state.nextStep()">Next: Build Config</pf-button>
+  </div>
+</pf-card>

@@ -156,8 +156,29 @@ export const routes: Routes = [
       {
         path: 'generator',
         loadComponent: () =>
+          import('./features/generator-selection/pages/generator-selection.page').then(
+            m => m.GeneratorSelectionPage,
+          ),
+      },
+      {
+        path: 'generator/frontend',
+        loadComponent: () =>
           import('./features/generator/pages/generator.page').then(
             m => m.GeneratorPage,
+          ),
+      },
+      {
+        path: 'generator/backend',
+        loadComponent: () =>
+          import('./features/generator-backend/pages/backend-generator-root.page').then(
+            m => m.BackendGeneratorRootPage,
+          ),
+      },
+      {
+        path: 'generator/mobile',
+        loadComponent: () =>
+          import('./features/generator-mobile/pages/mobile-generator-root.page').then(
+            m => m.MobileGeneratorRootPage,
           ),
       },
       {

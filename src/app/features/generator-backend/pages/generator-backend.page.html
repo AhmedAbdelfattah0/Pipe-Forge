@@ -1,0 +1,41 @@
+<div class="flex h-full flex-col">
+
+  <!-- Page header -->
+  <div class="border-b border-border bg-card px-6 py-4">
+    <h1 class="text-lg font-bold text-text-dark">Backend Pipeline Generator</h1>
+    <p class="text-sm text-text-dark/60">Generate CI/CD pipelines for your backend services</p>
+  </div>
+
+  <!-- Stepper + content -->
+  <div class="flex flex-1 flex-col gap-6 overflow-auto p-6">
+
+    <pf-stepper
+      [steps]="steps"
+      [currentStep]="state.currentStep()"
+    />
+
+    <div class="mx-auto w-full max-w-2xl">
+      @switch (state.currentStep()) {
+        @case (1) {
+          <pf-step-backend-project-info />
+        }
+        @case (2) {
+          <pf-step-backend-language />
+        }
+        @case (3) {
+          <pf-step-backend-build-config />
+        }
+        @case (4) {
+          <pf-step-backend-deploy-target />
+        }
+        @case (5) {
+          <pf-step-backend-environments />
+        }
+        @case (6) {
+          <pf-step-backend-review />
+        }
+      }
+    </div>
+
+  </div>
+</div>

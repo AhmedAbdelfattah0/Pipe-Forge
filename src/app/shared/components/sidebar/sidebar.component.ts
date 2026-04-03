@@ -10,7 +10,7 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 
-import { LucideAngularModule, Zap, WandSparkles, History, LogOut, User, ShieldCheck, ShieldAlert } from 'lucide-angular';
+import { LucideAngularModule, Zap, WandSparkles, History, LogOut, User, ShieldCheck, ShieldAlert, Globe, Cpu, Smartphone, Lock } from 'lucide-angular';
 import { ProfileService } from '../../../features/profile/services/profile.service';
 import { AdminService } from '../../../features/admin/services/admin.service';
 
@@ -20,6 +20,8 @@ interface NavItem {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any;
   adminOnly?: boolean;
+  /** If true, show lock icon + "Coming Soon" badge for non-admins */
+  adminPreview?: boolean;
 }
 
 @Component({
@@ -44,13 +46,16 @@ export class SidebarComponent implements OnInit {
   protected readonly userIcon = User;
   protected readonly shieldCheckIcon = ShieldCheck;
   protected readonly shieldAlertIcon = ShieldAlert;
+  protected readonly lockIcon = Lock;
 
   protected readonly allNavItems: NavItem[] = [
-    { label: 'Generator', route: '/generator', icon: WandSparkles },
-    { label: 'History', route: '/history', icon: History },
+    { label: 'Frontend Pipeline', route: '/generator/frontend', icon: Globe },
+    { label: 'Backend Pipeline',  route: '/generator/backend',  icon: Cpu, adminPreview: true },
+    { label: 'Mobile Pipeline',   route: '/generator/mobile',   icon: Smartphone, adminPreview: true },
+    { label: 'History',   route: '/history',   icon: History },
     { label: 'Validator', route: '/validator', icon: ShieldAlert },
-    { label: 'Profile', route: '/profile', icon: User },
-    { label: 'Admin', route: '/admin', icon: ShieldCheck, adminOnly: true },
+    { label: 'Profile',   route: '/profile',   icon: User },
+    { label: 'Admin',     route: '/admin',     icon: ShieldCheck, adminOnly: true },
   ];
 
   ngOnInit(): void {

@@ -1,0 +1,55 @@
+<div class="flex min-h-full flex-col items-center justify-center px-4 py-16">
+  <div class="w-full max-w-lg text-center">
+
+    <!-- Lock icon -->
+    <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-navy/10">
+      <lucide-icon [img]="lockIcon" [size]="40" class="text-navy" />
+    </div>
+
+    <h1 class="mb-2 text-2xl font-bold text-text-dark">Backend Pipeline Generator</h1>
+    <p class="mb-8 text-text-dark/60">Coming Soon — Currently in admin preview</p>
+
+    <!-- Feature preview cards -->
+    <div class="mb-8 grid gap-3 text-left sm:grid-cols-2">
+      <div class="rounded-xl border border-border bg-card p-4">
+        <lucide-icon [img]="terminalIcon" [size]="20" class="mb-2 text-primary" />
+        <p class="text-sm font-semibold text-text-dark">Any Language</p>
+        <p class="text-xs text-text-dark/60">Node.js, Java, Python, .NET, Go, PHP, Ruby</p>
+      </div>
+      <div class="rounded-xl border border-border bg-card p-4">
+        <lucide-icon [img]="cpuIcon" [size]="20" class="mb-2 text-primary" />
+        <p class="text-sm font-semibold text-text-dark">Any Deploy Target</p>
+        <p class="text-xs text-text-dark/60">App Service, Docker + ACR, Kubernetes</p>
+      </div>
+      <div class="rounded-xl border border-border bg-card p-4">
+        <lucide-icon [img]="layersIcon" [size]="20" class="mb-2 text-primary" />
+        <p class="text-sm font-semibold text-text-dark">Multi-Environment</p>
+        <p class="text-xs text-text-dark/60">QA and Production pipelines in one wizard</p>
+      </div>
+      <div class="rounded-xl border border-border bg-card p-4">
+        <lucide-icon [img]="zapIcon" [size]="20" class="mb-2 text-primary" />
+        <p class="text-sm font-semibold text-text-dark">Azure DevOps + GitHub</p>
+        <p class="text-xs text-text-dark/60">YAML and Classic JSON where GUIDs are verified</p>
+      </div>
+    </div>
+
+    <!-- Notify me form -->
+    @if (!notified()) {
+      <div class="rounded-xl border border-border bg-card p-6">
+        <p class="mb-4 text-sm font-medium text-text-dark">Get notified when it launches</p>
+        <div class="flex gap-2">
+          <div class="flex-1">
+            ="emailControl"
+            />
+          </div>
+          <pf-button variant="primary" (click)="notify()">Notify Me</pf-button>
+        </div>
+      </div>
+    } @else {
+      <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+        <p class="text-sm font-medium text-emerald-700">You're on the list! We'll notify you when the Backend Generator launches.</p>
+      </div>
+    }
+
+  </div>
+</div>

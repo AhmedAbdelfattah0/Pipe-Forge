@@ -104,28 +104,36 @@
           </span>
 
           <h1 class="stagger-2 mt-6 font-display text-display-hero font-bold text-navy">
-            Generate production-ready<br class="hidden sm:block">
-            CI/CD pipelines<br class="hidden sm:block">
-            in minutes.
+            Generate CI/CD pipelines<br class="hidden sm:block">
+            in minutes, not days.
           </h1>
 
           <p class="stagger-3 mt-6 max-w-xl text-lg leading-relaxed text-navy/60">
-            Answer a few questions about your project.
-            PipeForge generates all your Azure DevOps or GitHub Actions
-            pipeline files — ready to import and run.
-            No DevOps expertise required.
+            Stop writing pipeline files manually.
+            Configure once, download instantly.
           </p>
 
+          <ul class="stagger-3 mt-4 space-y-1.5 text-sm text-navy/60">
+            <li class="flex items-center gap-2">
+              <lucide-icon [img]="checkIcon" [size]="14" class="shrink-0 text-primary" />
+              Azure DevOps (YAML + Classic JSON) and GitHub Actions
+            </li>
+            <li class="flex items-center gap-2">
+              <lucide-icon [img]="checkIcon" [size]="14" class="shrink-0 text-primary" />
+              Frontend, Backend, and Mobile — any language, any framework
+            </li>
+            <li class="flex items-center gap-2">
+              <lucide-icon [img]="checkIcon" [size]="14" class="shrink-0 text-primary" />
+              Any deploy target: Cloud, App Service, cPanel, Docker, App Store
+            </li>
+          </ul>
+
           <div class="stagger-4 mt-10 flex flex-wrap items-center gap-4">
-            <a routerLink="/generator">
-              <pf-button variant="primary" size="lg">Generate Your Pipelines</pf-button>
+            <a routerLink="/auth/signup">
+              <pf-button variant="primary" size="lg">Start for Free</pf-button>
             </a>
             <pf-button variant="ghost" size="lg" (clicked)="scrollTo('how-it-works')">See How It Works</pf-button>
           </div>
-
-          <p class="mt-8 text-sm text-navy/35">
-            Azure DevOps or GitHub Actions &middot; 4 deploy targets &middot; One ZIP download
-          </p>
         </div>
 
         <!-- Right: Product preview — the product IS the visual -->
@@ -157,6 +165,22 @@
         </div>
 
       </div>
+    </div>
+  </section>
+
+  <!-- ===== FOUNDER STORY ===== -->
+  <section class="bg-navy py-12">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+      <blockquote class="text-center">
+        <p class="text-base leading-relaxed text-white/80 italic">
+          "I managed 64 Azure DevOps pipelines manually at IKEA.
+          Each setup took 1&ndash;3 days.
+          So I built PipeForge."
+        </p>
+        <footer class="mt-4 text-sm text-white/50">
+          &mdash; Ahmed Abdelfatah, Frontend Engineering Lead
+        </footer>
+      </blockquote>
     </div>
   </section>
 
@@ -197,7 +221,7 @@
         Everything you need
       </h2>
       <p class="mt-4 max-w-2xl text-lg text-navy/60">
-        Everything you need to generate, manage, and ship CI/CD pipelines
+        7 features that cover the full CI/CD lifecycle — from generation to validation to diagnosis
       </p>
 
       <!-- Spotlight: first 2 features — larger treatment -->

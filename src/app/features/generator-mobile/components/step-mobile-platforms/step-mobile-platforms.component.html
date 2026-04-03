@@ -1,0 +1,41 @@
+<pf-card title="Step 3 — Target Platforms">
+  <div class="mb-6 flex gap-3">
+    @for (opt of options; track opt.id) {
+      <button type="button" (click)="selectPlatform(opt.id)"
+        [class]="state.platformConfig().targetPlatform === opt.id
+          ? 'flex-1 rounded-lg border-2 border-primary bg-primary/10 py-2.5 text-sm font-medium text-primary'
+          : 'flex-1 rounded-lg border-2 border-border bg-card py-2.5 text-sm font-medium text-text-dark hover:border-primary/50'">
+        {{ opt.label }}
+      </button>
+    }
+  </div>
+
+  @if (state.platformConfig().targetPlatform !== 'ios') {
+    <div class="mb-4 rounded-lg border border-border bg-surface p-4">
+      <p class="mb-1 text-sm font-semibold text-text-dark">Android Signing</p>
+      <p class="text-xs text-text-dark/60">Values are pipeline variable references — set them in Azure DevOps / GitHub Secrets.</p>
+      <ul class="mt-2 list-inside list-disc space-y-1 text-xs text-text-dark/70">
+        <li>KEYSTORE_FILE — Base64-encoded keystore</li>
+        <li>KEYSTORE_PASSWORD — Keystore password</li>
+        <li>KEY_ALIAS — Key alias</li>
+        <li>KEY_PASSWORD — Key password</li>
+      </ul>
+    </div>
+  }
+
+  @if (state.platformConfig().targetPlatform !== 'android') {
+    <div class="rounded-lg border border-border bg-surface p-4">
+      <p class="mb-1 text-sm font-semibold text-text-dark">iOS Signing</p>
+      <p class="text-xs text-text-dark/60">Values are pipeline variable references — set them in Azure DevOps / GitHub Secrets.</p>
+      <ul class="mt-2 list-inside list-disc space-y-1 text-xs text-text-dark/70">
+        <li>PROVISIONING_PROFILE — Provisioning profile UUID</li>
+        <li>CERTIFICATE — P12 certificate (Base64)</li>
+      </ul>
+    </div>
+  }
+
+  <div class="mt-6 flex justify-between">
+    <pf-button variant="ghost" (click)="state.prevStep()">Back</pf-button>
+    <pf-button variant="primary" (click)="state.nextStep()">Next: Build Type</pf-button>
+  </div>
+</pf-card>
