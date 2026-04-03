@@ -77,7 +77,7 @@ export class AuthService {
     this._error.set(null);
     const { error } = await this.supabase.client.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/generator` },
     });
     if (error) {
       this._error.set(error.message);
