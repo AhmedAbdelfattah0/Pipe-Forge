@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { GeneratorStateService } from '../services/generator-state.service';
 import { HistoryService } from '../../history/services/history.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { StepperComponent } from '../../../shared/components/stepper/stepper.component';
 import { StepConfig } from '../../../shared/models/stepper.model';
 import { StepProjectInfoComponent } from '../components/step-project-info/step-project-info.component';
@@ -26,11 +29,21 @@ const ALL_STEPS: StepConfig[] = [
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [StepperComponent, StepProjectInfoComponent, StepMarketsComponent, StepLanguagesComponent, StepDeployTargetComponent, StepReviewComponent],
 })
-export class GeneratorPage implements OnInit {
+export class GeneratorPage {
   protected readonly state = inject(GeneratorStateService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly historyService = inject(HistoryService);
+  private readonly toastService = inject(ToastService);
+
+  /**
+   * Reactive signal from the route's query params — updates automatically
+   * even on same-path navigation (e.g. /generator/frontend → /generator/frontend?edit=id).
+   */
+  private readonly editId = toSignal(
+    this.route.queryParamMap.pipe(map(p => p.get('edit'))),
+    { initialValue: this.route.snapshot.queryParamMap.get('edit') },
+  );
 
   /**
    * Computed step config array for the stepper.
@@ -54,16 +67,21 @@ export class GeneratorPage implements OnInit {
     return null;
   });
 
-  async ngOnInit(): Promise<void> {
-    const editId = this.route.snapshot.queryParamMap.get('edit');
+  constructor() {
+    effect(() => {
+      const editId = this.editId();
+      void this.handleEditParam(editId);
+    });
+  }
 
+  private async handleEditParam(editId: string | null): Promise<void> {
     if (editId) {
       // Edit mode: fetch the project from the API and load its config into the wizard.
       const project = await this.historyService.getProject(editId);
 
       if (!project) {
-        // Project not found or fetch failed — clear the query param and start fresh.
-        this.router.navigate(['/generator/frontend'], { replaceUrl: true });
+        // Project not found or fetch failed — show an error and keep URL intact.
+        this.toastService.show('Could not load project for editing. Please try again.', 'error');
         return;
       }
 
